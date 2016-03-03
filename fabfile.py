@@ -53,7 +53,7 @@ def setup():
 @task
 @roles('home')
 def dependency():
-    run("pip3 install aiohttp RPi.GPIO --user")
+    run("pip3 install aiohttp aiohttp_wsgi RPi.GPIO django --user")
 
 @task
 @roles('home')
@@ -71,7 +71,7 @@ def deploy(init_supervisor = False):
             command='python3 /home/pi/server/server.py',
             directory='/home/pi/server/',
             user=env.user
-            )      
+            )
     else:
         restart_process("server")
 
