@@ -74,3 +74,8 @@ def deploy(init_supervisor = False):
             )      
     else:
         restart_process("server")
+
+@task
+@roles('home')
+def shutdown():
+    sudo("shutdown now")
