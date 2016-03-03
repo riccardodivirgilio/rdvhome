@@ -3,35 +3,32 @@
 from django.conf.urls import include, patterns, url
 from django.http import Http404, JsonResponse
 
-from rdvhome.gpio import GPIO, IN, OUT, PINS
+from rdvhome.gpio import get_input, set_output, IN, OUT, PINS
 
-def status(pin):
-    if GPIO:
-        return bool(GPIO.input(pin)) and "on" or "off"
-    else:
-        return "unknown"    
+def status_verbose(mode = None):
+    return mode and "on" or "off"
 
-def api_response(request = None, status = 200, message = "OK", **kw):
+def api_response(request = None, status_code = 200, message = "OK", **kw):
     return JsonResponse(
         dict(
             kw,
-            code = status,
-            success = status == 200,
+            code = status_code,
+            success = status_code == 200,
             message = message
         ),
-        status = status,
+        status = status_code,
         json_dumps_params = {"indent": 4}
     )
 
 def home_view(request):
     return api_response(
         input = {
-            pin: status(pin)
+            pin: status_verbose(get_input(pin))
             for pin, mode in PINS.items()
             if mode is IN
         },
         output = {
-            pin: status(pin)
+            pin: status_verbose(get_input(pin))
             for pin, mode in PINS.items()
             if mode is OUT
         },
@@ -42,12 +39,6 @@ def validate_pin(number, mode):
     if not PINS.get(n, None) is mode:
         raise Http404("Invalid pin number %s" % n)
     return n
-
-def output_view(request, number):
-    pin = validate_pin(number, OUT)
-    return api_response(
-        pin = pin
-    )
 
 def input_view(request, number):
     pin = validate_pin(number, IN)
@@ -61,15 +52,13 @@ def output_view(request, number):
     return api_response(
         pin = pin,
         mode = "output",
-        status = status(pin)
+        status = status_verbose(get_input(pin))
     )
 
 def output_switch(request, number, mode = True):
     pin = validate_pin(number, OUT)
-    if GPIO:
-        GPIO.output(pin, mode)
     return api_response(
         pin = pin,
         mode = "output",
-        status = mode
+        status = status_verbose(set_output(pin, mode))
     )

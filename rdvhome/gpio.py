@@ -32,3 +32,18 @@ if GPIO:
     GPIO.setmode(GPIO.BOARD)
     for n, mode in PINS.items():
         GPIO.setup(n, mode)
+else:
+	STORE = {}
+
+def get_input(pin):
+    if GPIO:
+        return bool(GPIO.input(pin))
+    else:
+    	return STORE.get(pin, False)
+
+def set_output(pin, mode):
+    if GPIO:
+        return bool(GPIO.output(pin, mode))   
+    else:
+    	STORE[pin] = bool(mode)
+    	return STORE[pin]
