@@ -5,11 +5,17 @@ from django.http import Http404, JsonResponse
 
 from rdvhome.gpio import GPIO, IN, OUT, PINS
 
+def status(pin):
+    if GPIO:
+        return bool(GPIO.input(pin)) and "on" or "off"
+    else:
+        return "unknown"    
+
 def api_response(request = None, status = 200, message = "OK", **kw):
     return JsonResponse(
         dict(
             kw,
-            status = status,
+            code = status,
             success = status == 200,
             message = message
         ),
@@ -19,17 +25,16 @@ def api_response(request = None, status = 200, message = "OK", **kw):
 
 def home_view(request):
     return api_response(
-        success = True,
-        input = [
-            pin
+        input = {
+            pin: status(pin)
             for pin, mode in PINS.items()
             if mode is IN
-        ],
-        output = [
-            pin
+        },
+        output = {
+            pin: status(pin)
             for pin, mode in PINS.items()
             if mode is OUT
-        ],
+        },
     )
 
 def validate_pin(number, mode):
@@ -53,14 +58,10 @@ def input_view(request, number):
 
 def output_view(request, number):
     pin = validate_pin(number, OUT)
-    if GPIO:
-        mode = bool(GPIO.input(pin))
-    else:
-        mode = "unknown"
     return api_response(
         pin = pin,
         mode = "output",
-        on = mode
+        status = status(pin)
     )
 
 def output_switch(request, number, mode = True):
@@ -70,5 +71,5 @@ def output_switch(request, number, mode = True):
     return api_response(
         pin = pin,
         mode = "output",
-        on = mode
+        status = mode
     )
