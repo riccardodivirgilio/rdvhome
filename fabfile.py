@@ -9,6 +9,8 @@ from fabtools.supervisor import restart_process
 
 import os
 
+#use sudo raspi-config to resize partition
+
 env.roledefs  = {'home': ['pi@rdvpi.local:22']}
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
 
@@ -36,13 +38,13 @@ def setup():
         ssh_public_keys = [os.path.expanduser("~/.ssh/id_rsa.pub")]
     )
 
-    #if not exists("/swapfile"):
-    #    sudo("fallocate -l 4G /swapfile")
-    #    sudo("chmod 600 /swapfile")
-    #    sudo("mkswap /swapfile")
-    #    sudo("swapon /swapfile")
-    #if not "/swapfile" in sudo("cat /etc/fstab"):
-    #    sudo('echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab')
+    if not exists("/swapfile"):
+        sudo("fallocate -l 4G /swapfile")
+        sudo("chmod 600 /swapfile")
+        sudo("mkswap /swapfile")
+        sudo("swapon /swapfile")
+    if not "/swapfile" in sudo("cat /etc/fstab"):
+        sudo('echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab')
 
     require.python.pip(python_cmd="python")
     require.python.pip(python_cmd="python3")
