@@ -19,11 +19,11 @@ def setup():
     require.deb.uptodate_index()
     require.deb.packages([
        'ntpdate',
+       'rsync',
        'python2',
        'python2-dev',
        'python3',
        'python3-dev',
-       'rsync'
     ])
 
     sudo("ntpdate -s time.nist.gov")
@@ -53,7 +53,7 @@ def setup():
 @task
 @roles('home')
 def dependency():
-    run("pip3 install aiohttp --user")
+    run("pip3 install aiohttp RPi.GPIO --user")
 
 @task
 @roles('home')
