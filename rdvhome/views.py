@@ -20,14 +20,9 @@ def api_response(request = None, status_code = 200, message = "OK", **kw):
         json_dumps_params = {"indent": 4}
     )
 
-def home_view(request):
+def status_view(request):
     return api_response(
-        input = {
-            pin: status_verbose(get_input(pin))
-            for pin, mode in PINS.items()
-            if mode is IN
-        },
-        output = {
+        gpio = {
             pin: status_verbose(get_input(pin))
             for pin, mode in PINS.items()
             if mode is OUT
@@ -40,17 +35,10 @@ def validate_pin(number, mode):
         raise Http404("Invalid pin number %s" % n)
     return n
 
-def input_view(request, number):
-    pin = validate_pin(number, IN)
-    return api_response(
-        pin = pin,
-        mode = "input"
-    )
-
 def output_view(request, number):
     pin = validate_pin(number, OUT)
     return api_response(
-        pin = pin,
+        gpio = pin,
         mode = "output",
         status = status_verbose(get_input(pin))
     )
@@ -58,7 +46,7 @@ def output_view(request, number):
 def output_switch(request, number, mode = True):
     pin = validate_pin(number, OUT)
     return api_response(
-        pin = pin,
+        gpio = pin,
         mode = "output",
         status = status_verbose(set_output(pin, mode))
     )
