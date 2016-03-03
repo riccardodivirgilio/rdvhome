@@ -5,7 +5,7 @@ from django.http import Http404, JsonResponse
 
 from rdvhome.gpio import GPIO, IN, OUT, PINS
 
-def api_response(status = 200, message = "OK", **kw):
+def api_response(request = None, status = 200, message = "OK", **kw):
     return JsonResponse(
         dict(
             kw,
