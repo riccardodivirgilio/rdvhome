@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,26 +5,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RdvHome</title>
-
     <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   </head>
-
   <body>
-
-
     <div class="container">
       <div class="starter-template">
         <h1>RdV</h1>
         <p class="lead">Controller for GPIO. <a href="/gpio" class="small">API &rarr;</a></p>
         <form method="POST" class="panel">
           {% for field in form %}
-			<div class="checkbox">
-			  <label>
-			    {{ field }}
-			    {{ field.label }}
-			  </label>
-			</div>
+          <div class="checkbox">
+            <label>
+              {{ field }}
+              {{ field.label }}
+            </label>
+          </div>
           {% endfor %}
           <div class="panel-footer">
             <button type="submit" class="btn btn-primary">Update</button>
@@ -33,6 +28,5 @@
         </form>
       </div>
     </div><!-- /.container -->
-
   </body>
 </html>
