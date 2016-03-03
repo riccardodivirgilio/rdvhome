@@ -66,7 +66,7 @@ def input_view(request):
 def output_view(request):
     pin = validate_pin(request, OUT)
     if GPIO:
-        mode = GPIO.input(pin)
+        mode = bool(GPIO.input(pin))
     else:
         mode = "unknown"
     return web.json_response({
