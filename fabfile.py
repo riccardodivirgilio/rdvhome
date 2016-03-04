@@ -7,12 +7,12 @@ from fabric.contrib.project import rsync_project
 from fabtools import require
 from fabtools.supervisor import restart_process
 
+from rdvhome.constants import RASPBERRY
+
 import os
 
-#use sudo raspi-config to resize partition
-
-env.roledefs  = {'home': ['pi@rdvpi.local:22']}
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
+env.roledefs  = {'home': [RASPBERRY.host()]}
 
 @task
 @roles('home')
@@ -26,6 +26,9 @@ def setup():
        'python2-dev',
        'python3',
        'python3-dev',
+       'avahi-daemon',
+       'avahi-discover',
+       'libnss-mdns'
     ])
 
     sudo("ntpdate -s time.nist.gov")
@@ -63,7 +66,7 @@ upstream django {
 server {
     listen      80;
     server_name   %(host)s;
-    
+
     location / {
         # uncomment to switch to manteinance mode
         # return 503;
@@ -97,7 +100,6 @@ def nginx():
         host = env.host,
         check_config = False
         )
-
 
 @task
 @roles('home')
