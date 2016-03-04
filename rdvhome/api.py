@@ -45,8 +45,9 @@ def output_view(request, number):
 
 def output_switch(request, number, mode = True):
     pin = validate_pin(number, OUT)
+    set_output(pin, mode)
     return api_response(
         gpio = pin,
         mode = "output",
-        status = status_verbose(set_output(pin, mode))
+        status = status_verbose(mode)
     )
