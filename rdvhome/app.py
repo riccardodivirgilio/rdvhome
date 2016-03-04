@@ -9,8 +9,11 @@ from rdvhome.gpio import get_input, RASPBERRY, set_output
 SwitchForm = type(
     "SwitchForm",
     (forms.Form, ), {
-        str(n): forms.BooleanField(required = False)
-        for n in RASPBERRY.gpio.keys()
+        str(n): forms.BooleanField(
+            required = False,
+            **data
+            )
+        for n, data in RASPBERRY.gpio.items()
     }
 )
 
