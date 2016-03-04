@@ -50,16 +50,80 @@ def setup():
     require.python.pip(python_cmd="python3")
 
     execute(dependency)
-    execute(deploy, init_supervisor = True)
+    execute(supervisor)
+    execute(deploy, restart = False)
+    execute(nginx)
+
+SITE_TEMPLATE = """\
+
+upstream django {
+    server localhost:45000;
+}
+
+server {
+    listen      80;
+    server_name   %(host)s;
+    
+    location / {
+        # uncomment to switch to manteinance mode
+        # return 503;
+        # host and port to fastcgi server
+        uwsgi_pass django;
+
+        uwsgi_param  QUERY_STRING       $query_string;
+        uwsgi_param  REQUEST_METHOD     $request_method;
+        uwsgi_param  CONTENT_TYPE       $content_type;
+        uwsgi_param  CONTENT_LENGTH     $content_length;
+        uwsgi_param  REQUEST_URI        $request_uri;
+        uwsgi_param  PATH_INFO          $document_uri;
+        uwsgi_param  DOCUMENT_ROOT      $document_root;
+        uwsgi_param  SERVER_PROTOCOL    $server_protocol;
+        uwsgi_param  REQUEST_SCHEME     $scheme;
+        uwsgi_param  HTTPS              $https if_not_empty;
+        uwsgi_param  REMOTE_ADDR        $remote_addr;
+        uwsgi_param  REMOTE_PORT        $remote_port;
+        uwsgi_param  SERVER_PORT        $server_port;
+        uwsgi_param  SERVER_NAME        $server_name;
+    }
+}
+"""
+
+@task
+@roles('home')
+def nginx():
+    require.nginx.site(
+        'server',
+        template_contents = SITE_TEMPLATE,
+        host = env.host,
+        check_config = False
+        )
+
 
 @task
 @roles('home')
 def dependency():
-    run("pip3 install aiohttp aiohttp_wsgi RPi.GPIO django --user")
+    run("pip3 install uwsgi RPi.GPIO django --user")
 
 @task
 @roles('home')
-def deploy(init_supervisor = False):
+def supervisor():
+    require.supervisor.process(
+        'server',
+        command='/usr/local/bin/uwsgi --chdir=/home/pi/server/ --module=rdvhome.wsgi:application --master --pidfile=/home/pi/application.pid --socket=0.0.0.0:45000',
+        directory='/home/pi/server/',
+        user=env.user
+        )
+
+    #require.supervisor.process(
+    #    'server',
+    #    command='python3 /home/pi/server/server.py',
+    #    directory='/home/pi/server/',
+    #    user=env.user
+    #    )
+
+@task
+@roles('home')
+def deploy(restart = True):
     rsync_project(
         remote_dir="/home/pi/server/",
         local_dir="%s/" % os.path.dirname(__file__),
@@ -67,14 +131,7 @@ def deploy(init_supervisor = False):
         delete=True
         )
 
-    if init_supervisor:
-        require.supervisor.process(
-            'server',
-            command='python3 /home/pi/server/server.py',
-            directory='/home/pi/server/',
-            user=env.user
-            )
-    else:
+    if restart:
         restart_process("server")
 
 @task
