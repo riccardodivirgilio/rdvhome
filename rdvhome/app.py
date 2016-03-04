@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from django import forms
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
-from django import forms
 
-from rdvhome.gpio import PINS, get_input, set_output
+from rdvhome.gpio import get_input, RASPBERRY, set_output
 
 SwitchForm = type(
-    "SwitchForm", 
+    "SwitchForm",
     (forms.Form, ), {
         str(n): forms.BooleanField(required = False)
-        for n in PINS.keys()
+        for n in RASPBERRY.gpio.keys()
     }
 )
 
@@ -21,7 +21,7 @@ def home(request):
         form = SwitchForm(
             initial = {
                 str(n): get_input(n)
-                for n in PINS.keys()
+                for n in RASPBERRY.gpio.keys()
                 }
             )
 

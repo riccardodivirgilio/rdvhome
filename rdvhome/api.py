@@ -3,7 +3,8 @@
 from django.conf.urls import include, patterns, url
 from django.http import Http404, JsonResponse
 
-from rdvhome.gpio import get_input, set_output, IN, OUT, PINS
+from rdvhome.constants import RASPBERRY
+from rdvhome.gpio import get_input, IN, OUT, set_output
 
 def status_verbose(mode = None):
     return mode and "on" or "off"
@@ -24,14 +25,14 @@ def status_view(request):
     return api_response(
         gpio = {
             pin: status_verbose(get_input(pin))
-            for pin, mode in PINS.items()
+            for pin, mode in RASPBERRY.gpio.items()
             if mode is OUT
         },
     )
 
 def validate_pin(number, mode):
     n = int(number)
-    if not PINS.get(n, None) is mode:
+    if not RASPBERRY.gpio.get(n, None) is mode:
         raise Http404("Invalid pin number %s" % n)
     return n
 
