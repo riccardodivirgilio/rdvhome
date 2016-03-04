@@ -16,14 +16,14 @@ SwitchForm = type(
 
 def home(request):
     form = SwitchForm(
-        request.POST or None,
-        initial = request.POST or {
+        request.method == "POST" and request.POST or None,
+        initial = not request.method == "POST" and {
             str(n): get_input(n)
             for n in PINS.keys()
             }
         )
 
-    if form.is_valid():
+    if request.method == "POST" and form.is_valid():
         for n, value in form.cleaned_data.items():
             set_output(int(n), value)
 
