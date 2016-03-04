@@ -4,7 +4,7 @@ from django.conf.urls import include, url
 
 from functools import partial
 
-from rdvhome.api import api_response, status_view, output_switch, output_view
+from rdvhome.api import api_response, output_switch, output_view, status_view
 from rdvhome.app import home
 
 handler403 = partial(api_response, status = 403, message = "PermissionDenied")
