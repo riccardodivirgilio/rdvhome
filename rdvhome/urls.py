@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^gpio/(?P<number>[0-9]{1,2})$', output_view),
     url(r'^gpio/(?P<number>[0-9]{1,2})/on$', partial(output_switch, mode = True)),
     url(r'^gpio/(?P<number>[0-9]{1,2})/off$', partial(output_switch, mode = False)),
+    url(r'^gpio/(?P<number>[0-9]{1,2})/toggle$', partial(output_switch, mode = None)),
 ]

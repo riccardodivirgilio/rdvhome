@@ -7,9 +7,10 @@ class Server(object):
         self.name = name
         self.default_password = default_password
         self.gpio = gpio
+        self.user = user
 
-    def __unicode__(self):
-        return "%s@%s:22" % (self.name, self.name)
+    def host(self):
+        return "%s@%s:22" % (self.user, self.name)
 
 RASPBERRY = Server(
     ipaddress = "192.168.1.200",

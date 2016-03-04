@@ -25,19 +25,18 @@ def status_view(request):
     return api_response(
         gpio = {
             pin: status_verbose(get_input(pin))
-            for pin, mode in RASPBERRY.gpio.items()
-            if mode is OUT
+            for pin, data in RASPBERRY.gpio.items()
         },
     )
 
-def validate_pin(number, mode):
+def validate_pin(number):
     n = int(number)
-    if not RASPBERRY.gpio.get(n, None) is mode:
+    if not n in RASPBERRY.gpio:
         raise Http404("Invalid pin number %s" % n)
     return n
 
 def output_view(request, number):
-    pin = validate_pin(number, OUT)
+    pin = validate_pin(number)
     return api_response(
         gpio = pin,
         mode = "output",
@@ -45,7 +44,9 @@ def output_view(request, number):
     )
 
 def output_switch(request, number, mode = True):
-    pin = validate_pin(number, OUT)
+    pin = validate_pin(number)
+    if mode is None:
+        mode = not get_input(pin)
     set_output(pin, mode)
     return api_response(
         gpio = pin,
