@@ -11,19 +11,12 @@ from rdvhome.toggles import local_toggles
 def status_verbose(mode = None):
     return mode and "on" or "off"
 
-def validate_pin(id):
-    pin = local_toggles.filter(lambda toggle: toggle.id() == id)
-    if not pin:
-        raise Http404("Invalid toggle id %s" % id)
-    return pin
-
-def api_response(request = None, status_code = 200, message = "OK", **kw):
+def api_response(request = None, status_code = 200, **kw):
     return JsonResponse(
         dict(
             kw,
             code = status_code,
             success = status_code == 200,
-            message = message
         ),
         status = status_code,
         encoder = JSONEncoder,
@@ -34,18 +27,20 @@ def status_list(request):
     return api_response(mode = "status", toggles = local_toggles)
 
 def status_detail(request, number):
-    toggles = validate_pin(number)
+    toggles = local_toggles.filter(number)
     return api_response(
         mode = "status",
-        toggles = toggles
+        toggles = toggles,
+        status_code = toggles and 200 or 404
     )
 
 def output_switch(request, number, mode = True):
-    toggles = validate_pin(number)
-    if mode is None:
-        mode = not get_input(pin)
-    set_output(pin, mode)
+    toggles = local_toggles.filter(number)
+    #if mode is None:
+    #    mode = not get_input(pin)
+    #set_output(pin, mode)
     return api_response(
         mode = "status",
-        toggles = toggles
+        toggles = toggles,
+        status_code = toggles and 200 or 404
     )

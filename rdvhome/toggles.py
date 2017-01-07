@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import OrderedDict
 
 from django.conf import settings
+from django.utils import six
 
 from rdvhome import gpio
 from rdvhome.server import RASPBERRY
@@ -55,6 +56,8 @@ class ToggleList(object):
                 return obj
 
     def filter(self, func = None):
+        if isinstance(func, six.string_types):
+            return self.__class__(*filter(lambda toggle: toggle.id() == func, self))
         return self.__class__(*filter(func, self))
 
     def __bool__(self):
