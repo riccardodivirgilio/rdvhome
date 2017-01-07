@@ -7,10 +7,16 @@ from django.http import Http404, JsonResponse
 from rdvhome.encoding import JSONEncoder
 from rdvhome.gpio import get_input, set_output
 from rdvhome.server import RASPBERRY
-from rdvhome.toggles import toggles
+from rdvhome.toggles import toggles, ToggleList
 
 def status_verbose(mode = None):
     return mode and "on" or "off"
+
+def validate_pin(number):
+    pin = toggles.get(number)
+    if not pin:
+        raise Http404("Invalid pin number %s" % number)
+    return pin
 
 def api_response(request = None, status_code = 200, message = "OK", **kw):
     return JsonResponse(
@@ -25,21 +31,14 @@ def api_response(request = None, status_code = 200, message = "OK", **kw):
         json_dumps_params = {"indent": 4}
     )
 
-def status_view(request):
-    return api_response(toggles = toggles)
+def status_list(request):
+    return api_response(mode = "status", toggles = toggles)
 
-def validate_pin(number):
-    n = int(number)
-    if not n in RASPBERRY.gpio:
-        raise Http404("Invalid pin number %s" % n)
-    return n
-
-def output_view(request, number):
+def status_detail(request, number):
     pin = validate_pin(number)
     return api_response(
-        gpio = pin,
-        mode = "output",
-        status = status_verbose(get_input(pin))
+        mode = "status",
+        toggles = ToggleList(pin)
     )
 
 def output_switch(request, number, mode = True):
@@ -48,7 +47,6 @@ def output_switch(request, number, mode = True):
         mode = not get_input(pin)
     set_output(pin, mode)
     return api_response(
-        gpio = pin,
-        mode = "output",
-        status = status_verbose(mode)
+        mode = "status",
+        toggles = ToggleList(pin)
     )

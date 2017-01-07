@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.server import RASPBERRY
+from collections import OrderedDict
 
 class Toggle(object):
 
@@ -28,7 +29,15 @@ class ToggleList(object):
         self.servers = servers
 
     def serialize(self):
-        return [obj.serialize() for obj in self]
+        return OrderedDict(
+            (toggle.id(), toggle.serialize())
+            for toggle in self
+        )
+
+    def get(self, pk):
+        for obj in self:
+            if obj.id() == pk:
+                return obj
 
     def __iter__(self):
         return iter(self.servers)
