@@ -2,10 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.server import DEVICES
+from rdvhome.gpio import GPIO
 
 import os
-import socket
 
 """
 Django settings for rdvhome project.
@@ -29,7 +28,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'g&z@dt4o)&$j)2+e*p@1)9!=!&moja1%tz+g+0tia3y+$u+fa*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not socket.gethostname() in [device.name for device in DEVICES]
+DEBUG = not GPIO
 
 ALLOWED_HOSTS = ["*"]
 APPEND_SLASH = False
