@@ -2,11 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.conf.urls import include, patterns, url
 from django.http import Http404, JsonResponse
 
+from rdvhome.encoding import JSONEncoder
+from rdvhome.gpio import get_input, set_output
 from rdvhome.server import RASPBERRY
-from rdvhome.gpio import get_input, IN, OUT, set_output
+from rdvhome.toggles import toggles
 
 def status_verbose(mode = None):
     return mode and "on" or "off"
@@ -20,16 +21,12 @@ def api_response(request = None, status_code = 200, message = "OK", **kw):
             message = message
         ),
         status = status_code,
+        encoder = JSONEncoder,
         json_dumps_params = {"indent": 4}
     )
 
 def status_view(request):
-    return api_response(
-        gpio = {
-            pin: status_verbose(get_input(pin))
-            for pin, data in RASPBERRY.gpio.items()
-        },
-    )
+    return api_response(toggles = toggles)
 
 def validate_pin(number):
     n = int(number)

@@ -11,31 +11,15 @@ class Server(object):
         self.gpio = gpio
         self.user = user
 
+    def id(self):
+        return self.name.split('.')[0]
+
     def host(self):
         return "%s@%s:22" % (self.user, self.name)
 
 RASPBERRY = Server(
     ipaddress = "192.168.1.200",
     name = "rdvpi.local",
-    gpio = {
-        3:  {},
-        5:  {},
-        7:  {},
-        8:  {},
-        10: {},
-        11: {},
-        12: {"label": "Test led"},
-        13: {},
-        15: {},
-        16: {},
-        18: {},
-        19: {},
-        21: {},
-        22: {},
-        23: {},
-        24: {},
-        26: {},
-        }
     )
 
 NAS = Server(
