@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 from rdvhome.constants import RASPBERRY
 
 try:
@@ -9,7 +11,6 @@ except ImportError:
 
 IN  = 1
 OUT = 0
-
 
 if GPIO:
     GPIO.setmode(GPIO.BOARD)

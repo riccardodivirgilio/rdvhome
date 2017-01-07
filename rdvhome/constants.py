@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 class Server(object):
 
     def __init__(self, ipaddress, name, user = "pi", default_password = "raspberry", gpio = {}):
@@ -34,4 +36,9 @@ RASPBERRY = Server(
         24: {},
         26: {},
         }
+    )
+
+NAS = Server(
+    ipaddress = "192.168.1.230",
+    name = "rdvnas.local",
     )

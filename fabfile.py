@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 from fabric.api import env, roles, run, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
@@ -7,12 +9,12 @@ from fabric.contrib.project import rsync_project
 from fabtools import require
 from fabtools.supervisor import restart_process
 
-from rdvhome.constants import RASPBERRY
+from rdvhome.constants import NAS, RASPBERRY
 
 import os
 
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
-env.roledefs  = {'home': [RASPBERRY.host()]}
+env.roledefs  = {'home': [RASPBERRY.host()], 'nas': [NAS.host()]}
 
 @task
 @roles('home')
