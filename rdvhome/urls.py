@@ -15,8 +15,8 @@ handler500 = partial(api_response, status = 500, message = "InternalServerError"
 
 urlpatterns = [
     url(r'^$', home),
-    url(r'^status$', status_list),
-    url(r'^status/(?P<number>[a-zA-Z0-9-]+)$', status_detail),
+    url(r'^status$', status_list, name = "status"),
+    url(r'^status/(?P<number>[a-zA-Z0-9-]+)$', status_detail, name = "status"),
     url(r'^status/(?P<number>[a-zA-Z0-9-]+)/on$', partial(output_switch, mode = True)),
     url(r'^status/(?P<number>[a-zA-Z0-9-]+)/off$', partial(output_switch, mode = False)),
     url(r'^status/(?P<number>[a-zA-Z0-9-]+)/toggle$', partial(output_switch, mode = None)),
