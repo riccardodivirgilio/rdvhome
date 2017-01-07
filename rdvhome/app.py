@@ -6,7 +6,7 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 
-from rdvhome.gpio import get_input, RASPBERRY, set_output
+from rdvhome.gpio import get_input, set_output
 
 SwitchForm = type(
     "SwitchForm",
@@ -15,7 +15,7 @@ SwitchForm = type(
             required = False,
             **data
             )
-        for n, data in RASPBERRY.gpio.items()
+        for n, data in []
     }
 )
 
@@ -26,7 +26,7 @@ def home(request):
         form = SwitchForm(
             initial = {
                 str(n): get_input(n)
-                for n in RASPBERRY.gpio.keys()
+                for n in []
                 }
             )
 

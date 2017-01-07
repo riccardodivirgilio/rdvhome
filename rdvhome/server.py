@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-class Server(object):
+class Device(object):
 
     def __init__(self, ipaddress, name, user = "pi", default_password = "raspberry", gpio = {}):
         self.ipaddress = ipaddress
@@ -17,12 +17,14 @@ class Server(object):
     def host(self):
         return "%s@%s:22" % (self.user, self.name)
 
-RASPBERRY = Server(
+RASPBERRY = Device(
     ipaddress = "192.168.1.200",
     name = "rdvpi.local",
     )
 
-NAS = Server(
+NAS = Device(
     ipaddress = "192.168.1.230",
     name = "rdvnas.local",
     )
+
+DEVICES = [RASPBERRY]

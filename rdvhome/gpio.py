@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.server import RASPBERRY
-
 try:
     import RPi.GPIO as GPIO
 except ImportError:
@@ -14,8 +12,6 @@ OUT = 0
 
 if GPIO:
     GPIO.setmode(GPIO.BOARD)
-    for n, data in RASPBERRY.gpio.items():
-        GPIO.setup(n, data.get("mode", OUT))
 else:
     STORE = {}
 
@@ -31,3 +27,7 @@ def set_output(pin, mode):
     else:
         STORE[pin] = bool(mode)
         return STORE[pin]
+
+def setup_pin(pin = None, mode = IN):
+    if GPIO and pin:
+        GPIO.setup(pin, mode)
