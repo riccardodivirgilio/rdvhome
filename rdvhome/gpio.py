@@ -26,7 +26,7 @@ def set_output(pin, mode):
         return bool(GPIO.output(pin, mode))
     else:
         STORE[pin] = bool(mode)
-        return STORE[pin]
+        return bool(mode)
 
 def setup_pin(pin = None, mode = IN):
     if GPIO and pin:
