@@ -9,7 +9,7 @@ from fabric.contrib.project import rsync_project
 from fabtools import require
 from fabtools.supervisor import restart_process
 
-from rdvhome.constants import NAS, RASPBERRY
+from rdvhome.server import NAS, RASPBERRY
 
 import os
 

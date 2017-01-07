@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.core.management.base import BaseCommand
 from django.template import Context, Template
 
-from rdvhome.constants import RASPBERRY
+from rdvhome.server import RASPBERRY
 
 import os
 

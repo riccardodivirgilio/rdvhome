@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.conf.urls import include, patterns, url
 from django.http import Http404, JsonResponse
 
-from rdvhome.constants import RASPBERRY
+from rdvhome.server import RASPBERRY
 from rdvhome.gpio import get_input, IN, OUT, set_output
 
 def status_verbose(mode = None):

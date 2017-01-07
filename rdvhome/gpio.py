@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.constants import RASPBERRY
+from rdvhome.server import RASPBERRY
 
 try:
     import RPi.GPIO as GPIO
