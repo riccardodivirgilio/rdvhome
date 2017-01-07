@@ -13,7 +13,7 @@ class Toggle(object):
         self.name = name
 
     def id(self):
-        return '%s-%s' % (self.server.id(), self.toggle_gpio)
+        return '%s-%.2i' % (self.server.id(), self.toggle_gpio)
 
     def serialize(self):
         return {
