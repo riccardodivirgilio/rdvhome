@@ -37,7 +37,6 @@
 
       }
       .list-item {
-        background:white;
         padding:15px;
         border-bottom:1px solid #ddd;
         color:black;
@@ -182,7 +181,7 @@
       // called when a message arrives
       function onMessageArrived(message) {
         var data = JSON.parse(message.payloadString);
-        document.getElementById('loading').className = "hidden";
+        document.getElementById('loading').style.display = "none";
 
         for (var key in data.toggles) {      
           var el = document.getElementById('toggle-' + key);
