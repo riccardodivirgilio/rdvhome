@@ -7,11 +7,11 @@ from django.core.management.commands.runserver import Command as RunServer
 from django.test import Client
 from django.utils.encoding import force_str
 
-from rdvhome.mqtt import Client as Mqtt
+from rdvhome.management.mqtt import MqttCommand
 
-import sys
+import sys, time
 
-class Command(RunServer):
+class Command(MqttCommand, RunServer):
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(self, client, userdata, flags, rc):
@@ -36,5 +36,4 @@ class Command(RunServer):
 
     def inner_run(self, *args, **options):
         self.client = Client()
-        self.mqtt = Mqtt(self.on_connect, self.on_message)
         self.mqtt.loop_forever()
