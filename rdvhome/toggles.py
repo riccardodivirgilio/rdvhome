@@ -6,7 +6,7 @@ from collections import OrderedDict, defaultdict
 
 from django.conf import settings
 from django.utils import six
-
+from django.utils.baseconv import base64 as encoder
 from rdvhome import gpio
 from rdvhome.server import RASPBERRY
 
@@ -21,17 +21,20 @@ class Toggle(object):
         self.status_gpio = status_gpio or toggle_gpio
         self.name = name
         self.alias = alias
+        self.sequence = encoder.decode(id)
 
         if self.is_local():
             gpio.setup_pin(self.status_gpio, gpio.IN)
             gpio.setup_pin(self.toggle_gpio, gpio.OUT)
 
-    def serialize(self):
-        return {
-            'server': self.server.name,
-            'name': self.name,
-            'status': self.get_status()
-        }
+    def serialize(self, **extra):
+        return dict(
+            server = self.server.name,
+            name = self.name,
+            status = self.get_status(),
+            sequence = self.sequence,
+            **extra
+        )
 
     def is_local(self):
         if settings.DEBUG:

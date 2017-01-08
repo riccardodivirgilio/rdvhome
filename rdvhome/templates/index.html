@@ -7,12 +7,10 @@
     <title>RdvHome</title>
     <!-- Bootstrap core CSS -->
     <style>
-
       *, *:before, *:after {
         box-sizing: border-box;
         font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
       }
-
       .container {
         display: flex;
         flex-direction: column;
@@ -26,16 +24,15 @@
       .list-container {
         display: flex;
         flex-direction: column;
+        border: 1px solid #ddd;
+        border-top: none
 
       }
       .list-item {
         background:white;
         padding:15px;
-        border:1px solid #ddd;
+        border-top:1px solid #ddd;
         color:black;
-      }
-      .list-item:not(:last-child) {
-        border-bottom:none;
       }
       a.list-item:hover {
         background:#efefef;
@@ -53,7 +50,7 @@
     <script type="text/template" id="actions-template">
       <div class="list-container">
         <% _.each(toggles, function(toggle, i) { %> 
-            <a class="list-item" onclick="return window.onclicklink('<%= i %>')" href="#">
+            <a class="list-item" style="order:<%= toggle.sequence %>" onclick="return window.onclicklink('<%= i %>')" href="#">
               <%= toggle.name %>
               [<%= toggle.status %>]
             </a>
