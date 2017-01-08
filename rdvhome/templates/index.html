@@ -161,23 +161,31 @@
 
       {% inline_js %}
     
-      // Create a client instance
-      var client = new Paho.MQTT.Client("{{ settings.MQTT_BROKER_URL }}", {{ settings.MQTT_BROKER_PORT_WEBSOCKET|safe }}, "web_" + parseInt(Math.random() * 100, 10));
-      var stack = {};
 
-      // set callback handlers
-      client.onConnectionLost = onConnectionLost;
-      client.onMessageArrived = onMessageArrived;
-      var options = {
-        useSSL: {{ settings.MQTT_BROKER_SSL|lower }}, {% if settings.MQTT_BROKER_USERNAME %}
-        userName: "{{ settings.MQTT_BROKER_USERNAME }}",
-        password: "{{ settings.MQTT_BROKER_PASSWORD }}", {% endif %}
-        onSuccess:onConnect,
-        onFailure:doFail
+      var client = null;
+
+      function connect() {
+        // Create a client instance
+        client = new Paho.MQTT.Client(
+          "{{ settings.MQTT_BROKER_URL }}", 
+          {{ settings.MQTT_BROKER_PORT_WEBSOCKET|safe }}, 
+          "web_" + parseInt(Math.random() * 100, 10)
+        );
+
+        // set callback handlers
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+        var options = {
+          useSSL: {{ settings.MQTT_BROKER_SSL|lower }}, {% if settings.MQTT_BROKER_USERNAME %}
+          userName: "{{ settings.MQTT_BROKER_USERNAME }}",
+          password: "{{ settings.MQTT_BROKER_PASSWORD }}", {% endif %}
+          onSuccess:onConnect,
+          onFailure:doFail
+        }
+
+        // connect the client
+        client.connect(options);        
       }
-
-      // connect the client
-      client.connect(options);
 
       function hasClass(ele,cls) {
         return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
@@ -205,21 +213,19 @@
       }
 
       function doFail(e){
-        console.log(e);
+        console.log('epic fail');
       }
 
       // called when the client loses its connection
       function onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
-          console.log("onConnectionLost:"+responseObject.errorMessage);
+          connect();
         }
       }
 
       // called when a message arrives
       function onMessageArrived(message) {
         var data = JSON.parse(message.payloadString);
-        
-
         for (var key in data.toggles) {      
           var el = document.getElementById('toggle-' + key);
           if (! el) {
@@ -276,6 +282,8 @@
         updateLoading()
         
       }
+
+      connect();
 
     </script>
 
