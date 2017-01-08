@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.core.handlers.base import logger
 from django.core.management.commands.runserver import Command as RunServer
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.test import Client
 from django.utils.encoding import force_str
 
@@ -19,7 +20,7 @@ class Command(MqttCommand, RunServer):
         try:
             response = self.client.get(payload)
             if response.status_code == 200:
-                self.mqtt.publish("status", response.content)
+                self.mqtt.publish(settings.MQTT_CHANNEL_STATUS, response.content)
         except Exception as e:
             logger.error(
                 "Error %s" % e,
@@ -32,7 +33,7 @@ class Command(MqttCommand, RunServer):
         self.stdout.write("Connected to channel command")
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        client.subscribe("command")
+        client.subscribe(settings.MQTT_CHANNEL_COMMAND)
         self.send_update(reverse('status'))
 
     # The callback for when a PUBLISH message is received from the server.

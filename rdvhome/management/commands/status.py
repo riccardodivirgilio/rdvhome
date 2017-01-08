@@ -10,4 +10,4 @@ from rdvhome.management.mqtt import MqttCommand
 class Command(MqttCommand, BaseCommand):
 
     def handle(self, **options):
-        self.mqtt.publish('command', reverse('status'))
+        self.mqtt.publish(settings.MQTT_CHANNEL_COMMAND, reverse('status'))
