@@ -169,9 +169,9 @@
       client.onConnectionLost = onConnectionLost;
       client.onMessageArrived = onMessageArrived;
       var options = {
-        useSSL: {{ settings.MQTT_BROKER_SSL|lower }},
+        useSSL: {{ settings.MQTT_BROKER_SSL|lower }}, {% if settings.MQTT_BROKER_USERNAME %}
         userName: "{{ settings.MQTT_BROKER_USERNAME }}",
-        password: "{{ settings.MQTT_BROKER_PASSWORD }}",
+        password: "{{ settings.MQTT_BROKER_PASSWORD }}", {% endif %}
         onSuccess:onConnect,
         onFailure:doFail
       }
