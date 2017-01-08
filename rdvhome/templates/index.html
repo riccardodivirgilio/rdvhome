@@ -224,7 +224,8 @@
           el.id = 'toggle-' + key
           el.innerHTML = data.toggles[key].name
           el.className = 'list-item ' + (data.toggles[key].on ? 'on' : 'off')
-          el.href = '/switch/'+key+'/'+(data.toggles[key].on ? 'off' : 'on')
+          el.href = '/switch/'+key+'/'+ (data.toggles[key].on ? 'off' : 'on')
+          el.style.order = data.toggles[key].order;
           el.onclick = function() {return onclicklink(this.pathname)}
         }
 
