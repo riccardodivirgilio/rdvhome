@@ -249,7 +249,7 @@
         addClass(this, 'waiting')
         this.timestamp = new Date() - 0;
 
-        setTimeout(removeIdle, 1050);
+        setTimeout(removeIdle, 2050);
 
         return false
       }
@@ -259,7 +259,7 @@
         var divs = document.querySelectorAll('.list-item.waiting');
 
         for (var i = 0; i < divs.length; ++i) {
-          if (divs[i].timestamp < new Date() - 1000) {
+          if (divs[i].timestamp < new Date() - 2000) {
             divs[i].remove()
           }
         }
