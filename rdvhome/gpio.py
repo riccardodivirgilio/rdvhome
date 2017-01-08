@@ -19,13 +19,13 @@ def get_input(pin):
     if GPIO:
         return bool(GPIO.input(pin))
     else:
-        return cache.get(pin, False)
+        return cache.get('gpio-state-%s' % pin, False)
 
 def set_output(pin, mode):
     if GPIO:
         return bool(GPIO.output(pin, mode))
     else:
-        cache.set(pin, mode)
+        cache.set('gpio-state-%s' % pin, mode)
         return bool(mode)
 
 def setup_pin(pin = None, mode = IN):
