@@ -1,3 +1,4 @@
+{% load js %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -136,9 +137,10 @@
 
       </div>
     </div><!-- /.container -->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     <script type="text/javascript">
+
+      {% inline_js %}
+    
       // Create a client instance
       var client = new Paho.MQTT.Client("m21.cloudmqtt.com", 36494, "web_" + parseInt(Math.random() * 100, 10));
       var stack = {};

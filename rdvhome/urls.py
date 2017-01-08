@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from django.contrib.staticfiles.finders import find
 from django.conf.urls import url
 from django.template.response import TemplateResponse
 
