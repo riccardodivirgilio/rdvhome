@@ -11,6 +11,19 @@
         box-sizing: border-box;
         font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
       }
+      body {
+        margin:0px;
+        padding: 0px
+      }
+      h1, p {
+        padding: 0 15px;
+      }
+      a {
+        text-decoration: none;
+        color:red;
+      }
+
+
       .container {
         display: flex;
         flex-direction: column;
@@ -18,20 +31,17 @@
         height: 100%;
         align-items: center;
       }
-      .panel {
-          min-width:400px;
-      }
       .list-container {
         display: flex;
         flex-direction: column;
         border: 1px solid #ddd;
-        border-top: none
+        border-bottom: none
 
       }
       .list-item {
         background:white;
         padding:15px;
-        border-top:1px solid #ddd;
+        border-bottom:1px solid #ddd;
         color:black;
       }
       .list-item.on {
@@ -43,12 +53,19 @@
       a.list-item:hover {
         background:#efefef;
       }
-      h1, p {
-        padding: 0 15px;
+
+      .panel {
+          width:400px;
       }
-      a {
-        text-decoration: none;
-        color:red;
+
+      @media only screen and (max-width: 400px)  {
+        .panel {
+          width:100%;
+        }
+        .list-container {
+          border-left:none;
+          border-right:none;
+        }
       }
 
       .sk-cube-grid {
