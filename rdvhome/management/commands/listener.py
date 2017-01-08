@@ -7,7 +7,7 @@ from django.core.management.commands.runserver import Command as RunServer
 from django.test import Client
 from django.utils.encoding import force_str
 
-from paho.mqtt.client import Client as Mqtt
+from rdvhome.mqtt import Client as Mqtt
 
 import sys
 
@@ -36,8 +36,5 @@ class Command(RunServer):
 
     def inner_run(self, *args, **options):
         self.client = Client()
-        self.mqtt = Mqtt()
-        self.mqtt.on_connect = self.on_connect
-        self.mqtt.on_message = self.on_message
-        self.mqtt.connect("localhost", 1883, 60)
+        self.mqtt = Mqtt(self.on_connect, self.on_message)
         self.mqtt.loop_forever()
