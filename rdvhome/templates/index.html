@@ -22,8 +22,6 @@
         text-decoration: none;
         color:red;
       }
-
-
       .container {
         display: flex;
         flex-direction: column;
@@ -50,10 +48,6 @@
       .list-item.off {
         border-right:5px solid #ddd;
       }
-      a.list-item:hover {
-        background:#efefef;
-      }
-
       .panel {
           width:400px;
       }
@@ -71,7 +65,7 @@
       .sk-cube-grid {
         width: 80px;
         height: 80px;
-        margin: 100px auto;
+        margin: 50px auto;
       }
 
       .sk-cube-grid .sk-cube {
@@ -130,29 +124,23 @@
         }
       }
 
-      .list-item {
-        -moz-animation: flash 0.3s ease-out;
-        -moz-animation-iteration-count: 1;
-
-        -webkit-animation: flash 0.3s ease-out;
-        -webkit-animation-iteration-count: 1;
-
-        -ms-animation: flash 0.3s ease-out;
-        -ms-animation-iteration-count: 1;
+      .on {
+        animation: on 0.3s ease-out;
+        animation-iteration-count: 1;
       }
 
-      @-webkit-keyframes flash {
-          0% { background-color: #fbf8b2; }
+      @keyframes on {
+          0% { background-color: #edffd3; }
           100% { background-color: none; }
       }
 
-      @-moz-keyframes flash {
-          0% { background-color: #fbf8b2; }
-          100% { background-color: none; }
+      .off {
+        animation: off 0.3s ease-out;
+        animation-iteration-count: 1;
       }
 
-      @-ms-keyframes flash {
-          0% { background-color: #fbf8b2; }
+      @keyframes off {
+          0% { background-color: #efefef; }
           100% { background-color: none; }
       }
 
@@ -163,35 +151,26 @@
       <div class="panel">
         <h1>RdV</h1>
         <p class="lead">Controller for GPIO. <a href="{% url 'status' %}" class="small">API &rarr;</a></p>
-        <div id="toggles">
-          <div class="sk-cube-grid">
-            <div class="sk-cube sk-cube1"></div>
-            <div class="sk-cube sk-cube2"></div>
-            <div class="sk-cube sk-cube3"></div>
-            <div class="sk-cube sk-cube4"></div>
-            <div class="sk-cube sk-cube5"></div>
-            <div class="sk-cube sk-cube6"></div>
-            <div class="sk-cube sk-cube7"></div>
-            <div class="sk-cube sk-cube8"></div>
-            <div class="sk-cube sk-cube9"></div>
-          </div>
+        <div id="toggles" class="list-container">
+
         </div>
+        <div id="loading" class="sk-cube-grid">
+          <div class="sk-cube sk-cube1"></div>
+          <div class="sk-cube sk-cube2"></div>
+          <div class="sk-cube sk-cube3"></div>
+          <div class="sk-cube sk-cube4"></div>
+          <div class="sk-cube sk-cube5"></div>
+          <div class="sk-cube sk-cube6"></div>
+          <div class="sk-cube sk-cube7"></div>
+          <div class="sk-cube sk-cube8"></div>
+          <div class="sk-cube sk-cube9"></div>
+        </div>
+
       </div>
     </div><!-- /.container -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script type="text/template" id="actions-template">
-      <div class="list-container">
-        <% _.each(toggles, function(toggle, i) { %>
-            <a class="list-item <%= toggle.on ? 'on' : 'off' %>" style="order:<%= toggle.order %>;" onclick="return window.onclicklink('/switch/<%= i %>/<%= toggle.on ? 'off' : 'on' %>')" href="#<%= i %>">
-              <%= toggle.name %>
-            </a>
-        <% }); %>
-      </div>
-    </script>
     <script type="text/javascript">
-      var compiled = _.template(document.getElementById('actions-template').innerText);
       // Create a client instance
       var client = new Paho.MQTT.Client("m21.cloudmqtt.com", 36494, "web_" + parseInt(Math.random() * 100, 10));
       var stack = {};
@@ -234,11 +213,25 @@
       // called when a message arrives
       function onMessageArrived(message) {
         var data = JSON.parse(message.payloadString);
-        stack = _.extend(stack, data.toggles);
-        document.getElementById('toggles').innerHTML = compiled({toggles: stack});
+        document.getElementById('loading').className = "hidden";
+
+        for (var key in data.toggles) {      
+          var el = document.getElementById('toggle-' + key);
+          console.log(el)
+          if (! el) {
+            el = document.createElement("a"); 
+            document.getElementById('toggles').appendChild(el)
+          }
+          el.id = 'toggle-' + key
+          el.innerHTML = data.toggles[key].name
+          el.className = 'list-item ' + (data.toggles[key].on ? 'on' : 'off')
+          el.href = '/switch/'+key+'/'+(data.toggles[key].on ? 'off' : 'on')
+          el.onclick = function() {return onclicklink(this.href)}
+        }
+
       }
 
-      window.onclicklink = function(action) {
+      onclicklink = function(action) {
         var message = new Paho.MQTT.Message(action);
         message.destinationName = "command";
         try {
