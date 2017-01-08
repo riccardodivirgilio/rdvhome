@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from django.core.handlers.base import logger
 from django.core.management.commands.runserver import Command as RunServer
+from django.core.urlresolvers import reverse
 from django.test import Client
 from django.utils.encoding import force_str
 
@@ -19,6 +20,7 @@ class Command(MqttCommand, RunServer):
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe("command")
+        client.publish("status", self.client.get(reverse('status')).content)
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(self, client, userdata, msg):
