@@ -209,7 +209,7 @@
       // called when a message arrives
       function onMessageArrived(message) {
         var data = JSON.parse(message.payloadString);
-        document.getElementById('loading').style.display = "none";
+        
 
         for (var key in data.toggles) {      
           var el = document.getElementById('toggle-' + key);
@@ -227,9 +227,16 @@
           
         }
 
+        updateLoading()
+
       }
 
-      onclicklink = function() {
+      function updateLoading() {
+        document.getElementById('loading').style.display = document.querySelectorAll('#toggles > *').length ? 'none' : 'block';
+      }
+
+      function onclicklink() {
+
         var message = new Paho.MQTT.Message(this.pathname);
         message.destinationName = "command";
         try {
@@ -240,9 +247,27 @@
         }
 
         addClass(this, 'waiting')
+        this.timestamp = new Date() - 0;
+
+        setTimeout(removeIdle, 1050);
 
         return false
       }
+
+      function removeIdle() {
+
+        var divs = document.querySelectorAll('.list-item.waiting');
+
+        for (var i = 0; i < divs.length; ++i) {
+          if (divs[i].timestamp < new Date() - 1000) {
+            divs[i].remove()
+          }
+        }
+
+        updateLoading()
+        
+      }
+
     </script>
 
   </body>
