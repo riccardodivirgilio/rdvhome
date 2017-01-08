@@ -27,6 +27,8 @@ def status_list(request):
     return api_response(mode = "status", toggles = local_toggles)
 
 def filter_toggles(number):
+    if number == 'all':
+        return local_toggles
     return local_toggles.filter(number.split('-'))
 
 def status_detail(request, number):
