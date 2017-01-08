@@ -198,7 +198,12 @@
       window.onclicklink = function(action) {
         var message = new Paho.MQTT.Message(action);
         message.destinationName = "command";
-        client.send(message); 
+        try {
+            client.send(message); 
+        }
+        catch(err) {
+            location.reload();
+        }
         return false
       }
     </script>
