@@ -6,13 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>RdvHome</title>
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+
+      *, *:before, *:after {
+        box-sizing: border-box;
+        font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+      }
+      .panel {
+          min-width:400px;
+      }
+      .list-container {
+        display: flex;
+        flex-direction: column;
+
+      }
+      .list-item {
+        background:white;
+        padding:15px;
+        border:1px solid #ddd;
+        color:black;
+      }
+      .list-item:not(:last-child) {
+        border-bottom:none;
+      }
+      a.list-item:hover {
+        background:#efefef;
+      }
+      h1, p {
+        padding: 0 15px;
+      }
+      a {
+        text-decoration: none;
+        color:red;
+      }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/template" id="actions-template">
-      <div class="list-group">
+      <div class="list-container">
         <% _.each(toggles, function(toggle, i) { %> 
-            <a class="list-group-item" onclick="return window.onclicklink('<%= i %>')" href="#">
+            <a class="list-item" onclick="return window.onclicklink('<%= i %>')" href="#">
               <%= toggle.name %>
               [<%= toggle.status %>]
             </a>
@@ -20,9 +61,7 @@
       </div>
     </script>
     <script type="text/javascript">
-
       var compiled = _.template(document.getElementById('actions-template').innerText);
-
       // Create a client instance
       var client = new Paho.MQTT.Client("m21.cloudmqtt.com", 36494, "web_" + parseInt(Math.random() * 100, 10));
       var stack = {};
@@ -75,12 +114,11 @@
         client.send(message); 
         return false
       }
-
     </script>
   </head>
   <body>
     <div class="container">
-      <div class="starter-template">
+      <div class="panel">
         <h1>RdV</h1>
         <p class="lead">Controller for GPIO. <a href="{% url 'status' %}" class="small">API &rarr;</a></p>
         <div id="toggles"></div>
