@@ -101,3 +101,34 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+AWS_DEFAULT_REGION    = "eu-central-1"
+AWS_ACCESS_KEY_ID     = "AKIAIYEFWRRN7LSZFWSQ"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_HEADERS = {
+    'Expires': 'Thu, 15 Apr 2030 20:00:00 GMT',
+    'Cache-Control': 'max-age=2592000',
+}
+
+AWS_IS_GZIPPED = True
+GZIP_CONTENT_TYPES = (
+    'application/javascript',
+    'application/x-javascript',
+    'application/json',
+    'application/pdf',
+    'application/postscript',
+    'application/vnd.iccprofile',
+    'application/vnd.ms-fontobject',
+    'application/x-font-ttf',
+    'application/x-font-woff',
+    'application/x-font-woff2',
+    'image/bmp',
+    'image/svg+xml',
+    'image/vnd.adobe.photoshop',
+    'text/css',
+    'text/html',
+    'text/less',
+    'text/plain',
+)
+
+AWS_DEPLOY_URL = "https://rdvhome.s3.eu-central-1.amazonaws.com"
