@@ -219,14 +219,16 @@
           var el = document.getElementById('toggle-' + key);
           if (! el) {
             el = document.createElement("a"); 
+            el.id = 'toggle-' + key
+            el.onclick = function() {return onclicklink(this.pathname)}
             document.getElementById('toggles').appendChild(el)
           }
-          el.id = 'toggle-' + key
+          
           el.innerHTML = data.toggles[key].name
           el.className = 'list-item ' + (data.toggles[key].on ? 'on' : 'off')
           el.href = '/switch/'+key+'/'+ (data.toggles[key].on ? 'off' : 'on')
           el.style.order = data.toggles[key].order;
-          el.onclick = function() {return onclicklink(this.pathname)}
+          
         }
 
       }
