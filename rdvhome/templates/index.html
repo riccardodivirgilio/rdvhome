@@ -7,28 +7,83 @@
     <title>RdvHome</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script type="text/template" id="actions-template">
+      <div class="list-group">
+        <% _.each(toggles, function(toggle, i) { %> 
+            <a class="list-group-item" onclick="return window.onclicklink('<%= i %>')" href="#">
+              <%= toggle.name %>
+              [<%= toggle.status %>]
+            </a>
+        <% }); %>
+      </div>
+    </script>
+    <script type="text/javascript">
+
+      var compiled = _.template(document.getElementById('actions-template').innerText);
+
+      // Create a client instance
+      var client = new Paho.MQTT.Client("m21.cloudmqtt.com", 36494, "web_" + parseInt(Math.random() * 100, 10));
+      var stack = {};
+
+      // set callback handlers
+      client.onConnectionLost = onConnectionLost;
+      client.onMessageArrived = onMessageArrived;
+      var options = {
+        useSSL: true,
+        userName: "owflekio",
+        password: "0aeZc50ixVbT",
+        onSuccess:onConnect,
+        onFailure:doFail
+      }
+
+      // connect the client
+      client.connect(options);
+
+      // called when the client connects
+      function onConnect() {
+        // Once a connection has been made, make a subscription and send a message.
+        console.log("onConnect");
+        client.subscribe("status");
+        var message = new Paho.MQTT.Message("/switch");
+        message.destinationName = "command";
+        client.send(message); 
+      }
+
+      function doFail(e){
+        console.log(e);
+      }
+
+      // called when the client loses its connection
+      function onConnectionLost(responseObject) {
+        if (responseObject.errorCode !== 0) {
+          console.log("onConnectionLost:"+responseObject.errorMessage);
+        }
+      }
+
+      // called when a message arrives
+      function onMessageArrived(message) {
+        var data = JSON.parse(message.payloadString);
+        stack = _.extend(stack, data.toggles);
+        document.getElementById('toggles').innerHTML = compiled({toggles: stack});
+      }      
+
+      window.onclicklink = function(name) {
+        var message = new Paho.MQTT.Message("/switch/" + name + '/toggle');
+        message.destinationName = "command";
+        client.send(message); 
+        return false
+      }
+
+    </script>
   </head>
   <body>
     <div class="container">
       <div class="starter-template">
         <h1>RdV</h1>
         <p class="lead">Controller for GPIO. <a href="{% url 'status' %}" class="small">API &rarr;</a></p>
-        <form method="POST" class="panel">
-          {% for field in form %}
-          <div class="checkbox">
-            <label>
-              {{ field }}
-              {{ field.label }}
-              {% if field.errors %}
-              <small class="text-danger">{{ field.errors }}</small>
-              {% endif %}
-            </label>
-          </div>
-          {% endfor %}
-          <div class="panel-footer">
-            <button type="submit" class="btn btn-primary">Update</button>
-          </div>
-        </form>
+        <div id="toggles"></div>
       </div>
     </div><!-- /.container -->
   </body>

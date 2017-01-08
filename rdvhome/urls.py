@@ -3,15 +3,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from django.conf.urls import url
+from django.template.response import TemplateResponse
 
 from functools import partial
 
 from rdvhome.api import api_response, output_switch, status_detail, status_list
-from rdvhome.app import home
 
 handler403 = partial(api_response, status = 403, message = "PermissionDenied")
 handler404 = partial(api_response, status = 404, message = "PageNotFound")
 handler500 = partial(api_response, status = 500, message = "InternalServerError")
+
+def home(request):
+    return TemplateResponse(request, "index.html")
 
 urlpatterns = [
     url(r'^$', home),
