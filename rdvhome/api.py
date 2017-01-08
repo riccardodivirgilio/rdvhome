@@ -34,11 +34,9 @@ def status_detail(request, number):
         status_code = toggles and 200 or 404
     )
 
-def output_switch(request, number, mode = True):
+def output_switch(request, number, mode = None):
     toggles = local_toggles.filter(number)
-    #if mode is None:
-    #    mode = not get_input(pin)
-    #set_output(pin, mode)
+    toggles.switch(mode)
     return api_response(
         mode = "status",
         toggles = toggles,
