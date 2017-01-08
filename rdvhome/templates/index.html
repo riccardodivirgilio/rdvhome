@@ -16,8 +16,10 @@
         margin:0px;
         padding: 0px
       }
-      h1, p {
+      h1 {
         padding: 0 15px;
+        text-align: center;
+        font-weight: normal
       }
       a {
         text-decoration: none;
@@ -50,6 +52,13 @@
       }
       .panel {
           width:400px;
+      }
+
+      footer {
+        margin-top: 30px;
+        font-size:0.8em;
+        color:#ddd;
+        text-align: center;
       }
 
       @media only screen and (max-width: 400px)  {
@@ -130,7 +139,6 @@
     <div class="container">
       <div class="panel">
         <h1>RdV</h1>
-        <p class="lead">Controller for GPIO. <a href="{% url 'status' %}" class="small">API &rarr;</a></p>
         <div id="toggles" class="list-container"></div>
         <div id="loading" class="sk-cube-grid">
           <div class="sk-cube sk-cube1"></div>
@@ -144,6 +152,9 @@
           <div class="sk-cube sk-cube9"></div>
         </div>
       </div>
+      <footer class="footer">
+        Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.<br/>
+      </footer>
     </div><!-- /.container -->
     <script type="text/javascript">
 
