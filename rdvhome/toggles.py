@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from collections import defaultdict, OrderedDict
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.utils import six
 from django.utils.baseconv import base64 as encoder
 
@@ -28,13 +29,13 @@ class Toggle(object):
             gpio.setup_pin(self.status_gpio, gpio.IN)
             gpio.setup_pin(self.toggle_gpio, gpio.OUT)
 
-    def serialize(self, **extra):
+    def serialize(self):
+        on = self.get_status()
         return dict(
-            server = self.server.name,
+            on = on,
             name = self.name,
-            on = self.get_status(),
             order = self.order,
-            **extra
+            action = reverse('toggle', kwargs = {'mode': not on, 'number': self.id}),
         )
 
     def is_local(self):
