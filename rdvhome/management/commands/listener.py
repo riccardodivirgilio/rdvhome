@@ -14,7 +14,7 @@ import sys
 
 class Command(MqttCommand, RunServer):
 
-    def handle_payload(self, payload):
+    def send_update(self, payload):
         self.stdout.write(force_str(payload))
         try:
             response = self.client.get(payload)
@@ -33,11 +33,11 @@ class Command(MqttCommand, RunServer):
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe("command")
-        self.handle_payload(reverse('status'))
+        self.send_update(reverse('status'))
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(self, client, userdata, msg):
-        self.handle_payload(msg.payload)
+        self.send_update(msg.payload)
 
     def inner_run(self, *args, **options):
         self.client = Client()
