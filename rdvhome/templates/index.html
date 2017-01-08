@@ -141,7 +141,7 @@
     <script type="text/template" id="actions-template">
       <div class="list-container">
         <% _.each(toggles, function(toggle, i) { %> 
-            <a class="list-item <%= toggle.status ? 'on' : 'off' %>" style="order:<%= toggle.sequence %>;" onclick="return window.onclicklink('/switch/<%= i %>/<%= toggle.status ? 'off' : 'on' %>')" href="#<%= i %>">
+            <a class="list-item <%= toggle.on ? 'on' : 'off' %>" style="order:<%= toggle.order %>;" onclick="return window.onclicklink('/switch/<%= i %>/<%= toggle.on ? 'off' : 'on' %>')" href="#<%= i %>">
               <%= toggle.name %>
             </a>
         <% }); %>

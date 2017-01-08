@@ -21,7 +21,7 @@ class Toggle(object):
         self.status_gpio = status_gpio or toggle_gpio
         self.name = name
         self.alias = alias
-        self.sequence = encoder.decode(id)
+        self.order = encoder.decode(id)
 
         if self.is_local():
             gpio.setup_pin(self.status_gpio, gpio.IN)
@@ -31,8 +31,8 @@ class Toggle(object):
         return dict(
             server = self.server.name,
             name = self.name,
-            status = self.get_status(),
-            sequence = self.sequence,
+            on = self.get_status(),
+            order = self.order,
             **extra
         )
 
