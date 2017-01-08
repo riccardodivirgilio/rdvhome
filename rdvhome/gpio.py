@@ -13,19 +13,19 @@ OUT = 0
 if GPIO:
     GPIO.setmode(GPIO.BOARD)
 else:
-    STORE = {}
+    from django.core.cache import cache
 
 def get_input(pin):
     if GPIO:
         return bool(GPIO.input(pin))
     else:
-        return STORE.get(pin, False)
+        return cache.get(pin, False)
 
 def set_output(pin, mode):
     if GPIO:
         return bool(GPIO.output(pin, mode))
     else:
-        STORE[pin] = bool(mode)
+        cache.set(pin, mode)
         return bool(mode)
 
 def setup_pin(pin = None, mode = IN):

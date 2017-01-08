@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.gpio import GPIO
 
 import os
+import tempfile
 
 """
 Django settings for rdvhome project.
@@ -73,6 +74,13 @@ TEMPLATES = [
         },
     },
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': tempfile.gettempdir()
+    },
+}
 
 WSGI_APPLICATION = 'rdvhome.wsgi.application'
 
