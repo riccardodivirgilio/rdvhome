@@ -34,6 +34,12 @@
         border-top:1px solid #ddd;
         color:black;
       }
+      .list-item.on {
+        border-right:4px solid lime;
+      }
+      .list-item.off {
+        border-right:4px solid #ddd;
+      }
       a.list-item:hover {
         background:#efefef;
       }
@@ -50,9 +56,8 @@
     <script type="text/template" id="actions-template">
       <div class="list-container">
         <% _.each(toggles, function(toggle, i) { %> 
-            <a class="list-item" style="order:<%= toggle.sequence %>" onclick="return window.onclicklink('<%= i %>')" href="#">
+            <a class="list-item <%= toggle.status ? 'on' : 'off' %>" style="order:<%= toggle.sequence %>;" onclick="return window.onclicklink('<%= i %>')" href="#">
               <%= toggle.name %>
-              [<%= toggle.status %>]
             </a>
         <% }); %>
       </div>
