@@ -113,6 +113,17 @@
           100% { background-color: none; }
       }
 
+      .waiting {
+        animation: waiting 2s ease-out;
+        animation-iteration-count: infinite;
+      }
+
+      @keyframes waiting {
+          0% { background-color: none; }
+          50% { background-color: #e0eaf9; }
+          100% { background-color: none; }
+      }
+
     </style>
   </head>
   <body>
@@ -159,6 +170,21 @@
       // connect the client
       client.connect(options);
 
+      function hasClass(ele,cls) {
+        return !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+      }
+
+      function addClass(ele,cls) {
+        if (!hasClass(ele,cls)) ele.className += " "+cls;
+      }
+
+      function removeClass(ele,cls) {
+        if (hasClass(ele,cls)) {
+          var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+          ele.className=ele.className.replace(reg,' ');
+        }
+      }
+
       // called when the client connects
       function onConnect() {
         // Once a connection has been made, make a subscription and send a message.
@@ -190,7 +216,7 @@
           if (! el) {
             el = document.createElement("a"); 
             el.id = 'toggle-' + key
-            el.onclick = function() {return onclicklink(this.pathname)}
+            el.onclick = onclicklink
             document.getElementById('toggles').appendChild(el)
           }
           
@@ -203,8 +229,8 @@
 
       }
 
-      onclicklink = function(action) {
-        var message = new Paho.MQTT.Message(action);
+      onclicklink = function() {
+        var message = new Paho.MQTT.Message(this.pathname);
         message.destinationName = "command";
         try {
             client.send(message);
@@ -212,6 +238,9 @@
         catch(err) {
             location.reload();
         }
+
+        addClass(this, 'waiting')
+
         return false
       }
     </script>
