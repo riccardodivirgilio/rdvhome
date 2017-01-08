@@ -9,7 +9,7 @@ from django.utils.encoding import force_str
 
 from rdvhome.management.mqtt import MqttCommand
 
-import sys, time
+import sys
 
 class Command(MqttCommand, RunServer):
 

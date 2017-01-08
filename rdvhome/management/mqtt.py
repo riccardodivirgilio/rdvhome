@@ -3,8 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from django.utils.functional import cached_property
-from rdvhome.mqtt import Client as Mqtt
 
+from rdvhome.mqtt import Client as Mqtt
 
 class MqttCommand(object):
 

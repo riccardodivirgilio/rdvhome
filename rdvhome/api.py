@@ -2,10 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.http import Http404, JsonResponse
+from django.http import JsonResponse
 
 from rdvhome.encoding import JSONEncoder
-from rdvhome.gpio import get_input, set_output
 from rdvhome.toggles import local_toggles, toggle_registry, ToggleList
 
 def status_verbose(mode = None):

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
 def Client(on_connect = None, on_message = None):
     from paho.mqtt.client import Client as Mqtt
     mqtt = Mqtt()

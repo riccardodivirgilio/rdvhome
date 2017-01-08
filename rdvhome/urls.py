@@ -17,7 +17,7 @@ def home(request):
     return TemplateResponse(request, "index.html")
 
 urlpatterns = [
-    url(r'^$', home),
+    url(r'^$', home, name = "app"),
     url(r'^switch$', status_list, name = "status"),
     url(r'^switch/(?P<number>[a-zA-Z0-9-]+)$', status_detail, name = "status"),
     url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/on$', output_switch, kwargs = {'mode': True}, name = 'toggle'),

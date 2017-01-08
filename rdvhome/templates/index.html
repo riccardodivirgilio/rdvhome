@@ -9,7 +9,7 @@
     <style>
       *, *:before, *:after {
         box-sizing: border-box;
-        font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+        font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
       }
       .container {
         display: flex;
@@ -63,7 +63,7 @@
         background-color: red;
         float: left;
         -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-                animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out; 
+                animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
       }
       .sk-cube-grid .sk-cube1 {
         -webkit-animation-delay: 0.2s;
@@ -99,7 +99,7 @@
                   transform: scale3D(1, 1, 1);
         } 35% {
           -webkit-transform: scale3D(0, 0, 1);
-                  transform: scale3D(0, 0, 1); 
+                  transform: scale3D(0, 0, 1);
         }
       }
 
@@ -110,7 +110,7 @@
         } 35% {
           -webkit-transform: scale3D(0, 0, 1);
                   transform: scale3D(0, 0, 1);
-        } 
+        }
       }
 
     </style>
@@ -131,7 +131,7 @@
             <div class="sk-cube sk-cube7"></div>
             <div class="sk-cube sk-cube8"></div>
             <div class="sk-cube sk-cube9"></div>
-          </div>        
+          </div>
         </div>
       </div>
     </div><!-- /.container -->
@@ -140,7 +140,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/template" id="actions-template">
       <div class="list-container">
-        <% _.each(toggles, function(toggle, i) { %> 
+        <% _.each(toggles, function(toggle, i) { %>
             <a class="list-item <%= toggle.on ? 'on' : 'off' %>" style="order:<%= toggle.order %>;" onclick="return window.onclicklink('/switch/<%= i %>/<%= toggle.on ? 'off' : 'on' %>')" href="#<%= i %>">
               <%= toggle.name %>
             </a>
@@ -174,7 +174,7 @@
         client.subscribe("status");
         var message = new Paho.MQTT.Message("/switch");
         message.destinationName = "command";
-        client.send(message); 
+        client.send(message);
       }
 
       function doFail(e){
@@ -193,13 +193,13 @@
         var data = JSON.parse(message.payloadString);
         stack = _.extend(stack, data.toggles);
         document.getElementById('toggles').innerHTML = compiled({toggles: stack});
-      }      
+      }
 
       window.onclicklink = function(action) {
         var message = new Paho.MQTT.Message(action);
         message.destinationName = "command";
         try {
-            client.send(message); 
+            client.send(message);
         }
         catch(err) {
             location.reload();

@@ -2,11 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from collections import OrderedDict, defaultdict
+from collections import defaultdict, OrderedDict
 
 from django.conf import settings
 from django.utils import six
 from django.utils.baseconv import base64 as encoder
+
 from rdvhome import gpio
 from rdvhome.server import RASPBERRY
 
