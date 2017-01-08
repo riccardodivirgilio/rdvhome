@@ -217,7 +217,6 @@
 
         for (var key in data.toggles) {      
           var el = document.getElementById('toggle-' + key);
-          console.log(el)
           if (! el) {
             el = document.createElement("a"); 
             document.getElementById('toggles').appendChild(el)
@@ -226,7 +225,7 @@
           el.innerHTML = data.toggles[key].name
           el.className = 'list-item ' + (data.toggles[key].on ? 'on' : 'off')
           el.href = '/switch/'+key+'/'+(data.toggles[key].on ? 'off' : 'on')
-          el.onclick = function() {return onclicklink(this.href)}
+          el.onclick = function() {return onclicklink(this.pathname)}
         }
 
       }
