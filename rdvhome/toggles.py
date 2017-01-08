@@ -14,7 +14,8 @@ import socket
 
 class Toggle(object):
 
-    def __init__(self, server, toggle_gpio, status_gpio = None, name = None):
+    def __init__(self, id, server, toggle_gpio, status_gpio = None, name = None):
+        self.id = id
         self.server = server
         self.toggle_gpio = toggle_gpio
         self.status_gpio = status_gpio or toggle_gpio
@@ -23,9 +24,6 @@ class Toggle(object):
         if self.is_local():
             gpio.setup_pin(self.status_gpio, gpio.IN)
             gpio.setup_pin(self.toggle_gpio, gpio.OUT)
-
-    def id(self):
-        return '%s-%.2i' % (self.server.id(), self.toggle_gpio)
 
     def serialize(self):
         return {
@@ -37,7 +35,7 @@ class Toggle(object):
     def is_local(self):
         if settings.DEBUG:
             return True
-        return socket.gethostname() == self.server.id()
+        return socket.gethostname() == self.server.id
 
     def switch(self, status = None):
         if status is None:
@@ -57,18 +55,20 @@ class ToggleList(object):
 
     def serialize(self):
         return OrderedDict(
-            (toggle.id(), toggle.serialize())
+            (toggle.id, toggle.serialize())
             for toggle in self
         )
 
     def get(self, pk):
         for obj in self:
-            if obj.id() == pk:
+            if obj.id == pk:
                 return obj
 
     def filter(self, func = None):
         if isinstance(func, six.string_types):
-            return self.__class__(*filter(lambda toggle: toggle.id() == func, self))
+            return self.__class__(*filter(lambda toggle: toggle.id == func, self))
+        if isinstance(func, (list, tuple, dict)):
+            return self.__class__(*filter(lambda toggle: toggle.id in func, self))
         return self.__class__(*filter(func, self))
 
     def switch(self, *args, **kw):
@@ -84,8 +84,10 @@ class ToggleList(object):
         return iter(self.servers)
 
 all_toggles = ToggleList(
-    Toggle(server = RASPBERRY, toggle_gpio = 1, name = "Test light"),
-    Toggle(server = RASPBERRY, toggle_gpio = 2, name = "Test light"),
+    Toggle('s1', server = RASPBERRY, toggle_gpio = 1, name = "Salone 1"),
+    Toggle('s2', server = RASPBERRY, toggle_gpio = 2, name = "Salone 2"),
+    Toggle('b1', server = RASPBERRY, toggle_gpio = 3, name = "Bagno 1"),
+    Toggle('b2', server = RASPBERRY, toggle_gpio = 4, name = "Bagno 2"),
 )
 
 local_toggles = all_toggles.filter(lambda toggle: toggle.is_local())

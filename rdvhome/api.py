@@ -26,8 +26,11 @@ def api_response(request = None, status_code = 200, **kw):
 def status_list(request):
     return api_response(mode = "status", toggles = local_toggles)
 
+def filter_toggles(number):
+    return local_toggles.filter(number.split('-'))
+
 def status_detail(request, number):
-    toggles = local_toggles.filter(number)
+    toggles = filter_toggles(number)
     return api_response(
         mode = "status",
         toggles = toggles,
@@ -35,7 +38,7 @@ def status_detail(request, number):
     )
 
 def output_switch(request, number, mode = None):
-    toggles = local_toggles.filter(number)
+    toggles = filter_toggles(number)
     toggles.switch(mode)
     return api_response(
         mode = "status",
