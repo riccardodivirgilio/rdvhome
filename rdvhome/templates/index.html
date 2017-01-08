@@ -56,7 +56,7 @@
     <script type="text/template" id="actions-template">
       <div class="list-container">
         <% _.each(toggles, function(toggle, i) { %> 
-            <a class="list-item <%= toggle.status ? 'on' : 'off' %>" style="order:<%= toggle.sequence %>;" onclick="return window.onclicklink('<%= i %>')" href="#">
+            <a class="list-item <%= toggle.status ? 'on' : 'off' %>" style="order:<%= toggle.sequence %>;" onclick="return window.onclicklink('/switch/<%= i %>/toggle')" href="#<%= i %>">
               <%= toggle.name %>
             </a>
         <% }); %>
@@ -110,8 +110,8 @@
         document.getElementById('toggles').innerHTML = compiled({toggles: stack});
       }      
 
-      window.onclicklink = function(name) {
-        var message = new Paho.MQTT.Message("/switch/" + name + '/toggle');
+      window.onclicklink = function(action) {
+        var message = new Paho.MQTT.Message(action);
         message.destinationName = "command";
         client.send(message); 
         return false
