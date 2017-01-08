@@ -133,8 +133,8 @@ GZIP_CONTENT_TYPES = (
 
 AWS_DEPLOY_URL = "https://rdvhome.s3.eu-central-1.amazonaws.com"
 
-MQTT_CHANNEL_COMMAND = "command"
-MQTT_CHANNEL_STATUS  = "status"
+MQTT_CHANNEL_COMMAND = "c-63HhqFG9QoKRbq47q0D48N"
+MQTT_CHANNEL_STATUS  = "s-63HhqFG9QoKRbq47q0D48N"
 
 MQTT_BROKER_URL = "broker.hivemq.com"
 MQTT_BROKER_PORT = 1883
