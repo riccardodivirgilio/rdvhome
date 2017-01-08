@@ -6,7 +6,7 @@ from django.http import Http404, JsonResponse
 
 from rdvhome.encoding import JSONEncoder
 from rdvhome.gpio import get_input, set_output
-from rdvhome.toggles import local_toggles
+from rdvhome.toggles import local_toggles, toggle_registry, ToggleList
 
 def status_verbose(mode = None):
     return mode and "on" or "off"
@@ -27,9 +27,7 @@ def status_list(request):
     return api_response(mode = "status", toggles = local_toggles)
 
 def filter_toggles(number):
-    if number == 'all':
-        return local_toggles
-    return local_toggles.filter(number.split('-'))
+    return toggle_registry.get(number.lower()) or ToggleList()
 
 def status_detail(request, number):
     toggles = filter_toggles(number)

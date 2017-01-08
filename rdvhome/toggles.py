@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 from django.conf import settings
 from django.utils import six
@@ -14,12 +14,13 @@ import socket
 
 class Toggle(object):
 
-    def __init__(self, id, server, toggle_gpio, status_gpio = None, name = None):
+    def __init__(self, id, server, toggle_gpio, status_gpio = None, name = None, alias = []):
         self.id = id
         self.server = server
         self.toggle_gpio = toggle_gpio
         self.status_gpio = status_gpio or toggle_gpio
         self.name = name
+        self.alias = alias
 
         if self.is_local():
             gpio.setup_pin(self.status_gpio, gpio.IN)
@@ -48,10 +49,13 @@ class Toggle(object):
     def set_status(self, status = True):
         return gpio.set_output(self.toggle_gpio, status)
 
+    def __repr__(self):
+        return '<%s: %s>' % (self.__class__.__name__, self.id)
+
 class ToggleList(object):
 
     def __init__(self, *servers):
-        self.servers = servers
+        self.servers = list(servers)
 
     def serialize(self):
         return OrderedDict(
@@ -74,6 +78,10 @@ class ToggleList(object):
     def switch(self, *args, **kw):
         return [toggle.switch(*args, **kw) for toggle in self]
 
+    def register(self, other):
+        self.servers.append(other)
+        return self
+
     def __bool__(self):
         return bool(self.servers)
 
@@ -83,11 +91,21 @@ class ToggleList(object):
     def __iter__(self):
         return iter(self.servers)
 
-all_toggles = ToggleList(
-    Toggle('s1', server = RASPBERRY, toggle_gpio = 1, name = "Salone 1"),
-    Toggle('s2', server = RASPBERRY, toggle_gpio = 2, name = "Salone 2"),
-    Toggle('b1', server = RASPBERRY, toggle_gpio = 3, name = "Bagno 1"),
-    Toggle('b2', server = RASPBERRY, toggle_gpio = 4, name = "Bagno 2"),
+    def __repr__(self):
+        return repr(self.servers)
+
+local_toggles = ToggleList(
+    Toggle('s1', server = RASPBERRY, toggle_gpio = 1, name = "Salone 1", alias = ['s']),
+    Toggle('s2', server = RASPBERRY, toggle_gpio = 2, name = "Salone 2", alias = ['s']),
+    Toggle('b1', server = RASPBERRY, toggle_gpio = 3, name = "Bagno 1",  alias = ['b']),
+    Toggle('b2', server = RASPBERRY, toggle_gpio = 4, name = "Bagno 2",  alias = ['b']),
 )
 
-local_toggles = all_toggles.filter(lambda toggle: toggle.is_local())
+local_toggles = local_toggles.filter(lambda toggle: toggle.is_local())
+
+toggle_registry = defaultdict(ToggleList)
+for toggle in local_toggles:
+    toggle_registry[toggle.id].register(toggle)
+    toggle_registry['all'].register(toggle)
+    for name in toggle.alias:
+        toggle_registry[name].register(toggle)
