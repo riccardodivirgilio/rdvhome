@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.content.Context;
-
 import android.widget.Toast;
+
+import com.rdv.client.Settings;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -24,7 +25,7 @@ public class Toggle extends AppCompatActivity {
 
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(
                 this.getApplicationContext(),
-                "tcp://iot.eclipse.org:1883",
+                Settings.MQTT_BROKER_URL,
                 "androidSampleClient"
         );
         mqttAndroidClient.setCallback(new MqttCallback() {
@@ -74,11 +75,8 @@ public class Toggle extends AppCompatActivity {
                     );
                     toast.show();
                     try {
-                        System.out.println("Subscribing to /test");
-                        mqttAndroidClient.subscribe("/test", 0);
-                        System.out.println("Subscribed to /test");
-                        System.out.println("Publishing message..");
-                        mqttAndroidClient.publish("/test", new MqttMessage("Hello world!".getBytes()));
+                        mqttAndroidClient.subscribe(Settings.MQTT_CHANNEL_STATUS, 0);
+                        mqttAndroidClient.publish(Settings.MQTT_CHANNEL_COMMAND, new MqttMessage(Settings.MQTT_INITIAL_COMMAND.getBytes()));
                     } catch (MqttException ex) {
 
                     }
