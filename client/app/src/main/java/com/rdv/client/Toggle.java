@@ -16,6 +16,8 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.UUID;
+
 public class Toggle extends AppCompatActivity {
 
     @Override
@@ -26,8 +28,9 @@ public class Toggle extends AppCompatActivity {
         final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(
                 this.getApplicationContext(),
                 Settings.MQTT_BROKER_URL,
-                "androidSampleClient"
+                UUID.randomUUID().toString()
         );
+
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
@@ -41,8 +44,6 @@ public class Toggle extends AppCompatActivity {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-
-
                 Toast toast = Toast.makeText(
                         getApplicationContext(),
                         "Message Arrived!: " + topic + ": " + new String(message.getPayload()),
@@ -67,7 +68,6 @@ public class Toggle extends AppCompatActivity {
             mqttAndroidClient.connect(null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-
                     Toast toast = Toast.makeText(
                             getApplicationContext(),
                             "Connection Success!",
@@ -76,11 +76,13 @@ public class Toggle extends AppCompatActivity {
                     toast.show();
                     try {
                         mqttAndroidClient.subscribe(Settings.MQTT_CHANNEL_STATUS, 0);
-                        mqttAndroidClient.publish(Settings.MQTT_CHANNEL_COMMAND, new MqttMessage(Settings.MQTT_INITIAL_COMMAND.getBytes()));
+                        mqttAndroidClient.publish(
+                                Settings.MQTT_CHANNEL_COMMAND,
+                                new MqttMessage(Settings.MQTT_INITIAL_COMMAND.getBytes())
+                        );
                     } catch (MqttException ex) {
 
                     }
-
                 }
 
                 @Override
