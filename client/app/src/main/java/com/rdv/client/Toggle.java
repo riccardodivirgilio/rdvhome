@@ -2,6 +2,8 @@ package com.rdv.client;
 
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,27 +25,57 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+
 import java.util.UUID;
 
 public class Toggle extends AppCompatActivity {
 
+    HashMap<String, HashMap<String, String>> toggleMap = new HashMap<>();
     ArrayList<HashMap<String, String>> toggleList;
+    MqttAndroidClient mqttAndroidClient;
+
+
     private ListView lv;
+
+
+    public void publish(String msg) {
+        try {
+            mqttAndroidClient.subscribe(Settings.MQTT_CHANNEL_STATUS, 0);
+            mqttAndroidClient.publish(
+                    Settings.MQTT_CHANNEL_COMMAND,
+                    new MqttMessage(msg.getBytes())
+            );
+        } catch (MqttException ex) {
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toggle);
 
-        toggleList = new ArrayList<>();
 
-        lv = (ListView) findViewById(R.id.list);
-
-        final MqttAndroidClient mqttAndroidClient = new MqttAndroidClient(
+        mqttAndroidClient = new MqttAndroidClient(
                 this.getApplicationContext(),
                 Settings.MQTT_BROKER_URL,
                 UUID.randomUUID().toString()
         );
+
+        lv = (ListView) findViewById(R.id.list);
+
+        lv.setOnItemClickListener(new OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, int position, long id)
+            {
+                publish(toggleList.get(position).get("action"));
+            }
+        });
 
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
@@ -69,7 +101,8 @@ public class Toggle extends AppCompatActivity {
 
                     // looping through All Contacts
                     for (int i = 0; i < toggles.names().length(); i++) {
-                        JSONObject t = toggles.getJSONObject(toggles.names().getString(i));
+                        String key = toggles.names().getString(i);
+                        JSONObject t = toggles.getJSONObject(key);
 
                         // tmp hash map for single toggle
                         HashMap<String, String> toggle = new HashMap<>();
@@ -77,22 +110,34 @@ public class Toggle extends AppCompatActivity {
                         // adding each child node to HashMap key => value
 
                         toggle.put("name",   t.getString("name"));
-                        toggle.put("on", t.getString("on"));
-                        toggle.put("order",   t.getString("order"));
+                        toggle.put("on",     t.getString("on"));
+                        toggle.put("order",  t.getString("order"));
+                        toggle.put("action", t.getString("action"));
 
                         // adding toggle to toggle list
-                        toggleList.add(toggle);
-
-                        ListAdapter adapter = new SimpleAdapter(
-                                Toggle.this,
-                                toggleList,
-                                R.layout.toggle,
-                                new String[]{"name", "order", "on"},
-                                new int[]{R.id.name, R.id.order, R.id.on});
-
-                        lv.setAdapter(adapter);
+                        toggleMap.put(key, toggle);
 
                     }
+
+                    toggleList = new ArrayList(toggleMap.values());
+
+                    Collections.sort(toggleList, new Comparator<HashMap<String, String>>() {
+                        @Override
+                        public int compare(HashMap<String, String> o1, HashMap<String, String> o2) {
+                            return o1.get("order").compareTo(o2.get("order"));
+                        }
+                    });
+
+                    ListAdapter adapter = new SimpleAdapter(
+                            Toggle.this,
+                            toggleList,
+                            R.layout.toggle,
+                            new String[]{"name", "order", "on", "action"},
+                            new int[]{R.id.name, R.id.order, R.id.on, R.id.action}
+                    );
+
+                    lv.setAdapter(adapter);
+
                 } catch (final JSONException e) {
                     Toast toast = Toast.makeText(
                             getApplicationContext(),
@@ -126,13 +171,11 @@ public class Toggle extends AppCompatActivity {
                     //toast.show();
                     try {
                         mqttAndroidClient.subscribe(Settings.MQTT_CHANNEL_STATUS, 0);
-                        mqttAndroidClient.publish(
-                                Settings.MQTT_CHANNEL_COMMAND,
-                                new MqttMessage(Settings.MQTT_INITIAL_COMMAND.getBytes())
-                        );
+
                     } catch (MqttException ex) {
 
                     }
+                    publish(Settings.MQTT_INITIAL_COMMAND);
                 }
 
                 @Override
