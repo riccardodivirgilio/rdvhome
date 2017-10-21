@@ -5,7 +5,15 @@ from __future__ import absolute_import, print_function, unicode_literals
 from fabric.api import env, roles, run, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
+from fabric.api import env, roles, run, sudo, task, execute
+from fabric.contrib.files import exists
+from fabric.contrib.project import rsync_project
+from fabric.main import main
+from fabtools import require
+from fabtools.supervisor import restart_process
 
+import os
+import sys
 from fabtools import require
 from fabtools.supervisor import restart_process
 
@@ -14,7 +22,15 @@ from rdvhome.server import NAS, RASPBERRY
 import os
 
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
-env.roledefs  = {'home': [RASPBERRY.host()], 'nas': [NAS.host()]}
+env.roledefs  = {
+    'home': [RASPBERRY.host()], 
+    'nas':  [NAS.host()]
+}
+
+env.passwords = {
+    NAS.host(): 'server'
+}
+
 
 @task
 @roles('home')
@@ -142,3 +158,85 @@ def deploy(restart = True):
 @roles('home')
 def shutdown():
     sudo("shutdown now")
+
+
+#START NAS
+
+
+@task
+@roles('nas')
+def setup_nas():
+
+    require.deb.uptodate_index()
+    require.deb.packages([
+        'ntpdate',
+        'rsync',
+        'python2',
+        'python2-dev',
+        'python3',
+        'python3-dev',
+        'avahi-daemon',
+        'avahi-discover',
+        'libnss-mdns'
+    ])
+
+    sudo("ntpdate -s time.nist.gov")
+    sudo("timedatectl set-timezone Europe/Rome")
+    require.system.default_locale("en_US.UTF-8")
+
+    require.user(
+        env.user,
+        password = env.password,
+        ssh_public_keys = [os.path.expanduser("~/.ssh/id_rsa.pub")]
+    )
+
+    require.python.pip(python_cmd="python")
+    require.python.pip(python_cmd="python3")
+
+@task
+@roles('nas')
+def shutdown_nas():
+    sudo("shutdown now")
+
+
+@task
+@roles('nas')
+def backup(master = True, slave = True, verbose = True):
+
+    for local, remote, extra in (
+        ("~/Pictures/", "raw/",     ''),
+        ("~/Photos/",   "photos/",  ''),
+        ("~/Git/",      "git/",     '--delete'),
+        ("~/Wolfram/",  "wolfram/", '--delete'),
+        ("~/Private/",  "private/", '--delete'),
+        ("~/Desktop/",  "desktop/", '--delete'),
+        ): 
+
+        if verbose:
+            extra += ' -v --progress'
+
+        if master:
+            rsync_project(
+                local_dir  = os.path.expanduser(local),
+                remote_dir = "/home/server/master/%s" % remote,
+                extra_opts = ' %s --size-only' % extra
+            )
+        if slave:
+            run('rsync -pthrvz %s --size-only /home/server/master/%s /home/server/slave/%s' % (extra, remote, remote))
+
+
+@task
+@roles('nas')
+def backup_master():
+    execute(backup, master = True, slave = False)
+
+
+@task
+@roles('nas')
+def backup_slave():
+    execute(backup, master = False, slave = True)
+
+
+if __name__ == '__main__':  
+    sys.argv = ['fab', '-f', __file__] + sys.argv[1:]
+    main()

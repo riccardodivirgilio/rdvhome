@@ -22,6 +22,7 @@ RASPBERRY = Device(
     )
 
 NAS = Device(
+    user='server',
     ipaddress = "192.168.1.230",
     name = "rdvnas.local",
     id = 'b'
