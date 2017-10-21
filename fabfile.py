@@ -2,35 +2,28 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, roles, run, sudo, task
-from fabric.contrib.files import exists
-from fabric.contrib.project import rsync_project
-from fabric.api import env, roles, run, sudo, task, execute
+from fabric.api import env, execute, roles, run, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
-from fabtools import require
-from fabtools.supervisor import restart_process
 
-import os
-import sys
 from fabtools import require
 from fabtools.supervisor import restart_process
 
 from rdvhome.server import NAS, RASPBERRY
 
 import os
+import sys
 
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
 env.roledefs  = {
-    'home': [RASPBERRY.host()], 
+    'home': [RASPBERRY.host()],
     'nas':  [NAS.host()]
 }
 
 env.passwords = {
     NAS.host(): 'server'
 }
-
 
 @task
 @roles('home')
@@ -159,9 +152,7 @@ def deploy(restart = True):
 def shutdown():
     sudo("shutdown now")
 
-
 #START NAS
-
 
 @task
 @roles('nas')
@@ -198,7 +189,6 @@ def setup_nas():
 def shutdown_nas():
     sudo("shutdown now")
 
-
 @task
 @roles('nas')
 def backup(master = True, slave = True, verbose = True):
@@ -210,7 +200,7 @@ def backup(master = True, slave = True, verbose = True):
         ("~/Wolfram/",  "wolfram/", '--delete'),
         ("~/Private/",  "private/", '--delete'),
         ("~/Desktop/",  "desktop/", '--delete'),
-        ): 
+        ):
 
         if verbose:
             extra += ' -v --progress'
@@ -224,19 +214,16 @@ def backup(master = True, slave = True, verbose = True):
         if slave:
             run('rsync -pthrvz %s --size-only /home/server/master/%s /home/server/slave/%s' % (extra, remote, remote))
 
-
 @task
 @roles('nas')
 def backup_master():
     execute(backup, master = True, slave = False)
-
 
 @task
 @roles('nas')
 def backup_slave():
     execute(backup, master = False, slave = True)
 
-
-if __name__ == '__main__':  
+if __name__ == '__main__':
     sys.argv = ['fab', '-f', __file__] + sys.argv[1:]
     main()
