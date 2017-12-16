@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.gpio import GPIO
-
 import os
 import tempfile
 
@@ -29,7 +27,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'g&z@dt4o)&$j)2+e*p@1)9!=!&moja1%tz+g+0tia3y+$u+fa*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not GPIO
+DEBUG = True
+
+TOGGLES = [
+    'rdvhome.toggles.philips.toggles_list'
+]
 
 ALLOWED_HOSTS = ["*"]
 APPEND_SLASH = False
