@@ -62,6 +62,6 @@ class PhilipsToggleList(ToggleList):
 
 toggles_list = PhilipsToggleList(
     PHILIPS, (
-        PhilipsToggle('led1', philips_id = 1),
+        PhilipsToggle('led1', name = 'Led salotto',philips_id = 1),
     )
 )
