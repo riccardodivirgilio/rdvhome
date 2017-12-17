@@ -2,17 +2,18 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-import RPi.GPIO as GPIO
-import time
-
 from django.core.management.base import BaseCommand
 from django.core.urlresolvers import reverse
 
 from rdvhome.management.mqtt import MqttCommand
 
+import time
+
 class Command(MqttCommand, BaseCommand):
 
     def handle(self, **options):
+
+        import RPi.GPIO as GPIO
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)

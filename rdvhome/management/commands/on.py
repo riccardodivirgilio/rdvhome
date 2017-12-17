@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from django.core.urlresolvers import reverse
 
 from rdvhome.management.mqtt import MqttCommand
+from rdvhome.toggles import all_toggles
 
 class Command(MqttCommand, BaseCommand):
 
@@ -14,7 +15,5 @@ class Command(MqttCommand, BaseCommand):
         parser.add_argument('args', nargs='*')
 
     def handle(self, *args, **options):
-        self.mqtt.publish(
-            settings.MQTT_CHANNEL_COMMAND,
-            reverse('toggle', kwargs = {'mode': True, 'number': "-".join(args or ['all'])})
-        )
+        all_toggles.switch(status = True)
+        self.mqtt.publish(settings.MQTT_CHANNEL_COMMAND, reverse('status'))
