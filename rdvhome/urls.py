@@ -23,5 +23,4 @@ urlpatterns = [
     url(r'^switch/(?P<number>[a-zA-Z0-9-]+)$', status_detail, name = "status"),
     url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/on$', output_switch, kwargs = {'mode': True}, name = 'toggle'),
     url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/off$', output_switch, kwargs = {'mode': False}, name = 'toggle'),
-    url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/toggle$', output_switch, kwargs = {'mode': None}, name = 'toggle'),
 ]

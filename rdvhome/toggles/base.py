@@ -8,15 +8,22 @@ from django.core.urlresolvers import reverse
 from django.utils import six
 from django.utils.baseconv import base64 as encoder
 
+from rdvhome.utils.functional import first
+
 class Toggle(object):
 
     def __init__(self, id, name = None, alias = []):
         self.id = id
         self.name = name
-        self.alias = alias
         self.order = encoder.decode(id)
 
         self.backend = None
+        self._alias = alias
+
+    def alias(self):
+        yield self.id
+        yield 'all'
+        yield from self.alias
 
     def set_backend(self, backend):
         self.backend = backend
@@ -24,8 +31,8 @@ class Toggle(object):
 
     def serialize(self):
         on = self.get_status()
-        return dict(
-            on = on,
+
+        status = dict(
             name = self.name,
             order = self.order,
             action = reverse(
@@ -33,15 +40,15 @@ class Toggle(object):
                 kwargs = {'mode': not on, 'number': self.id}
             ),
         )
+        status.update(self.get_status())
+
+        return status
 
     def switch(self, status = None):
-        return self.backend.switch([self], status = status)
+        return first(self.backend.filter(self).switch(status = status).values())
 
     def get_status(self):
-        return self.backend.get_status([self])
-
-    def set_status(self, status = True):
-        return self.backend.set_status([self])
+        return first(self.backend.filter(self).get_status().values())
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.id)
@@ -49,10 +56,10 @@ class Toggle(object):
 class ToggleList(object):
 
     def __init__(self, toggles):
-        self.toggles = [
+        self.toggles = tuple(
             toggle.set_backend(self)
             for toggle in toggles
-        ]
+        )
 
     def serialize(self):
         return OrderedDict(
@@ -65,15 +72,23 @@ class ToggleList(object):
             if obj.id == pk:
                 return obj
 
+    def copy(self, *args, **opts):
+        return self.__class__(*args, **opts)
+
     def filter(self, func = None):
         if isinstance(func, six.string_types):
-            return self.__class__(*filter(lambda toggle: toggle.id == func, self))
+            return self.copy(filter(lambda toggle: func in toggle.alias(), self))
         if isinstance(func, (list, tuple, dict)):
-            return self.__class__(*filter(lambda toggle: toggle.id in func, self))
-        return self.__class__(*filter(func, self))
+            return self.copy(filter(lambda toggle: any(f in toggle.alias() for f in func), self))
+        if isinstance(func, Toggle):
+            return self.copy([func])
+        return self.copy(filter(func, self))
 
-    def switch(self, *args, **kw):
-        return [toggle.switch(*args, **kw) for toggle in self]
+    def switch(self, status = None):
+        raise NotImplementedError
+
+    def get_status(self):
+        raise NotImplementedError
 
     def __bool__(self):
         return bool(self.toggles)
@@ -86,3 +101,33 @@ class ToggleList(object):
 
     def __repr__(self):
         return repr(self.toggles)
+
+class ToggleCollection(ToggleList):
+
+    def __init__(self, collections):
+        self.collections = tuple(filter(None, collections))
+
+    def filter(self, *args, **opts):
+        return self.copy(
+            collection.filter(*args, **opts)
+            for collection in self.collections
+        )
+
+    def switch(self, status = None):
+        d = {}
+        for collection in self.collections:
+            d.update(collection.switch(status))
+        return d
+
+    def __bool__(self):
+        return any(map(bool, self.collections))
+
+    def __len__(self):
+        return sum(map(len, self.collections))
+
+    def __iter__(self):
+        for collection in self.collections:
+            yield from collection
+
+    def __repr__(self):
+        return '<ToggleCollection: %s>' % len(self)
