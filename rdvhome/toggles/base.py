@@ -30,18 +30,15 @@ class Toggle(object):
         return self
 
     def serialize(self):
-        on = self.get_status()
-
-        status = dict(
+        status = self.get_status()
+        status.update(dict(
             name = self.name,
             order = self.order,
             action = reverse(
                 'toggle',
-                kwargs = {'mode': not on, 'number': self.id}
+                kwargs = {'mode': not status['on'], 'number': self.id}
             ),
-        )
-        status.update(self.get_status())
-
+        ))
         return status
 
     def switch(self, status = None):
