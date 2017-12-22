@@ -13,7 +13,7 @@ app = web.Application()
 
 def url(path, **opts):
     def inner(func):
-        app.router.add_get(path, func, **opts)
+        return app.router.add_get(path, func, **opts)
     return inner
 
 def JsonResponse(data, **opts):
