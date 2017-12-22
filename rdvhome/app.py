@@ -2,12 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from functools import partial
 from aiohttp import web
-from rdvhome.api import api_response, switch, status_detail, status_list
-from rdvhome.utils.json import dumps
 
-from rdvhome.utils.decorators import apply
+from functools import partial
+
+from rdvhome.api import api_response, status_detail, status_list, switch
+from rdvhome.utils.json import dumps
 
 app = web.Application()
 
@@ -21,7 +21,7 @@ def JsonResponse(data, **opts):
 
 @url('/')
 async def view_home(request):
-    return web.Response(text = 'aaaa')
+    return web.Response(text = 'hello!')
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):

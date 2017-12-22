@@ -2,12 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.conf import settings
-
-from rdvhome.cli.utils import SimpleCommand
-from rdvhome.app import app
 from aiohttp import web
 
+from rdvhome.app import app
+from rdvhome.cli.utils import SimpleCommand
 
 class Command(SimpleCommand):
 

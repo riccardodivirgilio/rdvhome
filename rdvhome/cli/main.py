@@ -6,7 +6,6 @@ from rdvhome.cli.utils import SimpleCommand
 from rdvhome.utils.functional import first
 from rdvhome.utils.importutils import import_string
 
-import os
 import sys
 
 class LauncherCommand(SimpleCommand):

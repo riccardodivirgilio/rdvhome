@@ -5,8 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from importlib import import_module
 
 import six
-import os
-
 
 def import_string(dotted_path):
     """

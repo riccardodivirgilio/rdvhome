@@ -2,10 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from django.conf import settings
+
 #need to use this
 #http://hbmqtt.readthedocs.io/en/latest/references/broker.html
 
-from django.conf import settings
 
 def Client(on_connect = None, on_message = None):
     from paho.mqtt.client import Client as Mqtt
