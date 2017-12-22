@@ -17,6 +17,6 @@ if __name__ == '__main__':
         ['six',     None], 
     )
 
-    from myhome.launcher.main import execute_from_command_line
+    from myhome.cli.main import execute_from_command_line
 
     execute_from_command_line()

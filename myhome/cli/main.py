@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from myhome.launcher.utils import SimpleCommand
+from myhome.cli.utils import SimpleCommand
 from myhome.utils.functional import first
 from myhome.utils.importutils import import_string
 
@@ -26,7 +26,7 @@ class LauncherCommand(SimpleCommand):
             attr = first(self.subcommands)
 
         if attr in self.subcommands:
-            return import_string('myhome.launcher.commands.%s.Command' % attr)(self.subcommand_args()).main()
+            return import_string('myhome.cli.commands.%s.Command' % attr)(self.subcommand_args()).main()
 
         print('Select one of the following commands:')
         for command in self.subcommands:

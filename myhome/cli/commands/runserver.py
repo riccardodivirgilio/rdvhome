@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from django.conf import settings
 
-from myhome.launcher.utils import SimpleCommand
+from myhome.cli.utils import SimpleCommand
 
 class Command(SimpleCommand):
 
