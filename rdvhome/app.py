@@ -2,25 +2,43 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.conf import settings
-from django.conf.urls import url
-from django.template.response import TemplateResponse
-
 from functools import partial
+from aiohttp import web
+from rdvhome.api import api_response, switch, status_detail, status_list
+from rdvhome.utils.json import dumps
 
-from rdvhome.api import api_response, output_switch, status_detail, status_list
+from rdvhome.utils.decorators import apply
 
-handler403 = partial(api_response, status = 403, message = "PermissionDenied")
-handler404 = partial(api_response, status = 404, message = "PageNotFound")
-handler500 = partial(api_response, status = 500, message = "InternalServerError")
+app = web.Application()
 
-def home(request):
-    return TemplateResponse(request, "index.html", {'settings': settings})
+def url(path, **opts):
+    def inner(func):
+        app.router.add_get(path, func, **opts)
+    return inner
 
-urlpatterns = [
-    url(r'^$', home, name = "app"),
-    url(r'^switch$', status_list, name = "status"),
-    url(r'^switch/(?P<number>[a-zA-Z0-9-]+)$', status_detail, name = "status"),
-    url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/on$', output_switch, kwargs = {'mode': True}, name = 'toggle'),
-    url(r'^switch/(?P<number>[a-zA-Z0-9-]+)/off$', output_switch, kwargs = {'mode': False}, name = 'toggle'),
-]
+def JsonResponse(data, **opts):
+    return web.Response(text = dumps(data), **opts)
+
+@url('/')
+async def view_home(request):
+    return web.Response(text = 'aaaa')
+
+@url('/switch', name = "status-list")
+async def view_status_list(request):
+    return JsonResponse(status_list())
+
+@url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
+async def view_status_list(request):
+    return JsonResponse(status_detail(request.match_info['number']))
+
+@url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
+async def view_status_list(request):
+    return JsonResponse(switch(request.match_info['number'], mode = True))
+
+@url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
+async def view_status_list(request):
+    return JsonResponse(switch(request.match_info['number'], mode = False))
+
+@url('/{all:.*}')
+async def view_status_list(request):
+    return JsonResponse(api_response(status = 404, message = 'PageNotFound'), status = 404)
