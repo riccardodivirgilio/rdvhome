@@ -2,11 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.conf import settings
-from django.utils.module_loading import import_string
-
 from myhome.launcher.utils import SimpleCommand
 from myhome.utils.functional import first
+from myhome.utils.importutils import import_string
 
 import os
 import sys
@@ -26,7 +24,7 @@ class LauncherCommand(SimpleCommand):
     def dispatch(self, attr = None):
         if not attr:
             attr = first(self.subcommands)
-            
+
         if attr in self.subcommands:
             return import_string('myhome.launcher.commands.%s.Command' % attr)(self.subcommand_args()).main()
 
