@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.toggles.base import Toggle, ToggleCollection, ToggleList
+from rdvhome.utils.datastructures import data
 
 import datetime
 import decimal
@@ -22,3 +23,9 @@ class JSONEncoder(json.JSONEncoder):
             return tuple(obj)
         else:
             return json.JSONEncoder.default(self, obj)
+
+def dumps(obj, indent = 4):
+    return json.dumps(obj, indent = indent, cls = JSONEncoder)
+
+def loads(obj):
+    return json.loads(obj, object_hook = data)
