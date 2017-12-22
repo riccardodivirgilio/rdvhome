@@ -9,7 +9,7 @@ if __name__ == '__main__':
     if sys.version_info[0] == 2:
         raise NotImplementedError('There is no support for python2. Please run python3.')
 
-    from myhome.utils.require import require_module
+    from rdvhome.utils.require import require_module
 
     require_module(
         ['aiohttp', None], 
@@ -17,6 +17,6 @@ if __name__ == '__main__':
         ['six',     None], 
     )
 
-    from myhome.cli.main import execute_from_command_line
+    from rdvhome.cli.main import execute_from_command_line
 
     execute_from_command_line()

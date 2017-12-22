@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from myhome.utils.functional import composition
+from rdvhome.utils.functional import composition
 
 def apply(*func):
     comp = composition(*func)
