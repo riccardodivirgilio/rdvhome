@@ -8,6 +8,7 @@ import six
 from operator import methodcaller
 from rdvhome.utils.functional import first, iterate
 from rdvhome.utils.async import wait_all
+from rdvhome.utils.datastructures import data
 
 class Switch(object):
 
@@ -21,20 +22,20 @@ class Switch(object):
         yield 'all'
         yield from self._alias
 
-    async def serialize(self):
-        status = await self.get_status()
-        status.update(dict(
+    def serialize(self, on, **opts):
+        return data(
             id     = self.id,
             name   = self.name,
-            action = '/switch/%s/%s' % (self.id, status['on'] and 'on' or 'off'),
-            alias  = self.alias()
-        ))
-        return status
+            action = '/switch/%s/%s' % (self.id, on and 'on' or 'off'),
+            alias  = self.alias(),
+            on     = on,
+            **opts
+        )
 
-    async def switch(self, status = None):
+    async def switch(self, mode = None):
         raise NotImplementedError
 
-    async def get_status(self):
+    async def status(self):
         raise NotImplementedError
 
     def __repr__(self):
@@ -48,10 +49,16 @@ class SwitchList(object):
         else:
             self.switches = tuple(iterate(switches))
 
-    async def serialize(self):
+    async def status(self, *args, **opts):
         return {
             serialized.id: serialized
-            for serialized in await wait_all(obj.serialize() for obj in self)
+            for serialized in await wait_all(obj.status(*args, **opts) for obj in self)
+        }
+
+    async def switch(self, *args, **opts):
+        return {
+            serialized.id: serialized
+            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self) 
         }
 
     def get(self, pk):
