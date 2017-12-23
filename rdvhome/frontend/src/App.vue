@@ -9,14 +9,11 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <div v-for="item in switches" class="list-item" v-bind:class="{on: item.on}" :key="item.id">
+          <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on}" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action">
             {{ item.id }} {{ item.name }}
-          </div>
+          </a>
         </div>
       </template>
-
-      {{ switches }}
-
       <footer class="footer">
         Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.
       </footer>
@@ -40,22 +37,20 @@ export default {
   },
   methods: {
     updateSwitch: function (data) {
-      console.log(data)
-      this.switches[data.id] = data
-      console.log(this.switches)
+      this.switches[data.id] = data;
+      this.$forceUpdate();
+    },
+    open: function (url) {
+      if (url) {
+        this.ws.send(url)
+      }
     }
   },
 
   created: function() {
 
     var commit = this.updateSwitch
-
-    commit({id:1, name:"a"})
-    commit({id:2, name:"b"})
-
-    var W3CWebSocket = require('websocket').w3cwebsocket;
-
-    var client = new W3CWebSocket('ws://localhost:8500/websocket');
+    var client = new WebSocket('ws://localhost:8500/websocket');
 
     client.onerror = function() {
         console.log('Connection Error');
