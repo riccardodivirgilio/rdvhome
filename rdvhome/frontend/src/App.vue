@@ -20,10 +20,10 @@ export default {
   components: {
     loading
   },
-  data () {
+  data: function() {
     return {}
   },
-  created: function () {
+  created: function() {
 
     var W3CWebSocket = require('websocket').w3cwebsocket;
 
