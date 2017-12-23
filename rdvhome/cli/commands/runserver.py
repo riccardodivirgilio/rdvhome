@@ -7,6 +7,9 @@ from aiohttp import web
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 
+import aiohttp_autoreload
+import asyncio
+
 class Command(SimpleCommand):
 
     help = 'Run the home app'
@@ -14,5 +17,23 @@ class Command(SimpleCommand):
     def add_arguments(self, parser):
         pass
 
-    def handle(self, *args, **options):
-        web.run_app(app, port = 8500)
+    def handle(self, port = 8500, debug = True):
+
+        if debug:
+            aiohttp_autoreload.start()
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(
+            loop.create_server(
+                app.make_handler(),
+                '0.0.0.0',
+                port
+            )
+        )
+
+        print('Server started at http://0.0.0.0:%s' % port)
+
+        try:
+            loop.run_forever()
+        except KeyboardInterrupt:
+            pass

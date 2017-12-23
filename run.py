@@ -15,6 +15,7 @@ if __name__ == '__main__':
         ['aiohttp', None],
         ['asyncio', None],
         ['six',     None],
+        ['aiohttp-autoreload', None]
     )
 
     from rdvhome.cli.main import execute_from_command_line
