@@ -16,7 +16,8 @@ def execute_from_command_line(argv = None, **opts):
         ['asyncio', None],
         ['six',     None],
         ['aiohttp-autoreload', None],
-        ['django',  None]
+        ['django',  None],
+        ['aioreactive', None]
     )
 
     from rdvhome.conf import settings
