@@ -2,8 +2,21 @@
   <div class="container">
     <div class="panel">
       <h1>&#127968; RdV</h1>
-      <div id="toggles" class="list-container"></div>
-      <loading></loading>
+
+
+      <template v-if="switches.length == 0">
+        <loading></loading>
+      </template>
+      <template v-else>
+        <div id="toggles" class="list-container" >
+          <div v-for="item in switches" class="list-item" v-bind:class="{on: item.on}" :key="item.id">
+            {{ item.id }} {{ item.name }}
+          </div>
+        </div>
+      </template>
+
+      {{ switches }}
+
       <footer class="footer">
         Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.
       </footer>
@@ -21,9 +34,24 @@ export default {
     loading
   },
   data: function() {
-    return {}
+    return {
+      switches: {}
+    }
   },
+  methods: {
+    updateSwitch: function (data) {
+      console.log(data)
+      this.switches[data.id] = data
+      console.log(this.switches)
+    }
+  },
+
   created: function() {
+
+    var commit = this.updateSwitch
+
+    commit({id:1, name:"a"})
+    commit({id:2, name:"b"})
 
     var W3CWebSocket = require('websocket').w3cwebsocket;
 
@@ -44,9 +72,11 @@ export default {
 
     client.onmessage = function(e) {
         if (typeof e.data === 'string') {
-            console.log("Received: '" + e.data + "'");
+            commit(JSON.parse(e.data))
         }
     };
+
+    this.ws = client;
 
   }
 }
