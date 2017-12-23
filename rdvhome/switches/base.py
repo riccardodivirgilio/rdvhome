@@ -3,49 +3,39 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
-
-from django.core.urlresolvers import reverse
-from django.utils import six
-from django.utils.baseconv import base64 as encoder
-
-from rdvhome.utils.functional import first
+import asyncio
+import six
+from operator import methodcaller
+from rdvhome.utils.functional import first, iterate
+from rdvhome.utils.async import wait_all
 
 class Switch(object):
 
     def __init__(self, id, name = None, alias = []):
         self.id = id
         self.name = name
-        self.order = encoder.decode(id)
-
-        self.backend = None
         self._alias = alias
 
     def alias(self):
         yield self.id
         yield 'all'
-        yield from self.alias
+        yield from self._alias
 
-    def set_backend(self, backend):
-        self.backend = backend
-        return self
-
-    def serialize(self):
-        status = self.get_status()
+    async def serialize(self):
+        status = await self.get_status()
         status.update(dict(
-            name = self.name,
-            order = self.order,
-            action = reverse(
-                'switch',
-                kwargs = {'mode': not status['on'], 'number': self.id}
-            ),
+            id     = self.id,
+            name   = self.name,
+            action = '/switch/%s/%s' % (self.id, status['on'] and 'on' or 'off'),
+            alias  = self.alias()
         ))
         return status
 
-    def switch(self, status = None):
-        return first(self.backend.filter(self).switch(status = status).values())
+    async def switch(self, status = None):
+        raise NotImplementedError
 
-    def get_status(self):
-        return first(self.backend.filter(self).get_status().values())
+    async def get_status(self):
+        raise NotImplementedError
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.id)
@@ -53,16 +43,16 @@ class Switch(object):
 class SwitchList(object):
 
     def __init__(self, switches):
-        self.switches = tuple(
-            switch.set_backend(self)
-            for switch in switches
-        )
+        if isinstance(switches, (tuple, list, set, frozenset)):
+            self.switches = switches
+        else:
+            self.switches = tuple(iterate(switches))
 
-    def serialize(self):
-        return OrderedDict(
-            (switch.id, switch.serialize())
-            for switch in self
-        )
+    async def serialize(self):
+        return {
+            serialized.id: serialized
+            for serialized in await wait_all(obj.serialize() for obj in self)
+        }
 
     def get(self, pk):
         for obj in self:
@@ -80,12 +70,6 @@ class SwitchList(object):
         if isinstance(func, Switch):
             return self.copy([func])
         return self.copy(filter(func, self))
-
-    def switch(self, status = None):
-        raise NotImplementedError
-
-    def get_status(self):
-        raise NotImplementedError
 
     def __bool__(self):
         return bool(self.switches)
