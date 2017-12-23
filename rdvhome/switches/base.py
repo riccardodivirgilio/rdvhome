@@ -26,7 +26,7 @@ class Switch(object):
         event = data(
             id     = self.id,
             name   = self.name,
-            action = '/switch/%s/%s' % (self.id, on and 'on' or 'off'),
+            action = '/switch/%s/%s' % (self.id, on and 'off' or 'on'),
             alias  = self.alias,
             on     = on,
             **opts
