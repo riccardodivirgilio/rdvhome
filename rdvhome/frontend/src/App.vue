@@ -14,7 +14,6 @@
 <script>
 
 import loading from './components/loading';
-var W3CWebSocket = require('websocket').w3cwebsocket;
 
 export default {
   name: 'app',
@@ -25,6 +24,8 @@ export default {
     return {}
   },
   created: function () {
+
+    var W3CWebSocket = require('websocket').w3cwebsocket;
 
     var client = new W3CWebSocket('ws://localhost:8500/websocket', 'echo-protocol');
 
