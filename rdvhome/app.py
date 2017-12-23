@@ -82,4 +82,4 @@ async def view_status_list(request):
 
 @url('/{all:.*}')
 async def view_status_list(request):
-    return JsonResponse(await api_response(status = 404, message = 'PageNotFound'), status = 404)
+    return JsonResponse(api_response(status = 404, message = 'PageNotFound'), status = 404)
