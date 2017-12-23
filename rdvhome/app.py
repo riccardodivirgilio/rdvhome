@@ -14,6 +14,7 @@ from rdvhome.utils.importutils import module_path
 import logging
 import sys
 import traceback
+import aiohttp
 
 @web.middleware
 async def server_error(request, handler):
@@ -51,7 +52,7 @@ app = web.Application(middlewares = [server_error])
 
 def url(path, **opts):
     def inner(func):
-        return app.router.add_get(path, func, **opts)
+        return app.router.add_route('GET', path, func, **opts)
     return inner
 
 def JsonResponse(data, status = None, **opts):
@@ -99,6 +100,22 @@ async def view_status_list(request):
 @url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
 async def view_status_list(request):
     return JsonResponse(await switch(request.match_info['number'], mode = False))
+
+@url('/websocket', name = "websocket")
+async def websocket(request):
+
+    ws = web.WebSocketResponse()
+    await ws.prepare(request)
+
+    while not ws.closed:
+        msg = await ws.receive()
+
+        if msg.data == 'close':
+            await ws.close()
+        else:
+            ws.send_str(msg.data)
+
+    return ws
 
 @url('/{all:.*}')
 async def view_status_list(request):
