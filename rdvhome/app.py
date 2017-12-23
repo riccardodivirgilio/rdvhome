@@ -66,20 +66,20 @@ async def view_home(request):
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
-    return JsonResponse(status_list())
+    return JsonResponse(await status_list())
 
 @url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
 async def view_status_list(request):
-    return JsonResponse(status_detail(request.match_info['number']))
+    return JsonResponse(await status_detail(request.match_info['number']))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
 async def view_status_list(request):
-    return JsonResponse(switch(request.match_info['number'], mode = True))
+    return JsonResponse(await switch(request.match_info['number'], mode = True))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
 async def view_status_list(request):
-    return JsonResponse(switch(request.match_info['number'], mode = False))
+    return JsonResponse(await switch(request.match_info['number'], mode = False))
 
 @url('/{all:.*}')
 async def view_status_list(request):
-    return JsonResponse(api_response(status = 404, message = 'PageNotFound'), status = 404)
+    return JsonResponse(await api_response(status = 404, message = 'PageNotFound'), status = 404)

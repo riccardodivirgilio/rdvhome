@@ -11,26 +11,29 @@ def status_verbose(mode = None):
 def api_response(status = 200, **kw):
     return data(
         kw,
-        status = status,
+        status  = status,
         success = status == 200,
     )
 
-def status_list():
-    return api_response(mode = "status", switches = switches)
-
-def status_detail(number):
-    switches = switches.filter(number)
+async def status_list():
     return api_response(
-        mode = "status",
-        switches = switches,
-        status = switches and 200 or 404
+        mode     = "status", 
+        switches = await switches.serialize()
     )
 
-def switch(number, mode = None):
-    switches = switches.filter(number)
-    switches.switch(mode)
+async def status_detail(number):
+    objs = switches.filter(number)
     return api_response(
-        mode = "status",
-        switches = switches,
-        status = switches and 200 or 404
+        mode     = "status",
+        switches = await objs.serialize(),
+        status   = objs and 200 or 404
+    )
+
+async def switch(number, mode = None):
+    objs = switches.filter(number)
+    objs.switch(mode)
+    return api_response(
+        mode     = "status",
+        switches = await objs.serialize(),
+        status   = objs and 200 or 404
     )
