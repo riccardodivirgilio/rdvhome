@@ -9,6 +9,7 @@ from operator import methodcaller
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import first, iterate
+from rdvhome.events import status_stream
 
 import asyncio
 import six
@@ -20,8 +21,9 @@ class Switch(object):
         self.name = name
         self.alias = frozenset(iterate(self.id, alias, 'all'))
 
-    def serialize(self, on, **opts):
-        return data(
+    def send(self, on, **opts):
+
+        event = data(
             id     = self.id,
             name   = self.name,
             action = '/switch/%s/%s' % (self.id, on and 'on' or 'off'),
@@ -29,6 +31,10 @@ class Switch(object):
             on     = on,
             **opts
         )
+
+        status_stream.send(event)
+
+        return event
 
     async def switch(self, mode = None):
         raise NotImplementedError
