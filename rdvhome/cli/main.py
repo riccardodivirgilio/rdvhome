@@ -2,42 +2,27 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.cli.utils import SimpleCommand
-from rdvhome.conf import settings
-from rdvhome.utils.functional import first
-from rdvhome.utils.importutils import import_string
-
 import sys
 
-class LauncherCommand(SimpleCommand):
-
-    subcommands = [
-        'runserver',
-    ]
-
-    def subcommand_args(self):
-        argv = self.argv[:]
-        if len(self.argv) > 1:
-            argv.pop(1)
-        return argv
-
-    def dispatch(self, attr = None):
-        if not attr:
-            attr = first(self.subcommands)
-
-        if attr in self.subcommands:
-            return import_string('rdvhome.cli.commands.%s.Command' % attr)(self.subcommand_args()).main()
-
-        print('Select one of the following commands:')
-        for command in self.subcommands:
-            print(' -', command)
-        sys.exit(1)
-
-    def main(self):
-        if len(self.argv) > 1 and self.argv[1]:
-            return self.dispatch(self.argv[1])
-        return self.dispatch()
-
 def execute_from_command_line(argv = None, **opts):
+
+    if sys.version_info[0] == 2:
+        raise NotImplementedError('There is no support for python2. Please run python3.')
+
+    from rdvhome.utils.require import require_module
+
+    require_module(
+        ['aiohttp', '2.3.6'],
+        ['asyncio', None],
+        ['six',     None],
+        ['aiohttp-autoreload', None],
+        ['django',  None]
+    )
+
+    from rdvhome.conf import settings
+
     settings.update(opts)
-    return LauncherCommand(argv).main()
+
+    from rdvhome.cli.dispatch import DispatchCommand
+
+    return DispatchCommand(argv).main()
