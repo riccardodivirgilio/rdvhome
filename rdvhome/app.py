@@ -9,6 +9,7 @@ from functools import partial
 from rdvhome.api import api_response, status_detail, status_list, switch
 from rdvhome.conf import settings
 from rdvhome.utils.json import dumps
+from rdvhome.utils.importutils import module_path
 
 import logging
 import sys
@@ -60,9 +61,28 @@ def JsonResponse(data, status = None, **opts):
         **opts
     )
 
+APP = """<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>%(title)s</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>%(js)s</script>
+  </body>
+</html>"""
+
 @url('/')
 async def view_home(request):
-    return web.Response(text = 'hello!')
+    with open(module_path('rdvhome', 'frontend', 'dist', 'build.js'), 'r') as f:
+        return web.Response(
+            text = APP % dict(
+                title = 'Home',
+                js    = f.read()
+            ), 
+            content_type = 'text/html'
+        )
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
