@@ -7,7 +7,6 @@ from aiohttp import web
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 
-import aiohttp_autoreload
 import asyncio
 
 class Command(SimpleCommand):
@@ -20,6 +19,7 @@ class Command(SimpleCommand):
     def handle(self, port = 8500, debug = True):
 
         if debug:
+            import aiohttp_autoreload
             aiohttp_autoreload.start()
 
         loop = asyncio.get_event_loop()
