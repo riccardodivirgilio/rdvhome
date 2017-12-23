@@ -1,60 +1,124 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
-  </div>
+  <div class="container">
+    <div class="panel">
+      <h1>&#127968; RdV</h1>
+      <div id="toggles" class="list-container"></div>
+      <loading></loading>
+      <footer class="footer">
+        Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.
+      </footer>
+    </div>
+  </div><!-- /.container -->
 </template>
 
 <script>
+
+import loading from './components/loading'
+
 export default {
   name: 'app',
+  components: {
+    loading
+  },
   data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+    return {}
   }
 }
 </script>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+*, *:before, *:after {
+  box-sizing: border-box;
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+  font-weight: 300;
 }
-
-h1, h2 {
-  font-weight: normal;
+body {
+  margin:0px;
+  padding: 0px
 }
-
-ul {
-  list-style-type: none;
-  padding: 0;
+h1 {
+  padding: 0 15px;
+  font-weight: 200;
+  color: gray;
 }
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
 a {
-  color: #42b983;
+  text-decoration: none;
+  color: red;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+.list-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-bottom: none
+
+}
+.list-item {
+  padding:15px;
+  border-bottom:1px solid #ddd;
+  color:black;
+}
+.list-item.on {
+  border-right:5px solid lime;
+}
+.list-item.off {
+  border-right:5px solid #ddd;
+}
+.panel {
+    width:400px;
+}
+
+footer {
+  margin: 30px 15px;
+  font-size:0.8em;
+  color:#ddd;
+  width:100%;
+}
+
+@media only screen and (max-width: 400px)  {
+  .panel {
+    width:100%;
+  }
+  .list-container {
+    border-left:none;
+    border-right:none;
+  }
+}
+
+.on {
+  animation: on 0.3s ease-out;
+  animation-iteration-count: 1;
+}
+
+@keyframes on {
+    0% { background-color: #edffd3; }
+    100% { background-color: none; }
+}
+
+.off {
+  animation: off 0.3s ease-out;
+  animation-iteration-count: 1;
+}
+
+@keyframes off {
+    0% { background-color: #efefef; }
+    100% { background-color: none; }
+}
+
+.waiting {
+  animation: waiting 2s ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes waiting {
+    0% { background-color: none; }
+    50% { background-color: #e0eaf9; }
+    100% { background-color: none; }
 }
 </style>
