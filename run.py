@@ -15,9 +15,9 @@ if __name__ == '__main__':
         DEBUG = True,
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': [
-                dict(id = 'l1', name = 'Salone 1',     philips_id = 1, **router),
-                dict(id = 'b1', name = 'Camera letto', philips_id = 2, **router),
-                dict(id = 'l2', name = 'Salone 2',     philips_id = 3, **router),
+                dict(id = 'b1', name = 'Camera letto', philips_id = 2, alias = [], **router),
+                dict(id = 'l1', name = 'Salone 1',     philips_id = 1, alias = ['default'], **router),
+                dict(id = 'l2', name = 'Salone 2',     philips_id = 3, alias = ['default'], **router),
             ]
         }
     )
