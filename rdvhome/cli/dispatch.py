@@ -12,6 +12,8 @@ class DispatchCommand(SimpleCommand):
 
     subcommands = [
         'runserver',
+        'on',
+        'off',
     ]
 
     def subcommand_args(self):
