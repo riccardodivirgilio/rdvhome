@@ -5,6 +5,18 @@ from __future__ import absolute_import, print_function, unicode_literals
 from importlib import import_module
 
 import six
+import os
+
+def module_path(module, *args):
+    if isinstance(module, six.string_types):
+        try:
+            module = import_module(module)
+        except ImportError:
+            return None
+    return os.path.join(
+        os.path.dirname(os.path.realpath(module.__file__)),
+        *args
+    )
 
 def import_string(dotted_path):
     """
