@@ -2,38 +2,35 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.toggles import all_toggles
+from rdvhome.switches import switches
 from rdvhome.utils.datastructures import data
 
 def status_verbose(mode = None):
     return mode and "on" or "off"
 
-def api_response(status_code = 200, **kw):
+def api_response(status = 200, **kw):
     return data(
         kw,
-        code = status_code,
-        success = status_code == 200,
+        status = status,
+        success = status == 200,
     )
 
 def status_list():
-    return api_response(mode = "status", toggles = all_toggles)
-
-def filter_toggles(number):
-    return all_toggles.filter(number)
+    return api_response(mode = "status", switches = switches)
 
 def status_detail(number):
-    toggles = filter_toggles(number)
+    switches = switches.filter(number)
     return api_response(
         mode = "status",
-        toggles = toggles,
-        status_code = toggles and 200 or 404
+        switches = switches,
+        status = switches and 200 or 404
     )
 
 def switch(number, mode = None):
-    toggles = filter_toggles(number)
-    toggles.switch(mode)
+    switches = switches.filter(number)
+    switches.switch(mode)
     return api_response(
         mode = "status",
-        toggles = toggles,
-        status_code = toggles and 200 or 404
+        switches = switches,
+        status = switches and 200 or 404
     )

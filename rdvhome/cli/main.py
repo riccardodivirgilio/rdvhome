@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.utils import SimpleCommand
+from rdvhome.conf import settings
 from rdvhome.utils.functional import first
 from rdvhome.utils.importutils import import_string
 
@@ -37,5 +38,6 @@ class LauncherCommand(SimpleCommand):
             return self.dispatch(self.argv[1])
         return self.dispatch()
 
-def execute_from_command_line(argv = None):
+def execute_from_command_line(argv = None, **opts):
+    settings.update(opts)
     return LauncherCommand(argv).main()

@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.toggles.base import Toggle, ToggleCollection, ToggleList
+from rdvhome.switches.base import Switch, SwitchList
 from rdvhome.utils.datastructures import data
 
 import datetime
@@ -17,7 +17,7 @@ class JSONEncoder(json.JSONEncoder):
             return obj.isoformat()
         elif isinstance(obj, decimal.Decimal):
             return float(obj)
-        elif isinstance(obj, (Toggle, ToggleList, ToggleCollection)):
+        elif isinstance(obj, (Switch, SwitchList)):
             return obj.serialize()
         elif isinstance(obj, (set, frozenset, types.GeneratorType)):
             return tuple(obj)

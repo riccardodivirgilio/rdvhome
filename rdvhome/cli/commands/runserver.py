@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aiohttp import web
-
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 
