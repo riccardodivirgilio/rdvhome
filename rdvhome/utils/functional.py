@@ -2,11 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from django.core.files.base import File
-from django.http import HttpResponse
-from django.utils import six
-
 from functools import reduce
+
+import six
 
 def first(iterable, default = None):
     try:
@@ -23,15 +21,17 @@ def last(iterable, default = None):
 def identity(x):
     return x
 
-def is_iterable(obj, exclude_list = six.string_types + (File, HttpResponse)):
+def is_iterable(obj, exclude_list = six.string_types):
     if isinstance(obj, exclude_list):
         return False
     return hasattr(obj, '__iter__')
 
-def to_iterable(obj):
-    if not is_iterable(obj):
-        return (obj, )
-    return obj
+def iterate(*args):
+    for arg in args:
+        if not is_iterable(arg):
+            yield arg
+        else:
+            yield from arg
 
 def composition(*functions):
 
