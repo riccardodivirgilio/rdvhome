@@ -5,9 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.switches import switches
 from rdvhome.utils.datastructures import data
 
-def status_verbose(mode = None):
-    return mode and "on" or "off"
-
 def api_response(status = 200, **kw):
     return data(
         kw,
