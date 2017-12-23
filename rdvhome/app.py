@@ -3,18 +3,22 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from aiohttp import web
+from aiohttp.client import _RequestContextManager
+from aiohttp.test_utils import make_mocked_request
 
 from functools import partial
 
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
-from rdvhome.utils.json import dumps
+from rdvhome.events import status_stream
 from rdvhome.utils.importutils import module_path
+from rdvhome.utils.json import dumps
 
+import aiohttp
+import asyncio
 import logging
 import sys
 import traceback
-import aiohttp
 
 @web.middleware
 async def server_error(request, handler):
@@ -24,7 +28,7 @@ async def server_error(request, handler):
 
         logging.error(e, exc_info=True)
 
-        if settings.DEBUG:
+        if settings.DEBUG and not request.method == 'WS':
 
             from django.conf import global_settings, settings as django_settings
 
@@ -50,9 +54,10 @@ async def server_error(request, handler):
 
 app = web.Application(middlewares = [server_error])
 
-def url(path, **opts):
+def url(path, name, **opts):
     def inner(func):
-        return app.router.add_route('GET', path, func, **opts)
+        app.router.add_route('GET', path, func, name = name, **opts)
+        app.router.add_route('WS',  path, func, name = '%s_ws' % name, **opts)
     return inner
 
 def JsonResponse(data, status = None, **opts):
@@ -74,14 +79,14 @@ APP = """<!DOCTYPE html>
   </body>
 </html>"""
 
-@url('/')
+@url('/', name = 'home')
 async def view_home(request):
     with open(module_path('rdvhome', 'frontend', 'dist', 'build.js'), 'r') as f:
         return web.Response(
             text = APP % dict(
                 title = 'Home',
                 js    = f.read()
-            ), 
+            ),
             content_type = 'text/html'
         )
 
@@ -107,16 +112,23 @@ async def websocket(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
-    while not ws.closed:
-        msg = await ws.receive()
+    async def ws_send(event):
+        return await ws.send_str(dumps(event))
 
-        if msg.data == 'close':
-            await ws.close()
-        else:
-            ws.send_str(msg.data)
+    await status_stream.subscribe(ws_send)
+
+    async for msg in ws:
+        if msg.type == aiohttp.WSMsgType.TEXT:
+            if msg.data == '/close':
+                await ws.close()
+            else:
+                await app._handle(make_mocked_request('WS', msg.data))
+
+        elif msg.type == aiohttp.WSMsgType.ERROR:
+            print('ws connection closed with exception %s' %ws.exception())
 
     return ws
 
-@url('/{all:.*}')
+@url('/{all:.*}', name = 'not_found')
 async def view_status_list(request):
     return JsonResponse(api_response(status = 404, message = 'PageNotFound'), status = 404)
