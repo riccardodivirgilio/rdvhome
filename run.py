@@ -15,7 +15,7 @@ if __name__ == '__main__':
     )
 
     execute_from_command_line(
-        DEBUG = True,
+        DEBUG    = True,
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
                 philips('b1', 'Camera letto', philips_id = 2, alias = []),
