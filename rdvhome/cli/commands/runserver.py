@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
+from rdvhome.conf import settings
 
 import asyncio
 
@@ -14,9 +15,9 @@ class Command(SimpleCommand):
     def add_arguments(self, parser):
         pass
 
-    def handle(self, port = 8500, debug = True):
+    def handle(self, port = settings.SERVER_PORT, address = settings.SERVER_ADDRESS):
 
-        if debug:
+        if settings.DEBUG:
             import aiohttp_autoreload
             aiohttp_autoreload.start()
 
@@ -24,12 +25,12 @@ class Command(SimpleCommand):
         loop.run_until_complete(
             loop.create_server(
                 app.make_handler(),
-                '0.0.0.0',
+                address,
                 port
             )
         )
 
-        print('Server started at http://0.0.0.0:%s' % port)
+        print('Server started at http://%s:%s' % (address, port))
 
         try:
             loop.run_forever()
