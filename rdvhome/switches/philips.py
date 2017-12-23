@@ -3,8 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import Switch
-import aiohttp
 
+import aiohttp
 
 class PhilipsSwitch(Switch):
 
@@ -32,4 +32,4 @@ class PhilipsSwitch(Switch):
         async with aiohttp.ClientSession() as session:
             async with session.put(self.api_url('/state'), json = {"on": bool(mode)}) as response:
                 r = await response.json()
-                return self.serialize(on = bool(mode)) 
+                return self.serialize(on = bool(mode))

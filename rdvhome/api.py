@@ -17,7 +17,7 @@ def api_response(status = 200, **kw):
 
 async def status_list():
     return api_response(
-        mode     = "status", 
+        mode     = "status",
         switches = await switches.status()
     )
 
