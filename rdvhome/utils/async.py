@@ -16,5 +16,5 @@ async def wait_all(*args):
 
     return done
 
-def syncronous_wait_all(*args):
-    yield from asyncio.get_event_loop().run_until_complete(wait_all(*args))
+def syncronous_wait_all(*args, loop = None):
+    yield from (loop or asyncio.get_event_loop()).run_until_complete(wait_all(*args))
