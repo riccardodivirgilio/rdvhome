@@ -3,12 +3,15 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import OrderedDict
-import asyncio
-import six
+
 from operator import methodcaller
-from rdvhome.utils.functional import first, iterate
+
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
+from rdvhome.utils.functional import first, iterate
+
+import asyncio
+import six
 
 class Switch(object):
 
@@ -58,7 +61,7 @@ class SwitchList(object):
     async def switch(self, *args, **opts):
         return {
             serialized.id: serialized
-            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self) 
+            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self)
         }
 
     def get(self, pk):
