@@ -6,7 +6,7 @@ from aiohttp import web
 
 from functools import partial
 
-from rdvhome.api import api_response, status_detail, status_list, switch
+from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.utils.json import dumps
 from rdvhome.utils.importutils import module_path
@@ -86,11 +86,11 @@ async def view_home(request):
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
-    return JsonResponse(await status_list())
+    return JsonResponse(await status())
 
 @url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
 async def view_status_list(request):
-    return JsonResponse(await status_detail(request.match_info['number']))
+    return JsonResponse(await status(request.match_info['number']))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
 async def view_status_list(request):

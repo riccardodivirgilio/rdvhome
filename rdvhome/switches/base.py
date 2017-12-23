@@ -80,7 +80,9 @@ class SwitchList(object):
             return self.copy(filter(lambda switch: any(f in switch.alias for f in func), self))
         if isinstance(func, Switch):
             return self.copy([func])
-        return self.copy(filter(func, self))
+        if func:
+            return self.copy(filter(func, self))
+        return self
 
     def __bool__(self):
         return bool(self.switches)

@@ -12,13 +12,7 @@ def api_response(status = 200, **kw):
         success = status == 200,
     )
 
-async def status_list():
-    return api_response(
-        mode     = "status",
-        switches = await switches.status()
-    )
-
-async def status_detail(number):
+async def status(number = None):
     objs = switches.filter(number)
     return api_response(
         mode     = "status",
@@ -26,7 +20,7 @@ async def status_detail(number):
         status   = objs and 200 or 404
     )
 
-async def switch(number, mode = None):
+async def switch(number = None, mode = None):
     objs = switches.filter(number)
     return api_response(
         mode     = "status",
