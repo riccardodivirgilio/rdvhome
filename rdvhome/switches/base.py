@@ -15,22 +15,17 @@ import six
 
 class Switch(object):
 
-    def __init__(self, id, name = None, alias = []):
+    def __init__(self, id, name = None, alias = ()):
         self.id = id
         self.name = name
-        self._alias = alias
-
-    def alias(self):
-        yield self.id
-        yield 'all'
-        yield from self._alias
+        self.alias = frozenset(iterate(self.id, alias, 'all'))
 
     def serialize(self, on, **opts):
         return data(
             id     = self.id,
             name   = self.name,
             action = '/switch/%s/%s' % (self.id, on and 'on' or 'off'),
-            alias  = self.alias(),
+            alias  = self.alias,
             on     = on,
             **opts
         )
@@ -74,9 +69,9 @@ class SwitchList(object):
 
     def filter(self, func = None):
         if isinstance(func, six.string_types):
-            return self.copy(filter(lambda switch: func in switch.alias(), self))
+            return self.copy(filter(lambda switch: func in switch.alias, self))
         if isinstance(func, (list, tuple, dict)):
-            return self.copy(filter(lambda switch: any(f in switch.alias() for f in func), self))
+            return self.copy(filter(lambda switch: any(f in switch.alias for f in func), self))
         if isinstance(func, Switch):
             return self.copy([func])
         return self.copy(filter(func, self))
