@@ -15,7 +15,7 @@ def run_rdv_command_line():
         ipaddress = "192.168.1.179",
         **opts
     )
-    
+
     return execute_from_command_line(
         DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
         SWITCHES = {

@@ -2,7 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aioreactive.core import AsyncStream, subscribe, AsyncAnonymousObserver
+from aioreactive.core import AsyncAnonymousObserver, AsyncStream, subscribe
+
 import asyncio
 
 class EventStream(AsyncStream):

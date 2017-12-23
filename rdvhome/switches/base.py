@@ -6,10 +6,10 @@ from collections import OrderedDict
 
 from operator import methodcaller
 
+from rdvhome.events import status_stream
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import first, iterate
-from rdvhome.events import status_stream
 
 import asyncio
 import six
