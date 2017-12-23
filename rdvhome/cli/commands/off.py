@@ -14,5 +14,5 @@ class Command(SimpleCommand):
         parser.add_argument('args', nargs='*')
 
     def handle(self, *args):
-        for r in syncronous_wait_all(switch(args or 'default', mode = False)):
+        for r in syncronous_wait_all(switch(args or 'all', mode = False)):
             print('off:', *sorted(r.switches.keys()))
