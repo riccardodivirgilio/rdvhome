@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-if __name__ == '__main__':
+def run_rdv_command_line(debug = True):
 
     from rdvhome.cli.main import execute_from_command_line
 
@@ -14,8 +14,8 @@ if __name__ == '__main__':
         **opts
     )
 
-    execute_from_command_line(
-        DEBUG    = True,
+    return execute_from_command_line(
+        DEBUG    = debug,
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
                 philips('b1', 'Camera letto', philips_id = 2, alias = []),
@@ -24,3 +24,6 @@ if __name__ == '__main__':
             )
         }
     )
+
+if __name__ == '__main__':
+    run_rdv_command_line()
