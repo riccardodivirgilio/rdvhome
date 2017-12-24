@@ -123,8 +123,10 @@ async def websocket(request):
         if not ws.closed:
             return await ws.send_str(dumps(event))
         print('attempt to write on closed ws')
+        run_all(map(methodcaller('adispose'), tasks))
 
     tasks = await switches.subscribe(ws_send)
+
     try:
         async for msg in ws:
             if msg.type == aiohttp.WSMsgType.TEXT:
