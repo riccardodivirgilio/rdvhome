@@ -24,12 +24,20 @@ class SceneSwitch(Switch):
     async def status(self):
         return self.send(on = self.on)
 
-    async def switch(self, on = False):
+    async def switch(self, on = False, **opts):
         self.on = bool(on)
+
         if self.on:
-            run_all(
-                switches.filter(key).switch(on = True)
-                for key, value in self.colors.items()
+            run_all((
+                switches.filter(key).switch(on = True, color = to_color(color))
+                for key, color in self.colors.items()
+                ),
+                self.delay_off()
             )
 
+        return self.send(on = self.on)
+
+    async def delay_off(self, timeout = 1):
+        await asyncio.sleep(timeout)
+        self.on = False
         return self.send(on = self.on)

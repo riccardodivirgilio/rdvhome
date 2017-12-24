@@ -3,7 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import Switch
-from rdvhome.utils.colors import hsb_to_hsl
+from rdvhome.utils.colors import hsb_to_hsl, to_color, hsb_to_color, hsl_to_hsb
+from rdvhome.utils.decorators import decorate, to_data
 
 import aiohttp
 
@@ -29,16 +30,34 @@ class PhilipsSwitch(Switch):
                 r = await response.json()
                 return self.send(
                     on = r['state']['on'],
-                    color = hsb_to_hsl(
+                    color = hsb_to_color(
                         float(r['state']['hue']) / 65534,
                         float(r['state']['sat']) / 254,
-                        float(r['state']['bri']) / 254
+                        float(r['state']['bri']) / 254,
                     ),
-                    brightness = float(r['state']['bri']) / 254
+                    brightness = float(r['state']['bri']) / 254,
                 )
 
-    async def switch(self, on = False):
+    @to_data
+    def _parse_command(self, on = None, color = None):
+
+        if on is not None:
+            yield 'on', bool(on)
+
+        if color is not None:
+
+            color   = to_color(color)
+            h, s, b = hsl_to_hsb(color.hue, color.saturation, color.luminance)
+
+            yield 'hue', int(h * 65535)
+            yield 'sat', int(s * 255)
+            yield 'bri', int(b * 255)
+
+    async def switch(self, on = None, color = None):
+
+        payload = self._parse_command(on, color)
+
         async with aiohttp.ClientSession() as session:
-            async with session.put(self.api_url('/state'), json = {"on": bool(on)}) as response:
+            async with session.put(self.api_url('/state'), json = payload) as response:
                 r = await response.json()
-                return self.send(on = bool(on))
+                return self.send(on = bool(on), color = to_color(color))

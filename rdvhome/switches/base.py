@@ -16,6 +16,7 @@ from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import decorate, to_data
 from rdvhome.utils.functional import first, iterate
+from rdvhome.utils.colors import to_color
 
 import asyncio
 import six
@@ -34,7 +35,7 @@ class Switch(EventStream):
         super(Switch, self).__init__()
 
     @to_data
-    def _send(self, on = None, **opts):
+    def _send(self, on = None, color = None, **opts):
         yield 'id',         self.id
         yield 'name',       self.name
         yield 'kind',       self.kind
@@ -47,16 +48,19 @@ class Switch(EventStream):
             yield 'off',    not bool(on)
             yield 'action', '/switch/%s/%s' % (self.id, on and 'off' or 'on')
 
+        if color is not None:
+            yield 'color', to_color(color)
+
         for key, value in opts.items():
             yield key, value
 
     def send(self, **opts):
         return super(Switch, self).send(self._send(**opts))
 
-    async def switch(self, on = None):
+    async def switch(self, *args, **opts):
         raise NotImplementedError
 
-    async def status(self):
+    async def status(self, *args, **opts):
         raise NotImplementedError
 
     def __repr__(self):

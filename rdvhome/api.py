@@ -20,10 +20,10 @@ async def status(number = None):
         status   = objs and 200 or 404
     )
 
-async def switch(number = None, on = None):
+async def switch(number = None, on = None, color = None):
     objs = switches.filter(number)
     return api_response(
         mode     = "status",
-        switches = await objs.switch(on = on),
+        switches = await objs.switch(on = on, color = color),
         status   = objs and 200 or 404
     )
