@@ -13,8 +13,13 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a v-for="item in switches" class="list-item" v-bind:style="{order: item.ordering}" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action">
+          <a v-for="item in switches" class="list-item" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action">
             {{ item.name }}
+
+            <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
+              
+            </div>
+
           </a>
         </div>
       </template>
@@ -44,7 +49,14 @@ export default {
   },
   methods: {
     updateSwitch: function (data) {
-      this.switches[data.id] = data;
+
+      if (! this.switches[data.id]) {
+        this.switches[data.id] = data;
+      } else {
+        this.switches[data.id] = Object.assign(this.switches[data.id], data)
+      }
+
+      
       this.$forceUpdate();
     },
     open: function (url) {
@@ -147,13 +159,18 @@ a {
   padding:15px;
   border-bottom:1px solid #ddd;
   color:black;
+  position:relative;
 }
-.list-item.on {
-  border-right:5px solid lime;
+.list-item .on,
+.list-item .off {
+  position:absolute;
+  right: 0px;
+  top:0px;
+  height: 100%;
+  width: 7px;
+  border-left: 1px solid #ddd;
 }
-.list-item.off {
-  border-right:5px solid #ddd;
-}
+
 .panel {
     width:400px;
 }
