@@ -113,21 +113,24 @@ async def websocket(request):
     await ws.prepare(request)
 
     async def ws_send(event):
-        return await ws.send_str(dumps(event))
+        if not ws.closed:
+            return await ws.send_str(dumps(event))
+        print('attempt to write on closed ws')
 
-    await status_stream.subscribe(ws_send)
+    async with status_stream.subscribe(ws_send):
+        try:
+            async for msg in ws:
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    if msg.data == '/close':
+                        await ws.close()
+                    else:
+                        await app._handle(make_mocked_request('WS', msg.data))
 
-    async for msg in ws:
-        if msg.type == aiohttp.WSMsgType.TEXT:
-            if msg.data == '/close':
-                await ws.close()
-            else:
-                await app._handle(make_mocked_request('WS', msg.data))
-
-        elif msg.type == aiohttp.WSMsgType.ERROR:
-            print('ws connection closed with exception %s' %ws.exception())
-
-    return ws
+                elif msg.type == aiohttp.WSMsgType.ERROR:
+                    print('ws connection closed with exception %s' %ws.exception())
+        except asyncio.CancelledError:
+            ws.close()
+        return ws
 
 @url('/{all:.*}', name = 'not_found')
 async def view_status_list(request):
