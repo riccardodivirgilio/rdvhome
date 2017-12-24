@@ -2,10 +2,14 @@
   <div class="container">
     <div class="panel">
       <h1>&#127968; RdV</h1>
-
-
-      <template v-if="switches.length == 0">
+      <template v-if="switches.length == 0 || ! connected">
         <loading></loading>
+        <small v-if="reconnect < reconnect_limit">
+          Connection in progress {{ reconnect }}... 
+        </small>
+        <small v-else>
+          Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
+        </small>
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
@@ -32,7 +36,10 @@ export default {
   },
   data: function() {
     return {
-      switches: {}
+      switches: {},
+      reconnect: 0,
+      connected: false,
+      reconnect_limit: 4
     }
   },
   methods: {
@@ -44,35 +51,56 @@ export default {
       if (url) {
         this.ws.send(url)
       }
+    },
+    connect: function(force) {
+
+      if (force) {
+        this.reconnect = 1
+      } else {
+        this.reconnect += 1;
+      }
+
+      this.connected = false;
+      this.ws        = null;
+
+      console.log("Attempting to connect to ws number " + this.reconnect)
+
+      if (this.reconnect < 4) {
+        this.ws = new WebSocket('ws://localhost:8500/websocket');
+
+        this.ws.onerror = () => {
+            console.log('Connection Error');
+
+            setTimeout(() => {this.connect()}, 1000);
+
+        };
+
+        this.ws.onopen = () => {
+            console.log('WebSocket Client Connected');
+            this.reconnect = 0;
+            this.connected = true;
+            this.ws.send('/switch');
+        };
+
+        this.ws.onclose = () => {
+            console.log('WebSocket Client Disconnected');
+            this.connected = false;
+
+            setTimeout(() => {this.connect()}, 1000);
+
+        };
+
+        this.ws.onmessage = (e) => {
+            if (typeof e.data === 'string') {
+                this.updateSwitch(JSON.parse(e.data))
+            }
+        };
+      }
     }
   },
 
   created: function() {
-
-    var commit = this.updateSwitch
-    var client = new WebSocket('ws://localhost:8500/websocket');
-
-    client.onerror = function() {
-        console.log('Connection Error');
-    };
-
-    client.onopen = function() {
-        console.log('WebSocket Client Connected');
-        client.send('/switch');
-    };
-
-    client.onclose = function() {
-        console.log('echo-protocol Client Closed');
-    };
-
-    client.onmessage = function(e) {
-        if (typeof e.data === 'string') {
-            commit(JSON.parse(e.data))
-        }
-    };
-
-    this.ws = client;
-
+    this.connect()
   }
 }
 </script>
