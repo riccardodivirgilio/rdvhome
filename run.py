@@ -20,21 +20,24 @@ def run_rdv_command_line():
         DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
-                philips('br', 'Camera letto', ordering = 10, icon = "🛏", philips_id = 2, alias = []),
                 philips('lm', 'Salone',       ordering =  1, icon = "🛋", philips_id = 1, alias = ['default']),
                 philips('lb', 'Salone Big',   ordering =  2, icon = "🛋", philips_id = 3, alias = ['default']),
+                philips('br', 'Camera letto', ordering = 10, icon = "🛏", philips_id = 2, alias = []),
             ),
-            'rdvhome.switches.scene.SceneSwitch': (
-                dict(id = 'usa', name = "USA", ordering = 20, icon = "🇺🇸", directives = {
+            'rdvhome.switches.scenes.SceneSwitch': (
+                dict(id = 'usa', name = "USA",    ordering  = 30, icon = "🇺🇸", directives = {
                     'lm': {'color': 'red',  'on': True},
                     'lb': {'color': 'blue', 'on': True},
                     'br': {'color': 'white'},
                 }),
-                dict(id = 'artic', name = "Artic", ordering = 21, icon = "⛄", directives = {
+                dict(id = 'artic', name = "Artic", ordering = 31, icon = "⛄", directives = {
                     'lm': {'color': 'lime'},
                     'lb': {'color': 'lime'},
                     'br': {'color': 'lime'},
                 }),
+            ),
+            'rdvhome.switches.loops.LoopSwitch': (
+                dict(id = 'disco', name = "Disco", ordering = 40, icon = "🌐", filter = 'default'),
             )
         }
     )
