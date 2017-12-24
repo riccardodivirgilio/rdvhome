@@ -10,6 +10,7 @@ from rdvhome.events import status_stream
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import first, iterate
+from rdvhome.utils.decorators import decorate
 
 import asyncio
 import six
@@ -22,22 +23,21 @@ class Switch(object):
         self.alias = frozenset(iterate(self.id, alias, 'all'))
         self.ordering = ordering
 
-    def send(self, on, **opts):
+    @decorate(data, status_stream.send)
+    def send(self, on = None, **opts):
 
-        event = data(
-            id     = self.id,
-            name   = self.name,
-            action = '/switch/%s/%s' % (self.id, on and 'off' or 'on'),
-            alias  = self.alias,
-            on     = bool(on),
-            off    = not bool(on),
-            ordering = self.ordering,
-            **opts
-        )
+        yield 'id',         self.id
+        yield 'name',       self.name
+        yield 'alias',      self.alias
+        yield 'ordering',   self.ordering
 
-        status_stream.send(event)
+        if on is not None:
+            yield 'on',     bool(on)
+            yield 'off',    not bool(on)
+            yield 'action', '/switch/%s/%s' % (self.id, on and 'off' or 'on')
 
-        return event
+        for key, value in opts.items():
+            yield key, value
 
     async def switch(self, mode = None):
         raise NotImplementedError
