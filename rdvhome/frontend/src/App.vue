@@ -14,7 +14,7 @@
       <template v-else>
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" :key="item.id" v-bind:style="{order: item.ordering}">
-            {{ item.name }}
+            {{ item.icon }} {{ item.name }}
             <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
             </div>
             <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
