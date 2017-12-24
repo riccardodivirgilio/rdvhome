@@ -2,18 +2,17 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.switches.base import Switch
 from rdvhome.utils.async import run_all, wait_all
-from rdvhome.utils.colors import to_color, random_color
+from rdvhome.utils.colors import random_color, to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import is_iterable
-from rdvhome.conf import settings
-
-import random
 
 import asyncio
 import math
+import random
 
 class ControlSwitch(Switch):
 
@@ -81,7 +80,7 @@ class ControlSwitch(Switch):
                 )
                 t += 1
 
-    async def delay_off(self, timeout = 1):
+    async def delay_off(self, timeout = 0.5):
         await asyncio.sleep(timeout)
         return await self.switch(on = False)
 
