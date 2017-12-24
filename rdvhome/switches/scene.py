@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function, unicode_literals
-from rdvhome.switches.base import Switch
-from rdvhome.utils.datastructures import data
-from rdvhome.utils.colors import to_color
+
 from rdvhome.switches import switches
+from rdvhome.switches.base import Switch
 from rdvhome.utils.async import run_all
+from rdvhome.utils.colors import to_color
+from rdvhome.utils.datastructures import data
+
 import asyncio
 
 class SceneSwitch(Switch):

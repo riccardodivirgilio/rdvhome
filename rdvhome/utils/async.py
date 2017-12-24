@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from operator import methodcaller
 
-from rdvhome.utils.functional import iterate, first
+from rdvhome.utils.functional import first, iterate
 
 import asyncio
 

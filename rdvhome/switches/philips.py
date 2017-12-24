@@ -7,7 +7,6 @@ from rdvhome.utils.colors import hsb_to_hsl
 
 import aiohttp
 
-
 class PhilipsSwitch(Switch):
 
     def __init__(self, id, philips_id, ipaddress, username, **opts):

@@ -2,20 +2,25 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from aioreactive.operators.concat import concat
+from aioreactive.operators.merge import merge
+
 from collections import OrderedDict
 
-from operator import methodcaller
+from functools import reduce
 
-from rdvhome.events import status_stream
+from operator import attrgetter, methodcaller
+
+from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import decorate
+from rdvhome.utils.decorators import decorate, to_data
 from rdvhome.utils.functional import first, iterate
 
 import asyncio
 import six
 
-class Switch(object):
+class Switch(EventStream):
 
     kind = 'switch'
 
@@ -26,9 +31,10 @@ class Switch(object):
         self.ordering = ordering
         self.icon = icon
 
-    @decorate(data, status_stream.send)
-    def send(self, on = None, **opts):
+        super(Switch, self).__init__()
 
+    @to_data
+    def _send(self, on = None, **opts):
         yield 'id',         self.id
         yield 'name',       self.name
         yield 'kind',       self.kind
@@ -44,6 +50,9 @@ class Switch(object):
         for key, value in opts.items():
             yield key, value
 
+    def send(self, **opts):
+        return super(Switch, self).send(self._send(**opts))
+
     async def switch(self, on = None):
         raise NotImplementedError
 
@@ -57,6 +66,12 @@ class SwitchList(object):
 
     def __init__(self, switches):
         self.switches = switches
+
+    async def subscribe(self, func):
+        return await wait_all(
+            switch.subscribe(func)
+            for switch in self
+        )
 
     def get_switches(self):
 

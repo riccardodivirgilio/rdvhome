@@ -5,7 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
-from rdvhome.events import status_stream
+from rdvhome.switches import switches
+from rdvhome.switches.events import EventStream, subscribe
+from rdvhome.utils.async import run_all
 
 import asyncio
 
@@ -36,7 +38,7 @@ class Command(SimpleCommand):
         )
 
         loop.run_until_complete(
-            status_stream.subscribe(log)
+            switches.subscribe(log)
         )
 
         print('Server started at http://%s:%s' % (address, port))

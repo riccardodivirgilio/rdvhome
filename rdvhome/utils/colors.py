@@ -6,12 +6,10 @@ from colour import Color
 
 import math
 
-
 def to_color(spec):
     if isinstance(spec, Color):
         return spec
     return Color(spec)
-
 
 def hsb_to_hsl(h, s, b):
     l = 0.5 * b  * (2 - s)

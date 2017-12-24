@@ -8,9 +8,12 @@ from aiohttp.test_utils import make_mocked_request
 
 from functools import partial
 
+from operator import methodcaller
+
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
-from rdvhome.events import status_stream
+from rdvhome.switches import switches
+from rdvhome.utils.async import run_all
 from rdvhome.utils.importutils import module_path
 from rdvhome.utils.json import dumps
 
@@ -117,20 +120,25 @@ async def websocket(request):
             return await ws.send_str(dumps(event))
         print('attempt to write on closed ws')
 
-    async with status_stream.subscribe(ws_send):
-        try:
-            async for msg in ws:
-                if msg.type == aiohttp.WSMsgType.TEXT:
-                    if msg.data == '/close':
-                        await ws.close()
-                    else:
-                        await app._handle(make_mocked_request('WS', msg.data))
+    tasks = await switches.subscribe(ws_send)
+    try:
+        async for msg in ws:
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                if msg.data == '/close':
+                    await ws.close()
+                else:
+                    await app._handle(make_mocked_request('WS', msg.data))
 
-                elif msg.type == aiohttp.WSMsgType.ERROR:
-                    print('ws connection closed with exception %s' %ws.exception())
-        except asyncio.CancelledError:
-            ws.close()
-        return ws
+            elif msg.type == aiohttp.WSMsgType.ERROR:
+                print('ws connection closed with exception %s' %ws.exception())
+    except asyncio.CancelledError:
+
+        run_all(
+            ws.close(),
+            map(methodcaller('adispose'), tasks),
+        )
+
+    return ws
 
 @url('/{all:.*}', name = 'not_found')
 async def view_status_list(request):
