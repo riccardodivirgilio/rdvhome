@@ -8,6 +8,8 @@ from rdvhome.utils.async import run_all, wait_all
 from rdvhome.utils.colors import to_color, random_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import is_iterable
+from rdvhome.conf import settings
+
 import random
 
 import asyncio
@@ -20,11 +22,11 @@ class ControlSwitch(Switch):
 
     def __init__(self, id, on = False, automatic_on = False, automatic_off = True, filter = Switch.kind, colors = lambda switch, i: random_color(), timeout = None, **opts):
 
-        self.on           = on
-        self.filter       = filter
-        self.colors       = colors
-        self.timeout      = timeout
-        self.automatic_on = automatic_on
+        self.on            = on
+        self.filter        = filter
+        self.colors        = colors
+        self.timeout       = timeout
+        self.automatic_on  = automatic_on
         self.automatic_off = automatic_off
 
         self._future_when_on  = None
@@ -47,7 +49,7 @@ class ControlSwitch(Switch):
         self.on = bool(on)
 
         await wait_all(
-            self.on and self.automatic_on  and switches.filter(self.filter).switch(on = True) or (),
+            self.on and self.automatic_on  and switches.filter(self.automatic_on is True and self.filter or self.automatic_on).switch(on = True) or (),
             self.on and self.automatic_off and switches.filter(
                 lambda s: s.kind == self.kind and not s.id == self.id
             ).switch(on = False) or ()
@@ -71,8 +73,12 @@ class ControlSwitch(Switch):
         t = 0
         if self.timeout:
             while self.on:
-                await switch.switch(color = to_color(self.assign_color(switch, i + t)))
-                await asyncio.sleep(self.assign_timeout(switch, i + t))
+                await switch.switch(
+                    color = to_color(self.assign_color(switch, i + t)),
+                )
+                await asyncio.sleep(
+                    self.assign_timeout(switch, i + t)
+                )
                 t += 1
 
     async def delay_off(self, timeout = 1):
