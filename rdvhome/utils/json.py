@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.utils.datastructures import data
+from colour import Color
 
 import datetime
 import decimal
@@ -12,6 +13,10 @@ import types
 class JSONEncoder(json.JSONEncoder):
 
     def default(self, obj):
+        if isinstance(obj, Color):
+            return obj.hex_l
+            return 'hsl(%i, %i%%, %i%%)' % (obj.hue * 360, obj.saturation * 100, obj.luminance * 100)
+
         if isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
         elif isinstance(obj, decimal.Decimal):
