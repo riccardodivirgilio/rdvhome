@@ -80,22 +80,25 @@ export default {
       if (this.reconnect < 4) {
         this.ws = new WebSocket('ws://localhost:8500/websocket');
 
-        this.ws.onerror = () => {
+        this.ws.onerror = (e) => {
             console.log('Connection Error');
+            console.log(e)
 
             setTimeout(() => {this.connect()}, 1000);
 
         };
 
-        this.ws.onopen = () => {
+        this.ws.onopen = (e) => {
             console.log('WebSocket Client Connected');
+            console.log(e)
             this.reconnect = 0;
             this.connected = true;
             this.ws.send('/switch');
         };
 
-        this.ws.onclose = () => {
+        this.ws.onclose = (e) => {
             console.log('WebSocket Client Disconnected');
+            console.log(e)
             this.connected = false;
 
             setTimeout(() => {this.connect()}, 1000);
