@@ -98,6 +98,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true
     }),
-    new MinifyPlugin()
+    new MinifyPlugin({}, {comments:false})
   ])
 }
