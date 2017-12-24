@@ -13,10 +13,11 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a v-for="item in switches" class="list-item" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action" v-bind:style="{order: item.ordering}">
+          <a v-for="item in switches" class="list-item" :key="item.id" v-bind:style="{order: item.ordering}">
             {{ item.name }}
             <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
             </div>
+            <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
           </a>
         </div>
       </template>
@@ -30,11 +31,13 @@
 <script>
 
 import loading from './components/loading';
+import toggle  from './components/toggle';
 
 export default {
   name: 'app',
   components: {
-    loading
+    loading,
+    toggle
   },
   data: function() {
     return {
@@ -203,6 +206,12 @@ footer {
 .off {
   animation: off 0.3s ease-out;
   animation-iteration-count: 1;
+}
+
+.list-item .toggle {
+  position: absolute;
+  right: 18px;
+  top: calc(50% - 13px);
 }
 
 @keyframes off {
