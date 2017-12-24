@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from colour import Color
 
 import math
+import random
 
 def to_color(spec):
     if isinstance(spec, Color):
@@ -31,4 +32,11 @@ def hsb_to_color(h, s, b):
         hue        = h,
         saturation = s,
         luminance  = l,
+    )
+
+def random_color():
+    return Color(
+        red   = random.random(),
+        green = random.random(),
+        blue  = random.random(),
     )

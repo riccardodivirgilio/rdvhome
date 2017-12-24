@@ -12,7 +12,7 @@ from rdvhome.utils.async import run_all
 import asyncio
 
 async def log(event):
-    print(event.id, event.get('on', None) and 'on' or 'off')
+    print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None))
 
 class Command(SimpleCommand):
 

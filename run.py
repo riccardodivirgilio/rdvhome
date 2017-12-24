@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.main import execute_from_command_line
 
 import uuid
+import random
 
 def run_rdv_command_line():
 
@@ -24,20 +25,11 @@ def run_rdv_command_line():
                 philips('lb', 'Salone Big',   ordering =  2, icon = "🛋", philips_id = 3, alias = ['default']),
                 philips('br', 'Camera letto', ordering = 10, icon = "🛏", philips_id = 2, alias = []),
             ),
-            'rdvhome.switches.scenes.SceneSwitch': (
-                dict(id = 'usa', name = "USA",    ordering  = 30, icon = "🇺🇸", directives = {
-                    'lm': {'color': 'red',  'on': True},
-                    'lb': {'color': 'blue', 'on': True},
-                    'br': {'color': 'white'},
-                }),
-                dict(id = 'artic', name = "Artic", ordering = 31, icon = "⛄", directives = {
-                    'lm': {'color': 'lime'},
-                    'lb': {'color': 'lime'},
-                    'br': {'color': 'lime'},
-                }),
-            ),
-            'rdvhome.switches.loops.LoopSwitch': (
-                dict(id = 'disco', name = "Disco", ordering = 40, icon = "🌐", filter = 'default'),
+            'rdvhome.switches.controls.ControlSwitch': (
+                dict(id = 'usa',      name = "USA",    ordering = 30, icon = "🇺🇸", colors = ['red', 'white', 'blue'], timeout = 1),
+                dict(id = 'artic',    name = "Artic",  ordering = 31, icon = "⛄",   colors = ['#bcf5ff', '#b2ffc5', '#87ffc7']),
+                dict(id = 'random',   name = "Random", ordering = 32, icon = "🌐"),
+                dict(id = 'disco',    name = "Disco",  ordering = 33, icon = "🌐", timeout = lambda switch, i: random.random() * 0.8 + 0.4),
             )
         }
     )
