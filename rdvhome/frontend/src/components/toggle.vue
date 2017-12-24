@@ -33,6 +33,7 @@ export default {
   display: inline-block;
   width: 50px;
   height: 26px;
+  transition: .4s;
 }
 
 .toggle input {display:none;}

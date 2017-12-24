@@ -169,6 +169,7 @@ a {
   height: 100%;
   width: 7px;
   border-left: 1px solid #ddd;
+  transition: .4s;
 }
 
 .panel {
