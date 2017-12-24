@@ -8,6 +8,7 @@ from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import run_all
+from rdvhome.utils.process import system_open
 
 import asyncio
 
@@ -40,6 +41,8 @@ class Command(SimpleCommand):
         loop.run_until_complete(
             switches.subscribe(log)
         )
+
+        system_open('http://%s:%s' % (address, port))
 
         print('Server started at http://%s:%s' % (address, port))
 
