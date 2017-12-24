@@ -3,13 +3,13 @@
     <div class="panel">
       <h1>&#127968; RdV</h1>
       <template v-if="switches.length == 0 || ! connected">
-        <loading></loading>
-        <small v-if="reconnect < reconnect_limit">
-          Connection in progress {{ reconnect }}... 
-        </small>
-        <small v-else>
+        <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
+        <div class="connection" v-if="reconnect < reconnect_limit">
+          Connection in progress... 
+        </div>
+        <div class="connection" v-else>
           Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
-        </small>
+        </div>
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
@@ -119,10 +119,15 @@ h1 {
   padding: 0 15px;
   font-weight: 200;
   color: gray;
+  text-align: center
 }
 a {
   text-decoration: none;
   color: red;
+}
+.connection {
+  font-size: 0.8em;
+  text-align: center
 }
 .container {
   display: flex;
@@ -154,10 +159,11 @@ a {
 }
 
 footer {
-  margin: 30px 15px;
+  margin-top: 30px;
   font-size:0.8em;
-  color:#ddd;
+  color:#ccc;
   width:100%;
+  text-align: center;
 }
 
 @media only screen and (max-width: 400px)  {

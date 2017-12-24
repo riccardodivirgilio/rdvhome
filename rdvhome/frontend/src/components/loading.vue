@@ -30,10 +30,15 @@ export default {
 .sk-cube-grid .sk-cube {
   width: 33%;
   height: 33%;
-  background-color: red;
+  background-color: #bbb;
   float: left;
   animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
 }
+
+.sk-cube-grid.active .sk-cube {
+  background-color: red;
+}
+
 .sk-cube-grid .sk-cube1 { animation-delay: 0.2s; }
 .sk-cube-grid .sk-cube2 { animation-delay: 0.3s; }
 .sk-cube-grid .sk-cube3 { animation-delay: 0.4s; }
