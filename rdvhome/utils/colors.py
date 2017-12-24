@@ -36,7 +36,7 @@ def hsb_to_color(h, s, b):
 
 def random_color():
     return Color(
-        red   = random.random(),
-        green = random.random(),
-        blue  = random.random(),
+        hue        = random.random(),
+        saturation = 1,
+        luminance  = 0.5 + random.random() * 0.3,
     )
