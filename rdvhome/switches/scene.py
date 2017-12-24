@@ -11,26 +11,25 @@ from rdvhome.utils.datastructures import data
 import asyncio
 
 class SceneSwitch(Switch):
-    kind = 'scene'
 
-    def __init__(self, id, on = False, colors = None, **opts):
+    kind = 'scene'
+    default_aliases = []
+
+    def __init__(self, id, on = False, directives = None, **opts):
         self.on = on
-        self.colors = data(
-            (alias, to_color(color))
-            for alias, color in colors.items()
-        )
+        self.directives = data(directives or {})
         super(SceneSwitch, self).__init__(id = id, **opts)
 
     async def status(self):
         return self.send(on = self.on)
 
-    async def switch(self, on = False, **opts):
+    async def switch(self, on = None, **opts):
         self.on = bool(on)
 
         if self.on:
             run_all((
-                switches.filter(key).switch(on = True, color = to_color(color))
-                for key, color in self.colors.items()
+                switches.filter(key).switch(**opts)
+                for key, opts in self.directives.items()
                 ),
                 self.delay_off()
             )

@@ -14,8 +14,11 @@ def to_color(spec):
 
 def hsb_to_hsl(h, s, b):
     l = 0.5 * b  * (2 - s)
-    s = b * s / (1 - math.fabs(2*l-1))
-    return h, s, l
+    try:
+        s = b * s / (1 - math.fabs(2*l-1))
+        return h, s, l
+    except ZeroDivisionError:
+        return h, 1, l
 
 def hsl_to_hsb(h, s, l):
     b = (2*l + s*(1-math.fabs(2*l-1)))/2

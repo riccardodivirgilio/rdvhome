@@ -13,10 +13,10 @@ from operator import attrgetter, methodcaller
 
 from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import wait_all
+from rdvhome.utils.colors import to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import decorate, to_data
 from rdvhome.utils.functional import first, iterate
-from rdvhome.utils.colors import to_color
 
 import asyncio
 import six
@@ -24,11 +24,12 @@ import six
 class Switch(EventStream):
 
     kind = 'switch'
+    default_aliases = ['all']
 
     def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
         self.name = name
-        self.alias = frozenset(iterate(self.id, alias, 'all'))
+        self.alias = frozenset(iterate(self.id, alias, self.default_aliases))
         self.ordering = ordering
         self.icon = icon
 

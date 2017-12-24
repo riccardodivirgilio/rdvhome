@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import Switch
-from rdvhome.utils.colors import hsb_to_hsl, to_color, hsb_to_color, hsl_to_hsb
+from rdvhome.utils.colors import hsb_to_color, hsb_to_hsl, hsl_to_hsb, to_color
 from rdvhome.utils.decorators import decorate, to_data
 
 import aiohttp
@@ -60,4 +60,4 @@ class PhilipsSwitch(Switch):
         async with aiohttp.ClientSession() as session:
             async with session.put(self.api_url('/state'), json = payload) as response:
                 r = await response.json()
-                return self.send(on = bool(on), color = to_color(color))
+                return self.send(on = on, color = color)
