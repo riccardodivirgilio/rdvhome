@@ -16,10 +16,11 @@ import six
 
 class Switch(object):
 
-    def __init__(self, id, name = None, alias = ()):
+    def __init__(self, id, name = None, alias = (), ordering = None):
         self.id = id
         self.name = name
         self.alias = frozenset(iterate(self.id, alias, 'all'))
+        self.ordering = ordering
 
     def send(self, on, **opts):
 
@@ -30,6 +31,7 @@ class Switch(object):
             alias  = self.alias,
             on     = bool(on),
             off    = not bool(on),
+            ordering = self.ordering,
             **opts
         )
 

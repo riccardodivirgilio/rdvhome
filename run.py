@@ -20,9 +20,9 @@ def run_rdv_command_line():
         DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
-                philips('b1', 'Camera letto', philips_id = 2, alias = []),
-                philips('l1', 'Salone 1',     philips_id = 1, alias = ['default']),
-                philips('l2', 'Salone 2',     philips_id = 3, alias = ['default']),
+                philips('b1', 'Camera letto', ordering = 10, philips_id = 2, alias = []),
+                philips('l1', 'Salone 1',     ordering =  1, philips_id = 1, alias = ['default']),
+                philips('l2', 'Salone 2',     ordering =  2, philips_id = 3, alias = ['default']),
             )
         }
     )

@@ -13,7 +13,7 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action">
+          <a v-for="item in switches" class="list-item" v-bind:style="{order: item.ordering}" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-on:click.stop.prevent="open(item.action)" v-bind:href="item.action">
             {{ item.name }}
           </a>
         </div>
