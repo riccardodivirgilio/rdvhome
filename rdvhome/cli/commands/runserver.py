@@ -10,7 +10,7 @@ from rdvhome.events import status_stream
 import asyncio
 
 async def log(event):
-    print(event.id, event.on and 'on' or 'off')
+    print(event.id, event.get('on', None) and 'on' or 'off')
 
 class Command(SimpleCommand):
 
