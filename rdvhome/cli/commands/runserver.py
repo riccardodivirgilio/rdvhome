@@ -9,6 +9,7 @@ from rdvhome.switches import switches
 from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
+from aiohttp import web
 
 import asyncio
 
@@ -28,25 +29,9 @@ class Command(SimpleCommand):
             import aiohttp_autoreload
             aiohttp_autoreload.start()
 
-        loop = asyncio.get_event_loop()
-
-        loop.run_until_complete(
-            loop.create_server(
-                app.make_handler(),
-                address,
-                port
-            )
-        )
-
-        loop.run_until_complete(
-            switches.subscribe(log)
-        )
+        run_all(switches.subscribe(log))
 
         system_open('http://%s:%s' % (address, port))
 
-        print('Server started at http://%s:%s' % (address, port))
-
-        try:
-            loop.run_forever()
-        except KeyboardInterrupt:
-            pass
+        web.run_app(app, port=port)
+        
