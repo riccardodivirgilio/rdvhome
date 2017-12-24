@@ -92,19 +92,19 @@ async def view_home(request):
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
-    return JsonResponse(await status())
+    return JsonResponse(await status(**request.match_info))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
 async def view_status_list(request):
-    return JsonResponse(await status(request.match_info['number']))
+    return JsonResponse(await status(**request.match_info))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
 async def view_status_list(request):
-    return JsonResponse(await switch(request.match_info['number'], mode = True))
+    return JsonResponse(await switch(**request.match_info, mode = True))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
 async def view_status_list(request):
-    return JsonResponse(await switch(request.match_info['number'], mode = False))
+    return JsonResponse(await switch(**request.match_info, mode = False))
 
 @url('/websocket', name = "websocket")
 async def websocket(request):
