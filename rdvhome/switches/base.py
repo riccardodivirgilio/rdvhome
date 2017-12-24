@@ -29,6 +29,7 @@ class Switch(object):
             action = '/switch/%s/%s' % (self.id, on and 'off' or 'on'),
             alias  = self.alias,
             on     = on,
+            off    = not on,
             **opts
         )
 
