@@ -21,8 +21,8 @@ def run_rdv_command_line():
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
                 philips('b1', 'Camera letto', ordering = 10, philips_id = 2, alias = []),
-                philips('l1', 'Salone',       ordering =  1, philips_id = 1, alias = ['default']),
-                philips('l2', 'Salone Big',   ordering =  2, philips_id = 3, alias = ['default']),
+                philips('lm', 'Salone',       ordering =  1, philips_id = 1, alias = ['default']),
+                philips('lb', 'Salone Big',   ordering =  2, philips_id = 3, alias = ['default']),
             )
         }
     )
