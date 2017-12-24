@@ -4,8 +4,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.main import execute_from_command_line
 
-import uuid
 import random
+import uuid
 
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
@@ -24,9 +24,9 @@ def run_rdv_command_line():
         DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
-                philips('lm', 'Salone',       ordering =  1, icon = "🛋", philips_id = 1, alias = ['default']),
-                philips('lb', 'Salone Big',   ordering =  2, icon = "🛋", philips_id = 3, alias = ['default']),
-                philips('br', 'Camera letto', ordering = 10, icon = "🛏", philips_id = 2, alias = []),
+                philips('lm', 'Salone', ordering =  1, icon = "🛋", philips_id = 1, alias = ['default']),
+                philips('tv', 'TV',     ordering =  2, icon = "📺", philips_id = 3, alias = ['default']),
+                philips('br', 'Letto',  ordering = 10, icon = "🛏", philips_id = 2, alias = []),
             ),
             'rdvhome.switches.controls.ControlSwitch': (
                 dict(id = 'usa',      name = "USA",    ordering = 30, icon = "🇺🇸", colors = ['red', 'white', 'blue'], timeout = 3, automatic_on = 'default'),
