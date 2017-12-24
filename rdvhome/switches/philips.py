@@ -2,8 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import Switch
 from colour import Color
+
+from rdvhome.switches.base import Switch
 
 import aiohttp
 import math
@@ -12,9 +13,9 @@ def hsb_to_hsl(h, s, b):
     l = 0.5 * b  * (2 - s)
     s = b * s / (1 - math.fabs(2*l-1))
     return Color(
-        hue        = h, 
-        saturation = s,  
-        luminance  = l, 
+        hue        = h,
+        saturation = s,
+        luminance  = l,
     )
 
 class PhilipsSwitch(Switch):
@@ -38,7 +39,7 @@ class PhilipsSwitch(Switch):
             async with session.get(self.api_url()) as response:
                 r = await response.json()
                 return self.send(
-                    on = r['state']['on'], 
+                    on = r['state']['on'],
                     color = hsb_to_hsl(
                         float(r['state']['hue']) / 65534,
                         float(r['state']['sat']) / 254,

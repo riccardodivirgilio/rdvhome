@@ -2,7 +2,6 @@ var path = require('path')
 var webpack = require('webpack')
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 
-
 module.exports = {
   entry: './src/main.js',
   output: {

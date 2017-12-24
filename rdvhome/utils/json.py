@@ -2,8 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.utils.datastructures import data
 from colour import Color
+
+from rdvhome.utils.datastructures import data
 
 import datetime
 import decimal

@@ -9,8 +9,8 @@ from operator import methodcaller
 from rdvhome.events import status_stream
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.datastructures import data
-from rdvhome.utils.functional import first, iterate
 from rdvhome.utils.decorators import decorate
+from rdvhome.utils.functional import first, iterate
 
 import asyncio
 import six
