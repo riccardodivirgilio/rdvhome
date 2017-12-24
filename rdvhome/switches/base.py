@@ -17,17 +17,22 @@ import six
 
 class Switch(object):
 
-    def __init__(self, id, name = None, alias = (), ordering = None):
+    kind = 'switch'
+
+    def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
         self.name = name
         self.alias = frozenset(iterate(self.id, alias, 'all'))
         self.ordering = ordering
+        self.icon = icon
 
     @decorate(data, status_stream.send)
     def send(self, on = None, **opts):
 
         yield 'id',         self.id
         yield 'name',       self.name
+        yield 'kind',       self.kind
+        yield 'icon',       self.icon
         yield 'alias',      self.alias
         yield 'ordering',   self.ordering
 
@@ -39,7 +44,7 @@ class Switch(object):
         for key, value in opts.items():
             yield key, value
 
-    async def switch(self, mode = None):
+    async def switch(self, on = None):
         raise NotImplementedError
 
     async def status(self):
@@ -51,10 +56,22 @@ class Switch(object):
 class SwitchList(object):
 
     def __init__(self, switches):
-        if isinstance(switches, (tuple, list, set, frozenset)):
-            self.switches = switches
-        else:
-            self.switches = tuple(iterate(switches))
+        self.switches = switches
+
+    def get_switches(self):
+
+        if callable(self._switches):
+            self._switches = self._switches()
+
+        if not isinstance(self._switches, (tuple, list, set, frozenset)):
+            self._switches = tuple(iterate(self._switches))
+
+        return self._switches
+
+    def set_switches(self, values):
+        self._switches = values
+
+    switches = property(get_switches, set_switches)
 
     async def status(self, *args, **opts):
         return {
