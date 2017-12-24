@@ -3,8 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.utils.functional import composition
+from rdvhome.utils.datastructures import data
 
-def apply(*func):
+def decorate(*func):
     comp = composition(*func)
     def multipass(fn):
         def caller(*args, **opts):
@@ -12,5 +13,5 @@ def apply(*func):
         return caller
     return multipass
 
-to_tuple           = apply(tuple)
-to_dict            = apply(dict)
+to_tuple = decorate(tuple)
+to_data  = decorate(data)
