@@ -11,7 +11,8 @@ class EventStream(AsyncStream):
     def subscribe(self, func):
         return subscribe(status_stream, AsyncAnonymousObserver(func))
 
-    def send(self, *args, **opts):
-        return asyncio.ensure_future(self.asend(*args, **opts))
+    def send(self, event):
+        asyncio.ensure_future(self.asend(event))
+        return event
 
 status_stream = EventStream()
