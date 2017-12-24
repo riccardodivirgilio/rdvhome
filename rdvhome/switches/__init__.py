@@ -7,7 +7,10 @@ from rdvhome.switches.base import SwitchList
 from rdvhome.utils.importutils import import_string
 
 switches = SwitchList(
-    import_string(path)(**switch)
-    for path, switches in settings.SWITCHES.items()
-    for switch in switches
+    #lazy construction so that we don't have any problem with recursion
+    lambda: (
+        import_string(path)(**switch)
+        for path, switches in settings.SWITCHES.items()
+        for switch in switches
+    )
 )
