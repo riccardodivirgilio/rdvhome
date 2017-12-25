@@ -11,7 +11,7 @@ import sys
 class DispatchCommand(SimpleCommand):
 
     subcommands = [
-        'runserver',
+        'run',
         'on',
         'off',
     ]

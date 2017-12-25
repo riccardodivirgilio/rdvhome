@@ -21,9 +21,9 @@ class Command(SimpleCommand):
     help = 'Run the home app'
 
     def add_arguments(self, parser):
-        pass
+        parser.add_argument('--open', dest = 'auto_open', default = False, action = 'store_true')
 
-    def handle(self, port = settings.SERVER_PORT, address = settings.SERVER_ADDRESS):
+    def handle(self, port = settings.SERVER_PORT, address = settings.SERVER_ADDRESS, auto_open = False):
 
         if settings.DEBUG:
             import aiohttp_autoreload
@@ -31,7 +31,8 @@ class Command(SimpleCommand):
 
         run_all(switches.subscribe(log))
 
-        system_open('http://%s:%s' % (address, port))
+        if auto_open:
+            system_open('http://%s:%s' % (address, port))
 
         web.run_app(app, port=port)
         
