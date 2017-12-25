@@ -15,7 +15,7 @@
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
             <btn v-bind:color="item.color" v-bind:disabled="item.off || ! item.color" v-on:input="toggle_colorpicker(item, $event)">
-              <div style="padding-top:3px" v-if="item.colorpicker">&times;</div>
+              <div v-if="item.colorpicker && item.on" style="padding-top:3px">&times;</div>
               <div v-else>{{ item.icon }}</div>
             </btn>
             <div class="sliders" v-if="!isNaN(item.intensity) && item.on">
