@@ -14,9 +14,12 @@
       <template v-else>
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
-            <slider v-if="item.intensity && item.on" v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
-            <div class="title">{{ item.icon }} {{ item.name }}</div>
-            <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item.color"></toggle>
+            <btn v-bind:color="item.color" v-bind:disabled="item.off || ! item.color">
+              {{ item.icon }}
+            </btn>
+            <slider v-if="!isNaN(item.intensity) && item.on" v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
+            <div class="title">{{ item.name }}</div>
+            <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item.color"/>
           </a>
         </div>
       </template>
@@ -31,6 +34,7 @@
 
 import loading from './components/loading';
 import toggle  from './components/toggle';
+import btn     from './components/btn';
 import slider  from './components/slider';
 
 export default {
@@ -38,7 +42,8 @@ export default {
   components: {
     loading,
     toggle,
-    slider
+    slider,
+    btn
   },
   data: function() {
     return {
@@ -118,6 +123,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+$item-size: 50px;
+$item-padding: 15px;
+
+$toggle-height: $item-size - 2 * $item-padding;
+$toggle-width:  $toggle-height * 2;
+
 *, *:before, *:after {
   box-sizing: border-box;
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
@@ -153,13 +165,6 @@ a {
   flex-direction: column;
   border: 1px solid #ddd;
   border-bottom: none
-
-}
-.list-item {
-  padding:15px;
-  border-bottom:1px solid #ddd;
-  color:black;
-  position:relative;
 }
 
 .panel {
@@ -184,23 +189,40 @@ footer {
   }
 }
 
-.list-item .toggle {
+.list-item {
+  border-bottom:1px solid #ddd;
+  color:black;
+  position:relative;
+  height:$item-size;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+.list-item > .btn {
+  height: $item-size;
+  width: $item-size;
+  border-bottom:1px solid #ddd;
+}
+.list-item > .slider {
+  z-index: 999;
+  width: calc(100% - #{$item-size} - #{$toggle-width} - 2 * #{$item-padding})
+}
+.list-item > .toggle {
   position: absolute;
-  right: 22px;
-  top: calc(50% - 10px);
+  right:  $item-padding;
+  width:  $toggle-width;
+  height: $toggle-height;
+  top:    $item-padding;
   z-index: 1000;
 }
-.list-item .slider {
-  position: absolute;
-  bottom:0px;
-  left:0px;
-  width:100%;
-  z-index: 999;
-}
-.list-item .title {
+
+.list-item > .title {
+
   pointer-events: none;
   z-index: 1000;
-  position:relative;
+  position:absolute;
+  left: $item-size + $item-padding;
+  top: calc(50% - 9px);
 }
 
 @keyframes off {
