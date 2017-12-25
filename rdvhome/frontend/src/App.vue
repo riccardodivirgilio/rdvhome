@@ -18,6 +18,7 @@
             <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
             </div>
             <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
+            <slider v-if="item.kind == 'switch'" v-bind:color="item.color"/>
           </a>
         </div>
       </template>
@@ -32,12 +33,14 @@
 
 import loading from './components/loading';
 import toggle  from './components/toggle';
+import slider  from './components/slider';
 
 export default {
   name: 'app',
   components: {
     loading,
-    toggle
+    toggle,
+    slider
   },
   data: function() {
     return {
@@ -214,8 +217,14 @@ footer {
 
 .list-item .toggle {
   position: absolute;
-  right: 18px;
-  top: calc(50% - 13px);
+  right: 22px;
+  top: calc(50% - 10px);
+}
+.list-item .slider {
+  position: absolute;
+  bottom:0px;
+  left:0px;
+  width:calc(100% - 7px)
 }
 
 @keyframes off {
