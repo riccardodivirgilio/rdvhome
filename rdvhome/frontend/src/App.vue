@@ -19,8 +19,7 @@
 
             <div class="title">{{ item.icon }} {{ item.name }}</div>
             
-            <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
-            </div>
+
             <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
           </a>
         </div>
@@ -171,18 +170,6 @@ a {
   position:relative;
 }
 
-.list-item .on,
-.list-item .off {
-  position:absolute;
-  right: 0px;
-  top:0px;
-  height: 100%;
-  width: 7px;
-  border-left: 1px solid #ddd;
-  transition: .4s;
-}
-
-
 .panel {
     width:400px;
 }
@@ -205,21 +192,6 @@ footer {
   }
 }
 
-.on {
-  animation: on 0.3s ease-out;
-  animation-iteration-count: 1;
-}
-
-@keyframes on {
-    0% { background-color: #edffd3; }
-    100% { background-color: none; }
-}
-
-.off {
-  animation: off 0.3s ease-out;
-  animation-iteration-count: 1;
-}
-
 .list-item .toggle {
   position: absolute;
   right: 22px;
@@ -230,7 +202,7 @@ footer {
   position: absolute;
   bottom:0px;
   left:0px;
-  width:calc(100% - 7px);
+  width:100%;
   z-index: 999;
 }
 .list-item .title {
