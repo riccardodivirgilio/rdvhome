@@ -1,10 +1,11 @@
 <template>
 
-<label class="slider">
-    <input type="range" class="slider-range" @change="toggle" :value="value" :name="name">
-</label>
-
-
+  <label class="slider">
+    <input type="range" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
+    <div class="overlay" v-bind:style="{backgroundColor: color ? color : 'white', opacity: 0.15 * value, width: value * 100 + '%'}"></div>
+    <div class="overlay-right" v-bind:style="{backgroundColor: 'black', opacity: 0.08 * (0.7 - Math.min(value, 0.7)), width: (100 - value * 100) + '%', left: value * 100 + '%'}"></div>
+  </label>
+    
 </template>
 
 <script>
@@ -20,46 +21,114 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss">
+
+$track-color: rgba(0, 0, 0, 0) !default;
+$thumb-color: #ddd !default;
+
+$thumb-height: 100% !default;
+$thumb-width:  1px !default;
+
+$track-width:  100% !default;
+$track-height: 100% !default;
+
+@mixin track {
+  cursor: pointer;
+  height: $track-height;
+  transition: all .2s ease;
+  width: $track-width;
+}
+
+@mixin thumb {
+  background: $thumb-color;
+  cursor: pointer;
+  height: $thumb-height;
+  width:  $thumb-width;
+  padding:0px;
+  margin: 0px;
+}
+
 .slider {
+  padding:0px;
+  margin:0px;
+  height:100%;
+
+}
+
+.slider .overlay-right,
+.slider .overlay {
+    position: absolute;
     width: 100%;
-    border:none;
-    height: 10px;
-    position: relative;
+    height: 100%;
+    top:0px;
+    left:0px;
+    pointer-events:none;
 }
 
 .slider-range {
+  -webkit-appearance: none;
+  width:  $track-width;
+  padding:0px;
+  margin: 0px;
+  height:100%;
+
+
+  &:focus {
+    outline: 0;
+
+    &::-webkit-slider-runnable-track {
+      background: $track-color;
+    }
+
+    &::-ms-fill-lower {
+      background: $track-color;
+    }
+
+    &::-ms-fill-upper {
+      background: $track-color;
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+    background: $track-color;
+  }
+
+  &::-webkit-slider-thumb {
+    @include thumb;
     -webkit-appearance: none;
-    width: 100%;
-    height: 10px;
-    background: #efefef;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-    margin:0px;
-    padding:0px;
-    position: relative;
-    top:-5px;
+    margin-top: calc(($track-height) / 2) - ($thumb-height / 2);
+  }
+
+  &::-moz-range-track {
+    @include track;
+    background: $track-color;
+  }
+
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+
+  &::-ms-track {
+    @include track;
+    background: transparent;
+    border-color: transparent;
+    border-width: ($thumb-height / 2) 0;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower {
+    background: $track-color;
+  }
+
+  &::-ms-fill-upper {
+    background: $track-color;
+  }
+
+  &::-ms-thumb {
+    @include thumb;
+    margin-top: 0;
+  }
 }
 
-.slider-range:hover {
-    opacity: 1;
-}
-
-.slider-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 10px;
-    background: #ddd;
-    cursor: pointer;
-}
-
-.slider-range::-moz-range-thumb {
-    width: 20px;
-    height: 0px;
-    background: #ddd;
-    cursor: pointer;
-}
 </style>

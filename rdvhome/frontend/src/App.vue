@@ -13,12 +13,15 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a v-for="item in switches" class="list-item" :key="item.id" v-bind:style="{order: item.ordering}">
-            {{ item.icon }} {{ item.name }}
+          <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
+
+            <slider v-if="item.kind == 'switch' && item.on" v-bind:color="item.color"  v-bind:value="1"/>
+
+            <div class="title">{{ item.icon }} {{ item.name }}</div>
+            
             <div v-bind:class="{on: item.on, off: item.off}" v-bind:style="{backgroundColor: item.on ? item.color : '#ddd'}">
             </div>
             <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
-            <slider v-if="item.kind == 'switch'" v-bind:color="item.color"/>
           </a>
         </div>
       </template>
@@ -167,6 +170,7 @@ a {
   color:black;
   position:relative;
 }
+
 .list-item .on,
 .list-item .off {
   position:absolute;
@@ -177,6 +181,7 @@ a {
   border-left: 1px solid #ddd;
   transition: .4s;
 }
+
 
 .panel {
     width:400px;
@@ -219,12 +224,19 @@ footer {
   position: absolute;
   right: 22px;
   top: calc(50% - 10px);
+  z-index: 1000;
 }
 .list-item .slider {
   position: absolute;
   bottom:0px;
   left:0px;
-  width:calc(100% - 7px)
+  width:calc(100% - 7px);
+  z-index: 999;
+}
+.list-item .title {
+  pointer-events: none;
+  z-index: 1000;
+  position:relative;
 }
 
 @keyframes off {
