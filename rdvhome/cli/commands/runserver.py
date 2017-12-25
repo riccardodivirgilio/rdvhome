@@ -14,7 +14,7 @@ from aiohttp import web
 import asyncio
 
 async def log(event):
-    print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None))
+    print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None) or '')
 
 class Command(SimpleCommand):
 
