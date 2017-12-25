@@ -14,13 +14,9 @@
       <template v-else>
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
-
-            <slider v-if="item.kind == 'switch' && item.on" v-bind:color="item.color"  v-bind:value="1"/>
-
+            <slider v-if="item.intensity && item.on" v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
             <div class="title">{{ item.icon }} {{ item.name }}</div>
-            
-
-            <toggle v-bind:value="item.on" v-on:input="open(item.action)" v-bind:color="item.color"></toggle>
+            <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item.color"></toggle>
           </a>
         </div>
       </template>
@@ -60,14 +56,13 @@ export default {
       } else {
         this.switches[data.id] = Object.assign(this.switches[data.id], data)
       }
-
-      
       this.$forceUpdate();
     },
-    open: function (url) {
-      if (url) {
-        this.ws.send(url)
-      }
+    toggle: function (item, value) {
+      this.ws.send('/switch/' + item.id + '/' + (item.on ? 'off' : 'on'))
+    },
+    toggle_intensity: function(item, value) {
+      this.ws.send('/switch/' + item.id + '/intensity/' + Math.round(value * 100))
     },
     connect: function(force) {
 
@@ -88,9 +83,8 @@ export default {
         this.ws.onerror = (e) => {
             console.log('Connection Error');
             console.log(e)
-
+            this.connected = false;
             setTimeout(() => {this.connect()}, 1000);
-
         };
 
         this.ws.onopen = (e) => {
@@ -105,9 +99,7 @@ export default {
             console.log('WebSocket Client Disconnected');
             console.log(e)
             this.connected = false;
-
             setTimeout(() => {this.connect()}, 1000);
-
         };
 
         this.ws.onmessage = (e) => {

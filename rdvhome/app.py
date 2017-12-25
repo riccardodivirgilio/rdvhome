@@ -109,6 +109,13 @@ async def view_status_list(request):
 async def view_status_list(request):
     return JsonResponse(await switch(**request.match_info))
 
+@url('/switch/{number:[a-zA-Z-0-9]+}/intensity/{intensity:[0-9]+}', name = "intensity")
+async def view_status_list(request):
+    return JsonResponse(await switch(**dict(
+        request.match_info,
+        intensity = int(request.match_info['intensity']) / 100
+    )))
+
 @url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
 async def view_status_list(request):
     return JsonResponse(await switch(**request.match_info, on = False))

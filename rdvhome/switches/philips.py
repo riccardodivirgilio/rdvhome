@@ -33,13 +33,13 @@ class PhilipsSwitch(Switch):
                     color = hsb_to_color(
                         float(r['state']['hue']) / 65534,
                         float(r['state']['sat']) / 254,
-                        float(r['state']['bri']) / 254,
+                        1,
                     ),
-                    brightness = float(r['state']['bri']) / 254,
+                    intensity = float(r['state']['bri']) / 254,
                 )
 
     @to_data
-    def _parse_command(self, on = None, color = None):
+    def _parse_command(self, on = None, color = None, intensity = None):
 
         if on is not None:
             yield 'on', bool(on)
@@ -51,13 +51,15 @@ class PhilipsSwitch(Switch):
 
             yield 'hue', int(h * 65535)
             yield 'sat', int(s * 255)
-            yield 'bri', int(b * 255)
+        
+        if intensity is not None:
+            yield 'bri', int(intensity * 255)
 
-    async def switch(self, on = None, color = None):
+    async def switch(self, on = None, color = None, intensity = None):
 
-        payload = self._parse_command(on, color)
+        payload = self._parse_command(on, color, intensity)
 
         async with aiohttp.ClientSession() as session:
             async with session.put(self.api_url('/state'), json = payload) as response:
                 r = await response.json()
-                return self.send(on = on, color = color)
+                return self.send(on = on, color = color, intensity = intensity)

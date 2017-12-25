@@ -1,7 +1,7 @@
 <template>
 
   <label class="slider">
-    <input type="range" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
+    <input type="range"  @change="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
     <div class="overlay" v-bind:style="{backgroundColor: color ? color : 'white', opacity: 0.15 * value, width: value * 100 + '%'}"></div>
     <div class="overlay-right" v-bind:style="{backgroundColor: 'black', opacity: 0.08 * (0.7 - Math.min(value, 0.7)), width: (100 - value * 100) + '%', left: value * 100 + '%'}"></div>
   </label>
@@ -16,6 +16,11 @@ export default {
     return {
 
     }
+  },
+  methods: {
+      toggle (e) {
+          this.$emit('input', this.value);
+      }
   },
 }
 </script>

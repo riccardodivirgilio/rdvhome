@@ -36,7 +36,7 @@ class Switch(EventStream):
         super(Switch, self).__init__()
 
     @to_data
-    def _send(self, on = None, color = None, **opts):
+    def _send(self, on = None, color = None, intensity = None, **opts):
         yield 'id',         self.id
         yield 'name',       self.name
         yield 'kind',       self.kind
@@ -47,10 +47,12 @@ class Switch(EventStream):
         if on is not None:
             yield 'on',     bool(on)
             yield 'off',    not bool(on)
-            yield 'action', '/switch/%s/%s' % (self.id, on and 'off' or 'on')
 
         if color is not None:
             yield 'color', to_color(color)
+
+        if intensity is not None:
+            yield 'intensity', intensity
 
         for key, value in opts.items():
             yield key, value
