@@ -2,7 +2,7 @@
 
   <label class="toggle" v-bind:style="{backgroundColor: color ? color : 'white'}">
     <input type="checkbox" @change="toggle" :checked="value" :name="name">
-    <span class="slider"></span>
+    <span class="toggle-button"></span>
   </label>
 
 </template>
@@ -31,14 +31,14 @@ export default {
 .toggle {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 26px;
+  width: 40px;
+  height: 20px;
   transition: .4s;
 }
 
 .toggle input {display:none;}
 
-.slider {
+.toggle .toggle-button {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -50,7 +50,7 @@ export default {
   border:1px solid #ddd;
 }
 
-.slider:before {
+.toggle .toggle-button:before {
   position: absolute;
   content: "";
   height: 100%;
@@ -65,23 +65,14 @@ export default {
   border-color:     rgba(  0,   0,   0, 0.5);
 }
 
-input:not(:checked) + .slider {
+.toggle input:not(:checked) + .toggle-button {
   background-color: rgba(  0,   0,   0, 0.5);
   border-color:     rgba(255, 255, 255, 0.5);
 }
 
-input:checked + .slider:before {
+.toggle input:checked + .toggle-button:before {
   -webkit-transform: translateX(100%);
   -ms-transform: translateX(100%);
   transform: translateX(100%);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
 }
 </style>
