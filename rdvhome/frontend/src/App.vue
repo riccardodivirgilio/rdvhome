@@ -14,10 +14,15 @@
       <template v-else>
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
-            <btn v-bind:color="item.color" v-bind:disabled="item.off || ! item.color">
-              {{ item.icon }}
+            <btn v-bind:color="item.color" v-bind:disabled="item.off || ! item.color" v-on:input="toggle_colorpicker(item, $event)">
+              <div style="padding-top:3px" v-if="item.colorpicker">&times;</div>
+              <div v-else>{{ item.icon }}</div>
             </btn>
-            <slider v-if="!isNaN(item.intensity) && item.on" v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
+            <div class="sliders" v-if="!isNaN(item.intensity) && item.on">
+              <slider v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
+              <slider v-if="item.colorpicker" value="0.5" class="hue"/>
+              <slider v-if="item.colorpicker" value="0.3" v-bind:color="item.color"/>
+            </div>
             <div class="title">{{ item.name }}</div>
             <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item.color"/>
           </a>
@@ -68,6 +73,10 @@ export default {
     },
     toggle_intensity: function(item, value) {
       this.ws.send('/switch/' + item.id + '/intensity/' + Math.round(value * 100))
+    },
+    toggle_colorpicker: function(item, value) {
+      this.switches[item.id]['colorpicker'] = value
+      this.$forceUpdate();
     },
     connect: function(force) {
 
@@ -129,6 +138,7 @@ $item-padding: 15px;
 
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
+$border-color: #ddd;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -163,7 +173,7 @@ a {
 .list-container {
   display: flex;
   flex-direction: column;
-  border: 1px solid #ddd;
+  border: 1px solid $border-color;
   border-bottom: none
 }
 
@@ -190,39 +200,54 @@ footer {
 }
 
 .list-item {
-  border-bottom:1px solid #ddd;
+  border-bottom:1px solid $border-color;
   color:black;
   position:relative;
-  height:$item-size;
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  min-height: $item-size;
 }
 .list-item > .btn {
-  height: $item-size;
   width: $item-size;
-  border-bottom:1px solid #ddd;
+  height: auto;
 }
-.list-item > .slider {
-  z-index: 999;
-  width: calc(100% - #{$item-size} - #{$toggle-width} - 2 * #{$item-padding})
+.list-item > .sliders {
+  width: calc(100% - #{$item-size} - #{$toggle-width} - 2 * #{$item-padding});
+  display:flex;
+  flex-direction: column;
 }
+.list-item > .sliders > .slider {
+  height: $item-size;
+}
+.list-item > .sliders > .slider:not(:last-child) {
+  border-bottom: 1px solid $border-color;
+}
+
 .list-item > .toggle {
   position: absolute;
   right:  $item-padding;
   width:  $toggle-width;
   height: $toggle-height;
   top:    $item-padding;
-  z-index: 1000;
 }
 
 .list-item > .title {
-
   pointer-events: none;
-  z-index: 1000;
   position:absolute;
   left: $item-size + $item-padding;
-  top: calc(50% - 9px);
+  top: $item-size / 2 - 9px
+}
+.hue {
+     background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); 
+}
+.hue-overlay {
+    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    position:absolute;
+    width:100%;
+    height: 100%;
+    pointer-events:none;
+    top:0px;
+    left:0px;
 }
 
 @keyframes off {

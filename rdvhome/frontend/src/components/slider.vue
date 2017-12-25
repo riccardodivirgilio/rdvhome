@@ -2,7 +2,9 @@
 
   <label class="slider">
     <input type="range"  @change="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
-    <div class="overlay" v-bind:style="{backgroundColor: color ? color : 'white', opacity: 0.15 * value, width: value * 100 + '%'}"></div>
+    <div v-if="color" class="overlay" v-bind:style="{backgroundColor: color, opacity: 0.15 * value, width: value * 100 + '%'}"></div>
+    <div class="track" v-bind:style="{left: value * 100 + '%'}"></div>
+
   </label>
     
 </template>
@@ -27,31 +29,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 
-$track-color: rgba(0, 0, 0, 0) !default;
-$thumb-color: #ddd !default;
-
-$thumb-height: 100% !default;
-$thumb-width:  1px !default;
-
-$track-width:  100% !default;
-$track-height: 100% !default;
-
-@mixin track {
-  cursor: pointer;
-  height: $track-height;
-  transition: all .2s ease;
-  width: $track-width;
-}
-
-@mixin thumb {
-  background: $thumb-color;
-  cursor: pointer;
-  height: $thumb-height;
-  width:  $thumb-width;
-  padding:0px;
-  margin: 0px;
-}
-
 .slider {
   padding:0px;
   margin:0px;
@@ -59,6 +36,7 @@ $track-height: 100% !default;
   position:relative;
 }
 
+.slider .track,
 .slider .overlay {
     position: absolute;
     width: 100%;
@@ -67,71 +45,21 @@ $track-height: 100% !default;
     left:0px;
     pointer-events:none;
 }
+.slider .track {
+  width: 2px;
+  right: 0px;
+  background: #ddd;
+  border-right: 1px solid rgba(255,255,255,0.7);
+}
+
 
 .slider-range {
-  -webkit-appearance: none;
-  width:  $track-width;
+  width:  100%;
   padding:0px;
   margin: 0px;
   height:100%;
+  opacity: 0;
 
-
-  &:focus {
-    outline: 0;
-
-    &::-webkit-slider-runnable-track {
-      background: $track-color;
-    }
-
-    &::-ms-fill-lower {
-      background: $track-color;
-    }
-
-    &::-ms-fill-upper {
-      background: $track-color;
-    }
-  }
-
-  &::-webkit-slider-runnable-track {
-    @include track;
-    background: $track-color;
-  }
-
-  &::-webkit-slider-thumb {
-    @include thumb;
-    -webkit-appearance: none;
-    margin-top: calc(($track-height) / 2) - ($thumb-height / 2);
-  }
-
-  &::-moz-range-track {
-    @include track;
-    background: $track-color;
-  }
-
-  &::-moz-range-thumb {
-    @include thumb;
-  }
-
-  &::-ms-track {
-    @include track;
-    background: transparent;
-    border-color: transparent;
-    border-width: ($thumb-height / 2) 0;
-    color: transparent;
-  }
-
-  &::-ms-fill-lower {
-    background: $track-color;
-  }
-
-  &::-ms-fill-upper {
-    background: $track-color;
-  }
-
-  &::-ms-thumb {
-    @include thumb;
-    margin-top: 0;
-  }
 }
 
 </style>

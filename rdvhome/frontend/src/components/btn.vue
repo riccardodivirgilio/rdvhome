@@ -1,8 +1,8 @@
 <template>
 
-  <label class="btn" v-bind:class="{disabled: disabled}" v-bind:style="{backgroundColor: (! disabled && color) ? color : 'white'}">
-    <input type="checkbox" @change="toggle" :checked="value" :disabled="disabled" :name="name">
-    <span class="btn-inner"></span>
+  <label class="btn" v-bind:class="{disabled: disabled}">
+    <input type="checkbox" @change="toggle" v-model="value" v-bind:disabled="disabled" v-bind:name="name">
+    <span class="btn-inner" v-bind:style="{backgroundColor: (! disabled && color) ? color : 'white'}"></span>
     <div class="title"><slot></slot></div>
   </label>
 
@@ -11,7 +11,7 @@
 <script>
 export default {
   name: 'btn',
-  props: ['name', 'value', 'color', 'disabled'],
+  props: ['name', 'color', 'disabled'],
   data: function() {
     return {
 
@@ -19,7 +19,6 @@ export default {
   },
   methods: {
       toggle (e) {
-          this.value = ! this.value;
           this.$emit('input', this.value);
       }
   },
@@ -32,7 +31,7 @@ export default {
 .btn {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: top;
   justify-content: center;
   width:  30px;
   height: 30px;
@@ -46,22 +45,22 @@ export default {
 .btn input {display:none;}
 
 .btn .title {
+  padding-top:10px;
   text-align: center;
   width: 100%;
   margin-top:1px;
   position: relative;
-
 }
 
 .btn .btn-inner {
   position: absolute;
   width: 100%;
   height: 100%;
-  
+  opacity: 0.15;
 }
 
 .btn input:checked + .btn-inner {
-  background-color: rgba(255, 255, 255, 0.2);
+  
 }
 
 </style>
