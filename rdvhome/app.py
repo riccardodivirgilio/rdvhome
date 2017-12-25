@@ -9,13 +9,14 @@ from aiohttp.test_utils import make_mocked_request
 from functools import partial
 
 from operator import methodcaller
-
+from rdvhome.utils.colors import to_color
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.utils.async import run_all
 from rdvhome.utils.importutils import module_path
 from rdvhome.utils.json import dumps
+from rdvhome.utils.decorators import to_data
 
 import aiohttp
 import asyncio
@@ -23,10 +24,17 @@ import logging
 import sys
 import traceback
 
+class ClientError(Exception):
+    pass
+
 @web.middleware
 async def server_error(request, handler):
     try:
         return await handler(request)
+
+    except ClientError as e:
+        return JsonResponse(api_response(status = 400, reason = str(e)))
+
     except Exception as e:
 
         logging.error(e, exc_info=True)
@@ -82,6 +90,23 @@ APP = """<!DOCTYPE html>
   </body>
 </html>"""
 
+@to_data
+def validate(number = None, color = None, intensity = None, hex = None):
+    if number:
+        yield 'number', number
+
+    if color:
+        try:
+            yield 'color', to_color(color)
+        except ValueError:
+            raise ClientError('invalid color')
+
+    if hex:
+        yield 'color', to_color('#%s' % hex)
+
+    if intensity:
+        yield 'intensity', int(intensity) / 100
+
 @url('/', name = 'home')
 async def view_home(request):
     with open(module_path('rdvhome', 'frontend', 'dist', 'build.js'), 'r') as f:
@@ -95,26 +120,27 @@ async def view_home(request):
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
-    return JsonResponse(await status(**request.match_info))
+    return JsonResponse(await status(**validate(**request.match_info)))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
 async def view_status_list(request):
-    return JsonResponse(await status(**request.match_info))
+    return JsonResponse(await status(**validate(**request.match_info)))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
 async def view_status_list(request):
-    return JsonResponse(await switch(**request.match_info, on = True))
+    return JsonResponse(await switch(**validate(**request.match_info), on = True))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
 async def view_status_list(request):
-    return JsonResponse(await switch(**request.match_info))
+    return JsonResponse(await switch(**validate(**request.match_info)))
+
+@url('/switch/{number:[a-zA-Z-0-9]+}/hex/{hex:[a-zA-Z-0-9]{3,6}}', name = "hex")
+async def view_status_list(request):
+    return JsonResponse(await switch(**validate(**request.match_info)))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/intensity/{intensity:[0-9]+}', name = "intensity")
 async def view_status_list(request):
-    return JsonResponse(await switch(**dict(
-        request.match_info,
-        intensity = int(request.match_info['intensity']) / 100
-    )))
+    return JsonResponse(await switch(**validate(**request.match_info)))
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
 async def view_status_list(request):
