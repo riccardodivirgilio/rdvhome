@@ -94,7 +94,7 @@ export default {
       this.ws.send('/switch/' + item.id + '/hsb/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b))
     },
     toggle_advanced_options: function(item, value) {
-      this.updateSwitch({id: item.id, advanced_options: value})
+      this.updateSwitch({id: item.id, advanced_options: ! item.advanced_options})
     },
     connect: function(force) {
 
