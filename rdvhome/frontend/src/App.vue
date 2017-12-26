@@ -88,7 +88,7 @@ export default {
         this.updateSwitch({id: item.id, advanced_options: false})
       }
 
-      this.ws.send('/switch/' + item.id + '/' + (item.on ? 'off' : 'on'))
+      this.send_action(item.id, ! item.on, item.hue, item.saturation, item.brightness)
     },
     format_hsb_value: function(value) {
       if (value || value == 0) {
@@ -96,9 +96,22 @@ export default {
       }
       return '-'
     },
+    format_on_value: function(value) {
+      if (value == true) {
+        return 'on'
+      }
+      if (value == false) {
+        return 'off'
+      }
+      return '-'
+    },
+    send_action: function(id, on, h, s, b) {
+      const url = '/switch/' + id + '/' + this.format_on_value(on) + '/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b);
+      this.ws.send(url)
+    },
     toggle_hsb: debounce(
       function(item, h, s, b) {
-        this.ws.send('/switch/' + item.id + '/hsb/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b))
+        this.send_action(item.id, null, h, s, b)
       },
       200
     ),

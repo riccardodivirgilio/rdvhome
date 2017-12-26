@@ -106,7 +106,7 @@ def validate_color(spec):
         return spec / 100
 
 @to_data
-def validate(number = None, color = None, hue = None, saturation = None, brightness = None):
+def validate(number = None, color = None, hue = None, saturation = None, brightness = None, mode = None):
     if number:
         yield 'number', number
 
@@ -120,6 +120,13 @@ def validate(number = None, color = None, hue = None, saturation = None, brightn
 
     if any(arg is not None for arg in args):
         yield 'color', HSB(*args)
+
+    if mode == 'on':
+        yield 'on', True
+    elif mode == 'off':
+        yield 'on', False
+    elif not mode in ('-', None):
+        raise ClientError('invalid mode')
 
 @url('/', name = 'home')
 async def view_home(request):
@@ -140,21 +147,19 @@ async def view_status_list(request):
 async def view_status_list(request):
     return JsonResponse(await status(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/on', name = "on")
-async def view_status_list(request):
-    return JsonResponse(await switch(**validate(**request.match_info), on = True))
+
 
 @url('/switch/{number:[a-zA-Z-0-9]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/hsb/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
+@url('/switch/{number:[a-zA-Z-0-9]+}/{mode:(-|on|off)}', name = "on")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/off', name = "off")
+@url('/switch/{number:[a-zA-Z-0-9]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
 async def view_status_list(request):
-    return JsonResponse(await switch(**request.match_info, on = False))
+    return JsonResponse(await switch(**validate(**request.match_info)))
 
 @url('/websocket', name = "websocket")
 async def websocket(request):
