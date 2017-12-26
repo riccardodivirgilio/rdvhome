@@ -1,7 +1,7 @@
 <template>
 
   <label class="slider">
-    <input type="range"  @change="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
+    <input type="range"  @change="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.001">
     <div v-if="color" class="overlay" v-bind:style="{backgroundColor: to_css(color), opacity: 0.15 * value, width: value * 100 + '%'}"></div>
     <div class="track" v-bind:style="{left: value * 100 + '%'}"></div>
 
