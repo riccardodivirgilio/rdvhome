@@ -44,12 +44,11 @@
 
 import Vue from 'vue'
 
-import loading from './components/loading';
-import toggle  from './components/toggle';
-import btn     from './components/btn';
-import slider  from './components/slider';
-
-var debounce = require('lodash.debounce');
+import loading  from './components/loading';
+import toggle   from './components/toggle';
+import btn      from './components/btn';
+import slider   from './components/slider';
+import debounce from 'lodash.debounce';
 
 import {hsb_to_css_with_lightness} from './utils/color';
 
@@ -84,6 +83,11 @@ export default {
       Vue.set(this.switches, data.id, data);
     },
     toggle: function (item, value) {
+
+      if (item.on) {
+        this.updateSwitch({id: item.id, advanced_options: false})
+      }
+
       this.ws.send('/switch/' + item.id + '/' + (item.on ? 'off' : 'on'))
     },
     format_hsb_value: function(value) {
