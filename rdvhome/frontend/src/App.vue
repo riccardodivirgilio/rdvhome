@@ -162,6 +162,7 @@ export default {
 
 $item-size: 50px;
 $item-padding: 15px;
+$btn-width: $item-size + 20px;
 
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
@@ -247,11 +248,11 @@ footer {
   position:relative
 }
 .list-item > .line > .btn {
-  width: $item-size;
+  width: $btn-width;
   height: auto;
 }
 .list-item > .line > .slider {
-  width: calc(100% - #{$item-size} - #{$toggle-width} - 2 * #{$item-padding});
+  width: calc(100% - #{$btn-width} - #{$toggle-width} - 2 * #{$item-padding});
   height: $item-size;
   display:flex;
   flex-direction: column;
@@ -276,8 +277,8 @@ footer {
 .list-item > .line > .title {
   pointer-events: none;
   position:absolute;
-  left: $item-size + $item-padding;
-  top: $item-size / 2 - 9px
+  left: $btn-width + $item-padding;
+  top:  $item-size / 2 - 9px
 }
 .slider-hue {
      background: linear-gradient(

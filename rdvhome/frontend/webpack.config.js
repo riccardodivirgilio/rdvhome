@@ -72,7 +72,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.runtime.esm.js'
+      'vue$':        'vue/dist/vue.runtime.esm.js',
+      'rangeinput$': 'rangetouch/dist/rangetouch.js'
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
