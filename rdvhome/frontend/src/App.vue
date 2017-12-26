@@ -182,6 +182,13 @@ h1 {
   color: gray;
   text-align: center
 }
+
+@media only screen and (max-width: 500px) {
+    h1 {
+        display: none
+    }
+}
+
 a {
   text-decoration: none;
   color: red;
