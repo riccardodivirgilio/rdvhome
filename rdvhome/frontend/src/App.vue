@@ -264,7 +264,16 @@ footer {
   top: $item-size / 2 - 9px
 }
 .slider-hue {
-     background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+     background: linear-gradient(
+      to right, 
+      hsl(  0, 100%, 50%)   0.0000%, 
+      hsl( 60, 100%, 50%)  16.6667%, 
+      hsl(120, 100%, 50%)  33.3333%, 
+      hsl(180, 100%, 50%)  50.0000%, 
+      hsl(240, 100%, 50%)  66.6667%, 
+      hsl(300, 100%, 50%)  83.3333%, 
+      hsl(360, 100%, 50%) 100.0000%
+    );
 }
 
 @keyframes off {
