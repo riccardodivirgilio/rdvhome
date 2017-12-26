@@ -2,22 +2,24 @@
 
   <label class="btn" v-bind:class="{disabled: disabled}">
     <input type="checkbox" @change="toggle" v-model="value" v-bind:disabled="disabled" v-bind:name="name">
-    <span class="btn-inner" v-bind:style="{backgroundColor: (! disabled && color) ? color : 'white'}"></span>
+    <span class="btn-inner" v-bind:style="{backgroundColor: (! disabled && color) ? to_css(color, 0.9) : 'white'}"></span>
     <div class="title"><slot></slot></div>
   </label>
 
 </template>
 
 <script>
+
+import {hsb_to_css_with_lightness} from '../utils/color';
+
 export default {
   name: 'btn',
-  props: ['name', 'color', 'disabled'],
+  props: ['name', 'color', 'disabled', 'value'],
   data: function() {
-    return {
-
-    }
+    return {}
   },
   methods: {
+      to_css: hsb_to_css_with_lightness,
       toggle (e) {
           this.$emit('input', this.value);
       }
@@ -56,11 +58,10 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: 0.15;
 }
 
 .btn input:checked + .btn-inner {
-  
+
 }
 
 </style>

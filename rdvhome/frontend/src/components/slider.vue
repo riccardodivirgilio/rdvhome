@@ -2,23 +2,26 @@
 
   <label class="slider">
     <input type="range"  @change="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.01">
-    <div v-if="color" class="overlay" v-bind:style="{backgroundColor: color, opacity: 0.15 * value, width: value * 100 + '%'}"></div>
+    <div v-if="color" class="overlay" v-bind:style="{backgroundColor: to_css(color), opacity: 0.15 * value, width: value * 100 + '%'}"></div>
     <div class="track" v-bind:style="{left: value * 100 + '%'}"></div>
 
   </label>
-    
+
 </template>
 
 <script>
+
+import {hsb_to_css_with_lightness} from '../utils/color';
+
 export default {
   name: 'slider',
   props: ['color', 'value'],
   data: function() {
     return {
-
     }
   },
   methods: {
+      to_css: hsb_to_css_with_lightness,
       toggle (e) {
           this.$emit('input', this.value);
       }
@@ -51,7 +54,6 @@ export default {
   background: #ddd;
   border-right: 1px solid rgba(255,255,255,0.7);
 }
-
 
 .slider-range {
   width:  100%;

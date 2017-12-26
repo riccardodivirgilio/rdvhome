@@ -5,7 +5,7 @@
       <template v-if="switches.length == 0 || ! connected">
         <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
         <div class="connection" v-if="reconnect < reconnect_limit">
-          Connection in progress... 
+          Connection in progress...
         </div>
         <div class="connection" v-else>
           Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
@@ -14,17 +14,22 @@
       <template v-else>
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
-            <btn v-bind:color="item.color" v-bind:disabled="item.off || ! item.color" v-on:input="toggle_colorpicker(item, $event)">
-              <div v-if="item.colorpicker && item.on" style="padding-top:3px">&times;</div>
-              <div v-else>{{ item.icon }}</div>
-            </btn>
-            <div class="sliders" v-if="!isNaN(item.intensity) && item.on">
-              <slider v-bind:color="item.color"  v-bind:value="item.intensity"  v-on:input="toggle_intensity(item, $event)"/>
-              <slider v-if="item.colorpicker" value="0.5" class="hue"/>
-              <slider v-if="item.colorpicker" value="0.3" v-bind:color="item.color"/>
+            <div class="line">
+              <btn v.bind:value="item.advanced_options" v-bind:color="item" v-bind:disabled="item.off || ! item.allow_hue" v-on:input="toggle_advanced_options(item, $event)">
+                <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>
+                <div v-else>{{ item.icon }}</div>
+              </btn>
+              <slider v-if="item.on && item.allow_brightness" v-bind:color="item" v-bind:value="item.brightness" v-on:input="toggle_hsb(item, null, null, $event)"/>
+              <div class="title">{{ item.name }}</div>
+              <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item"/>
             </div>
-            <div class="title">{{ item.name }}</div>
-            <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item.color"/>
+            <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
+              <slider v-bind:value="item.hue" v-on:input="toggle_hsb(item, $event, null, null)"/>
+            </div>
+            <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" v-bind:style="{background:
+              'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
+              <slider v-bind:value="item.saturation" v-on:input="toggle_hsb(item, null, $event, null)"/>
+            </div>
           </a>
         </div>
       </template>
@@ -37,10 +42,14 @@
 
 <script>
 
+import Vue from 'vue'
+
 import loading from './components/loading';
 import toggle  from './components/toggle';
 import btn     from './components/btn';
 import slider  from './components/slider';
+
+import {hsb_to_css_with_lightness} from './utils/color';
 
 export default {
   name: 'app',
@@ -59,29 +68,38 @@ export default {
     }
   },
   methods: {
+    to_css: hsb_to_css_with_lightness,
     updateSwitch: function (data) {
 
-      if (! this.switches[data.id]) {
-        this.switches[data.id] = data;
-      } else {
-        this.switches[data.id] = Object.assign(this.switches[data.id], data)
+      if (this.switches[data.id]) {
+        data = Object.assign(this.switches[data.id], data);
       }
-      this.$forceUpdate();
+
+      if (! data.advanced_options) {
+        data.advanced_options = false;
+      }
+
+      Vue.set(this.switches, data.id, data);
     },
     toggle: function (item, value) {
       this.ws.send('/switch/' + item.id + '/' + (item.on ? 'off' : 'on'))
     },
-    toggle_intensity: function(item, value) {
-      this.ws.send('/switch/' + item.id + '/intensity/' + Math.round(value * 100))
+    format_hsb_value: function(value) {
+      if (value) {
+        return Math.round(value * 100)
+      }
+      return '-'
     },
-    toggle_colorpicker: function(item, value) {
-      this.switches[item.id]['colorpicker'] = value
-      this.$forceUpdate();
+    toggle_hsb: function(item, h, s, b) {
+      this.ws.send('/switch/' + item.id + '/hsb/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b))
+    },
+    toggle_advanced_options: function(item, value) {
+      this.updateSwitch({id: item.id, advanced_options: value})
     },
     connect: function(force) {
 
       if (force) {
-        this.reconnect = 1
+        this.reconnect  = 1;
       } else {
         this.reconnect += 1;
       }
@@ -204,26 +222,34 @@ footer {
   color:black;
   position:relative;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: $item-size;
 }
-.list-item > .btn {
+.list-item > .line {
+  display: flex;
+  flex-direction: row;
+  position:relative
+}
+.list-item > .line > .btn {
   width: $item-size;
   height: auto;
 }
-.list-item > .sliders {
+.list-item > .line > .slider {
   width: calc(100% - #{$item-size} - #{$toggle-width} - 2 * #{$item-padding});
+  height: $item-size;
   display:flex;
   flex-direction: column;
 }
-.list-item > .sliders > .slider {
-  height: $item-size;
+
+.list-item > .line.slider-saturation > .slider,
+.list-item > .line.slider-hue > .slider {
+  width: 100%
 }
-.list-item > .sliders > .slider:not(:last-child) {
-  border-bottom: 1px solid $border-color;
+.list-item > .line:not(:last-child) {
+  border-bottom:1px solid $border-color
 }
 
-.list-item > .toggle {
+.list-item > .line > .toggle {
   position: absolute;
   right:  $item-padding;
   width:  $toggle-width;
@@ -231,23 +257,14 @@ footer {
   top:    $item-padding;
 }
 
-.list-item > .title {
+.list-item > .line > .title {
   pointer-events: none;
   position:absolute;
   left: $item-size + $item-padding;
   top: $item-size / 2 - 9px
 }
-.hue {
-     background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); 
-}
-.hue-overlay {
-    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-    position:absolute;
-    width:100%;
-    height: 100%;
-    pointer-events:none;
-    top:0px;
-    left:0px;
+.slider-hue {
+     background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
 }
 
 @keyframes off {
