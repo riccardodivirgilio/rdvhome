@@ -85,7 +85,7 @@ export default {
       this.ws.send('/switch/' + item.id + '/' + (item.on ? 'off' : 'on'))
     },
     format_hsb_value: function(value) {
-      if (value) {
+      if (value || value == 0) {
         return Math.round(value * 100)
       }
       return '-'
