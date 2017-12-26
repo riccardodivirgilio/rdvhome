@@ -52,6 +52,8 @@ def color_to_philips(color):
 def to_color(spec):
     if isinstance(spec, HSB):
         return spec
+    if isinstance(spec, dict):
+        return HSB(**spec)
     if isinstance(spec, Color):
         return HSB(*hsl_to_hsb(spec.hue, spec.saturation, spec.luminance))
     elif spec:
