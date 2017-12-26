@@ -2,6 +2,8 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from aiohttp import web
+
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
@@ -9,7 +11,6 @@ from rdvhome.switches import switches
 from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
-from aiohttp import web
 
 import asyncio
 
@@ -35,4 +36,3 @@ class Command(SimpleCommand):
             system_open('http://%s:%s' % (address, port))
 
         web.run_app(app, port=port)
-        
