@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.conf import settings
 from rdvhome.switches import switches
-from rdvhome.switches.base import Switch
+from rdvhome.switches.base import capabilities, Switch
 from rdvhome.utils.async import run_all, wait_all
 from rdvhome.utils.colors import random_color, to_color
 from rdvhome.utils.datastructures import data
@@ -18,6 +18,7 @@ class ControlSwitch(Switch):
 
     kind = 'control'
     default_aliases = []
+    default_capabilities = capabilities(on = True)
 
     def __init__(self, id, on = False, automatic_on = False, automatic_off = True, filter = Switch.kind, colors = lambda switch, i: random_color(), timeout = None, **opts):
 

@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from colour import Color
 
+from rdvhome.utils.colors import HSB, to_color
 from rdvhome.utils.datastructures import data
 
 import datetime
@@ -15,9 +16,9 @@ class JSONEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, Color):
-            return obj.hex_l
-            return 'hsl(%i, %i%%, %i%%)' % (obj.hue * 360, obj.saturation * 100, obj.luminance * 100)
-
+            return to_color(obj).serialize()
+        if isinstance(obj, HSB):
+            return obj.serialize()
         if isinstance(obj, (datetime.datetime, datetime.date)):
             return obj.isoformat()
         elif isinstance(obj, decimal.Decimal):

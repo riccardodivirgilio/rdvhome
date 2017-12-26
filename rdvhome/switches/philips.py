@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import Switch
-from rdvhome.utils.colors import hsb_to_color, hsb_to_hsl, hsl_to_hsb, to_color
+from rdvhome.utils.colors import color_to_philips, hsb_to_color, hsb_to_hsl, hsl_to_hsb, philips_to_color, to_color
 from rdvhome.utils.decorators import decorate, to_data
 
 import aiohttp
@@ -30,36 +30,28 @@ class PhilipsSwitch(Switch):
                 r = await response.json()
                 return self.send(
                     on = r['state']['on'],
-                    color = hsb_to_color(
-                        float(r['state']['hue']) / 65534,
-                        float(r['state']['sat']) / 254,
-                        1,
+                    color = philips_to_color(
+                        hue        = float(r['state']['hue']),
+                        saturation = float(r['state']['sat']),
+                        brightness = float(r['state']['bri']),
                     ),
-                    intensity = float(r['state']['bri']) / 254,
                 )
 
     @to_data
-    def _parse_command(self, on = None, color = None, intensity = None):
+    def _parse_command(self, on = None, color = None):
 
         if on is not None:
             yield 'on', bool(on)
 
         if color is not None:
+            for key, value in color_to_philips(color).items():
+                yield key, value
 
-            color   = to_color(color)
-            h, s, b = hsl_to_hsb(color.hue, color.saturation, color.luminance)
+    async def switch(self, on = None, color = None):
 
-            yield 'hue', int(h * 65535)
-            yield 'sat', int(s * 255)
-        
-        if intensity is not None:
-            yield 'bri', int(intensity * 255)
-
-    async def switch(self, on = None, color = None, intensity = None):
-
-        payload = self._parse_command(on, color, intensity)
+        payload = self._parse_command(on, color)
 
         async with aiohttp.ClientSession() as session:
             async with session.put(self.api_url('/state'), json = payload) as response:
                 r = await response.json()
-                return self.send(on = on, color = color, intensity = intensity)
+                return self.send(on = on, color = color, full = False)

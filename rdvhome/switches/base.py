@@ -21,10 +21,24 @@ from rdvhome.utils.functional import first, iterate
 import asyncio
 import six
 
+def capabilities(on = False, hue = False, saturation = False, brightness = False):
+    return data(
+        allow_on         = on,
+        allow_hue        = hue,
+        allow_saturation = saturation,
+        allow_brightness = brightness,
+    )
+
 class Switch(EventStream):
 
     kind = 'switch'
     default_aliases = ['all']
+    default_capabilities = capabilities(
+        on         = True,
+        hue        = True,
+        saturation = True,
+        brightness = True,
+    )
 
     def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
@@ -32,30 +46,34 @@ class Switch(EventStream):
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
+        self.capabilities = self.default_capabilities.copy()
 
         super(Switch, self).__init__()
 
     @to_data
-    def _send(self, on = None, color = None, intensity = None, **opts):
+    def _send(self, on = None, color = None, intensity = None, full = True, **opts):
         yield 'id',         self.id
-        yield 'name',       self.name
-        yield 'kind',       self.kind
-        yield 'icon',       self.icon
-        yield 'alias',      self.alias
-        yield 'ordering',   self.ordering
+
+        if full:
+            yield 'name',       self.name
+            yield 'kind',       self.kind
+            yield 'icon',       self.icon
+            yield 'alias',      self.alias
+            yield 'ordering',   self.ordering
+
+            yield from self.capabilities.items()
 
         if on is not None:
-            yield 'on',     bool(on)
-            yield 'off',    not bool(on)
+            yield 'on',  bool(on)
+            yield 'off', not bool(on)
 
         if color is not None:
-            yield 'color', to_color(color)
+            yield from to_color(color).serialize().items()
 
         if intensity is not None:
             yield 'intensity', intensity
 
-        for key, value in opts.items():
-            yield key, value
+        yield from opts.items()
 
     def send(self, **opts):
         return super(Switch, self).send(self._send(**opts))
