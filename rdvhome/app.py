@@ -117,7 +117,7 @@ def validate(number = None, color = None, hue = None, saturation = None, brightn
 
     args = tuple(map(validate_color, (hue, saturation, brightness)))
 
-    if any(args):
+    if any(arg is not None for arg in args):
         yield 'color', HSB(*args)
 
 @url('/', name = 'home')
