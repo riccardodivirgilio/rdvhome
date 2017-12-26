@@ -49,6 +49,8 @@ import toggle  from './components/toggle';
 import btn     from './components/btn';
 import slider  from './components/slider';
 
+var debounce = require('lodash.debounce');
+
 import {hsb_to_css_with_lightness} from './utils/color';
 
 export default {
@@ -90,9 +92,12 @@ export default {
       }
       return '-'
     },
-    toggle_hsb: function(item, h, s, b) {
-      this.ws.send('/switch/' + item.id + '/hsb/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b))
-    },
+    toggle_hsb: debounce(
+      function(item, h, s, b) {
+        this.ws.send('/switch/' + item.id + '/hsb/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b))
+      },
+      200
+    ),
     toggle_advanced_options: function(item, value) {
       this.updateSwitch({id: item.id, advanced_options: ! item.advanced_options})
     },
