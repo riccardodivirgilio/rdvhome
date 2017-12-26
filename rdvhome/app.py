@@ -9,14 +9,15 @@ from aiohttp.test_utils import make_mocked_request
 from functools import partial
 
 from operator import methodcaller
-from rdvhome.utils.colors import to_color
+
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.utils.async import run_all
+from rdvhome.utils.colors import HSB, to_color
+from rdvhome.utils.decorators import to_data
 from rdvhome.utils.importutils import module_path
 from rdvhome.utils.json import dumps
-from rdvhome.utils.decorators import to_data
 
 import aiohttp
 import asyncio
@@ -90,8 +91,21 @@ APP = """<!DOCTYPE html>
   </body>
 </html>"""
 
+def validate_color(spec):
+    if spec in (None, '-'):
+        return None
+    try:
+        spec = int(spec)
+    except ValueError:
+        raise ClientError('spec is not an integer')
+
+    if spec > 100 or spec < 0:
+        raise ClientError('spec color too big')
+    else:
+        return spec / 100
+
 @to_data
-def validate(number = None, color = None, intensity = None, hex = None):
+def validate(number = None, color = None, hue = None, saturation = None, brightness = None):
     if number:
         yield 'number', number
 
@@ -101,11 +115,10 @@ def validate(number = None, color = None, intensity = None, hex = None):
         except ValueError:
             raise ClientError('invalid color')
 
-    if hex:
-        yield 'color', to_color('#%s' % hex)
+    args = tuple(map(validate_color, (hue, saturation, brightness)))
 
-    if intensity:
-        yield 'intensity', int(intensity) / 100
+    if any(args):
+        yield 'color', HSB(*args)
 
 @url('/', name = 'home')
 async def view_home(request):
@@ -134,11 +147,7 @@ async def view_status_list(request):
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/hex/{hex:[a-zA-Z-0-9]{3,6}}', name = "hex")
-async def view_status_list(request):
-    return JsonResponse(await switch(**validate(**request.match_info)))
-
-@url('/switch/{number:[a-zA-Z-0-9]+}/intensity/{intensity:[0-9]+}', name = "intensity")
+@url('/switch/{number:[a-zA-Z-0-9]+}/hsb/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
