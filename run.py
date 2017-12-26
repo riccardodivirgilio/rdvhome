@@ -24,16 +24,73 @@ def run_rdv_command_line():
         DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
-                philips('lm', 'Salone', ordering =  1, icon = "🛋", philips_id = 1, alias = ['default']),
-                philips('tv', 'TV',     ordering =  2, icon = "📺", philips_id = 3, alias = ['default']),
-                philips('br', 'Letto',  ordering = 10, icon = "🛏", philips_id = 2, alias = []),
+                philips(
+                    id = 'lm', 
+                    name = 'Salone', 
+                    ordering =  1, 
+                    icon = "🛋", 
+                    philips_id = 1, 
+                    alias = ['default']
+                ),
+                philips(
+                    id = 'tv', 
+                    name = 'TV',     
+                    ordering =  2, 
+                    icon = "📺", 
+                    philips_id = 3, 
+                    alias = ['default']
+                ),
+                philips(
+                    id = 'br', 
+                    name = 'Letto',  
+                    ordering = 10, 
+                    icon = "🛏", 
+                    philips_id = 2, 
+                    alias = []
+                ),
             ),
             'rdvhome.switches.controls.ControlSwitch': (
-                dict(id = 'usa',      name = "USA",    ordering = 30, icon = "🇺🇸", colors = ['red', 'white', 'blue'], timeout = 3, automatic_on = 'default'),
-                dict(id = 'artic',    name = "Artic",  ordering = 31, icon = "⛄",   colors = ['#bcf5ff', '#b2ffc5', '#87ffc7']),
-                dict(id = 'random',   name = "Random", ordering = 32, icon = "❓"),
-                dict(id = 'loop',     name = "Random Loop", ordering = 33, icon = "➰", timeout = timeout(7, 15)),
-                dict(id = 'disco',    name = "Disco",  ordering = 34, icon = "🌐", timeout = timeout(0.3, 1.2), automatic_on = 'default'),
+                dict(
+                    id = 'usa',      
+                    name = "USA",    
+                    ordering = 30, 
+                    icon = "🇺🇸", 
+                    colors = [
+                        dict(hue = 1,    saturation = 1, brightness = 1), 
+                        dict(hue = 1,    saturation = 0, brightness = 1),
+                        dict(hue = 0.66, saturation = 1, brightness = 1),
+                    ], 
+                    timeout = 3, 
+                    automatic_on = 'default'
+                ),
+                dict(
+                    id = 'artic',    
+                    name = "Artic",  
+                    ordering = 31, 
+                    icon = "⛄",   
+                    colors = ['#bcf5ff', '#b2ffc5', '#87ffc7']
+                ),
+                dict(
+                    id = 'random',   
+                    name = "Random", 
+                    ordering = 32, 
+                    icon = "❓"
+                ),
+                dict(
+                    id = 'loop',     
+                    name = "Random Loop", 
+                    ordering = 33, 
+                    icon = "➰", 
+                    timeout = timeout(7, 15)
+                ),
+                dict(
+                    id = 'disco',    
+                    name = "Disco",  
+                    ordering = 34, 
+                    icon = "🌐", 
+                    timeout = timeout(0.3, 1.2), 
+                    automatic_on = 'default'
+                ),
             )
         }
     )
