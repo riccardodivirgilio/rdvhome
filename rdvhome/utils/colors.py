@@ -81,4 +81,7 @@ def hsb_to_color(h, s, b):
     )
 
 def random_color():
-    return HSB(hue = random.random(), saturation = 1)
+    return HSB(
+        hue = random.random(), 
+        saturation = 0.5 + random.random() * 0.5
+    )
