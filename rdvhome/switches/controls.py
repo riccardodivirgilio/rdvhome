@@ -96,7 +96,7 @@ class ControlSwitch(Switch):
 
     def assign_color(self, switch, i):
         if callable(self.colors):
-            return self.colors(switch, i)
+            return to_color(self.colors(switch, i))
         elif is_iterable(self.colors):
             return self.colors[(i+1) % len(self.colors)]
         else:
