@@ -147,8 +147,6 @@ async def view_status_list(request):
 async def view_status_list(request):
     return JsonResponse(await status(**validate(**request.match_info)))
 
-
-
 @url('/switch/{number:[a-zA-Z-0-9]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
