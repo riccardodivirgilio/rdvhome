@@ -10,21 +10,12 @@ def execute_from_command_line(argv = None, **opts):
         raise NotImplementedError('There is no support for python2. Please run python3.')
 
     from rdvhome.utils.require import require_module
-
-    require_module(
-        ['aiohttp', '2.3.6'],
-        ['asyncio', None],
-        ['six',     None],
-        ['aiohttp-autoreload', None],
-        ['django',  None],
-        ['aioreactive', None],
-        ['colour', None],
-        ['django', None],
-    )
-
     from rdvhome.conf import settings
 
     settings.update(opts)
+
+    if settings.INSTALL_DEPENDENCIES:
+        require_module(*settings.DEPENDENCIES.items())
 
     from rdvhome.cli.dispatch import DispatchCommand
 

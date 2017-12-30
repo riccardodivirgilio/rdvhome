@@ -10,6 +10,9 @@ import uuid
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
 
+def is_laptop():
+    return uuid.getnode() == 180725258261487
+
 def run_rdv_command_line():
 
     philips = lambda id, name, **opts: dict(
@@ -21,7 +24,8 @@ def run_rdv_command_line():
     )
 
     return execute_from_command_line(
-        DEBUG    = uuid.getnode() == 180725258261487, #my laptop everything else is production.
+        INSTALL_DEPENDENCIES = is_laptop(),
+        DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
                 philips(
