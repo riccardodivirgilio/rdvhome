@@ -10,31 +10,52 @@ from fabric.main import main
 from fabtools import require
 from fabtools.supervisor import restart_process
 
-from rdvhome.server import NAS, RASPBERRY
-
 import os
 import sys
 
+class Device(object):
+
+    def __init__(self, id, ipaddress, name = None, user = None, default_password = "raspberry"):
+        self.ipaddress = ipaddress
+        self.name = name
+        self.default_password = default_password
+        self.user = user
+        self.id = id
+
+    def host(self):
+        return "%s@%s:22" % (self.user, self.name)
+
+RASPBERRY = Device(
+    id = 'rasp',
+    name = "rdvpi.local",
+    user = "pi",
+    ipaddress = "192.168.1.113",
+    )
+
+
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
 env.roledefs  = {
-    'home': [RASPBERRY.host()],
-    'nas':  [NAS.host()]
+    'lights': [RASPBERRY.host()],
 }
 
 env.passwords = {
-    NAS.host(): 'server'
+    RASPBERRY.host(): 'server'
 }
 
 @task
-@roles('home')
+@roles('lights')
 def setup():
+
+    require.user(
+        env.user,
+        password = '!w9Ij56LaoRKnP5fpV0LGH2GEHkY=',
+        ssh_public_keys = [os.path.expanduser("~/.ssh/id_rsa.pub")]
+    )
 
     require.deb.uptodate_index()
     require.deb.packages([
        'ntpdate',
        'rsync',
-       'python2',
-       'python2-dev',
        'python3',
        'python3-dev',
        'avahi-daemon',
@@ -42,15 +63,9 @@ def setup():
        'libnss-mdns'
     ])
 
-    sudo("ntpdate -s time.nist.gov")
+    #sudo("ntpdate -s time.nist.gov")
     sudo("timedatectl set-timezone Europe/Rome")
     require.system.default_locale("en_US.UTF-8")
-
-    require.user(
-        env.user,
-        password = '!w9Ij56LaoRKnP5fpV0LGH2GEHkY=',
-        ssh_public_keys = [os.path.expanduser("~/.ssh/id_rsa.pub")]
-    )
 
     if not exists("/swapfile"):
         sudo("fallocate -l 4G /swapfile")
@@ -63,86 +78,25 @@ def setup():
     require.python.pip(python_cmd="python")
     require.python.pip(python_cmd="python3")
 
-    execute(dependency)
-    execute(supervisor)
-    execute(deploy, restart = False)
-    execute(nginx)
-
-SITE_TEMPLATE = """\
-
-upstream django {
-    server localhost:45000;
-}
-
-server {
-    listen      80;
-    server_name   %(host)s;
-
-    location / {
-        # uncomment to switch to manteinance mode
-        # return 503;
-        # host and port to fastcgi server
-        uwsgi_pass django;
-
-        uwsgi_param  QUERY_STRING       $query_string;
-        uwsgi_param  REQUEST_METHOD     $request_method;
-        uwsgi_param  CONTENT_TYPE       $content_type;
-        uwsgi_param  CONTENT_LENGTH     $content_length;
-        uwsgi_param  REQUEST_URI        $request_uri;
-        uwsgi_param  PATH_INFO          $document_uri;
-        uwsgi_param  DOCUMENT_ROOT      $document_root;
-        uwsgi_param  SERVER_PROTOCOL    $server_protocol;
-        uwsgi_param  REQUEST_SCHEME     $scheme;
-        uwsgi_param  HTTPS              $https if_not_empty;
-        uwsgi_param  REMOTE_ADDR        $remote_addr;
-        uwsgi_param  REMOTE_PORT        $remote_port;
-        uwsgi_param  SERVER_PORT        $server_port;
-        uwsgi_param  SERVER_NAME        $server_name;
-    }
-}
-"""
-
 @task
-@roles('home')
-def nginx():
-    require.nginx.site(
-        'server',
-        template_contents = SITE_TEMPLATE,
-        host = env.host,
-        check_config = False
-        )
-
-@task
-@roles('home')
-def dependency():
-    run("pip3 install uwsgi RPi.GPIO django --user")
-
-@task
-@roles('home')
+@roles('lights')
 def supervisor():
     require.supervisor.process(
         'server',
-        command='/usr/local/bin/uwsgi --chdir=/home/pi/server/ --module=rdvhome.wsgi:application --master --pidfile=/home/pi/application.pid --socket=0.0.0.0:45000',
+        command='python3 /home/pi/server/run.py runserver',
         directory='/home/pi/server/',
         user=env.user
-        )
-
-    #require.supervisor.process(
-    #    'server',
-    #    command='python3 /home/pi/server/server.py',
-    #    directory='/home/pi/server/',
-    #    user=env.user
-    #    )
+    )
 
 @task
-@roles('home')
+@roles('lights')
 def deploy(restart = True):
     rsync_project(
         remote_dir="/home/pi/server/",
         local_dir="%s/" % os.path.dirname(__file__),
-        exclude=("*.pyc", ".git/*"),
+        exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__"),
         delete=True
-        )
+    )
 
     if restart:
         restart_process("server")
