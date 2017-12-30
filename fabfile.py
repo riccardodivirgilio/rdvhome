@@ -2,13 +2,16 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, execute, roles, run, sudo, task
+from fabric.api import env, execute, roles, run, sudo, task, put
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 
 from fabtools import require
 from fabtools.supervisor import restart_process
+from rdvhome.utils.importutils import module_path, import_module
+from rdvhome.utils.functional import iterate
+from rdvhome.conf import settings
 
 import os
 import sys
@@ -91,12 +94,27 @@ def supervisor():
 @task
 @roles('lights')
 def deploy(restart = True):
+
     rsync_project(
         remote_dir="/home/pi/server/",
         local_dir="%s/" % os.path.dirname(__file__),
         exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__"),
         delete=True
     )
+
+    #for module in iterate(['rdvhome', 'multidict', 'yarl', 'async_timeout'], settings.DEPENDENCIES.keys()):
+    #    module = module.replace('-', "_")
+    #    path = import_module(module).__file__
+    #    if path.endswith('/__init__.py'):
+    #        rsync_project(
+    #            remote_dir="/home/pi/server/%s/" % module,
+    #            local_dir='%s/' % os.path.dirname(path),
+    #            exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__"),
+    #            delete=True
+    #        )
+    #    else:
+    #        put(path, "/home/pi/server/%s" % os.path.basename(path))
+    #put(os.path.join(os.path.dirname(__file__), 'run.py'), "/home/pi/server/run.py")
 
     if restart:
         restart_process("server")
