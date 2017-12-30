@@ -18,7 +18,8 @@ def execute_from_command_line(argv = None, **opts):
         ['aiohttp-autoreload', None],
         ['django',  None],
         ['aioreactive', None],
-        ['colour', None]
+        ['colour', None],
+        ['django', None],
     )
 
     from rdvhome.conf import settings
