@@ -24,7 +24,7 @@ def run_rdv_command_line():
     )
 
     return execute_from_command_line(
-        INSTALL_DEPENDENCIES = is_laptop(),
+        INSTALL_DEPENDENCIES = True,
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
