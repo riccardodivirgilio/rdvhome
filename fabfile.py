@@ -86,7 +86,7 @@ def setup():
 def supervisor():
     require.supervisor.process(
         'server',
-        command='python3 /home/pi/server/run.py runserver',
+        command='python3.6 /home/pi/server/run.py run',
         directory='/home/pi/server/',
         user=env.user
     )
