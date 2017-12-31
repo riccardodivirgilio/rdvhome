@@ -93,7 +93,7 @@ def supervisor():
 
 @task
 @roles('lights')
-def deploy(restart = True):
+def deploy(restart = False):
 
     rsync_project(
         remote_dir="/home/pi/server/",
