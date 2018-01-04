@@ -48,7 +48,7 @@ import loading  from './components/loading';
 import toggle   from './components/toggle';
 import btn      from './components/btn';
 import slider   from './components/slider';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 
 import {hsb_to_css_with_lightness} from './utils/color';
 
