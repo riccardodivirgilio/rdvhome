@@ -5,5 +5,5 @@ require('rangeinput');
 
 window.vm = new Vue({
   el: '#app',
-  render: function(h) {return h(App)}
+  render: (h) => h(App)
 })
