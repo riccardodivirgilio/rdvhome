@@ -93,28 +93,14 @@ def supervisor():
 
 @task
 @roles('lights')
-def deploy(restart = False):
+def deploy(restart = True):
 
     rsync_project(
         remote_dir="/home/pi/server/",
         local_dir="%s/" % os.path.dirname(__file__),
-        exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__"),
+        exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__", "node_modules"),
         delete=True
     )
-
-    #for module in iterate(['rdvhome', 'multidict', 'yarl', 'async_timeout'], settings.DEPENDENCIES.keys()):
-    #    module = module.replace('-', "_")
-    #    path = import_module(module).__file__
-    #    if path.endswith('/__init__.py'):
-    #        rsync_project(
-    #            remote_dir="/home/pi/server/%s/" % module,
-    #            local_dir='%s/' % os.path.dirname(path),
-    #            exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__"),
-    #            delete=True
-    #        )
-    #    else:
-    #        put(path, "/home/pi/server/%s" % os.path.basename(path))
-    #put(os.path.join(os.path.dirname(__file__), 'run.py'), "/home/pi/server/run.py")
 
     if restart:
         restart_process("server")
