@@ -85,14 +85,14 @@ def run_rdv_command_line():
                     name = "Random Loop", 
                     ordering = 33, 
                     icon = "➰", 
-                    timeout = timeout(7, 15)
+                    timeout = timeout(30, 60)
                 ),
                 dict(
                     id = 'hloop',     
                     name = "Random Hipster Loop", 
                     ordering = 34, 
                     icon = "🤓", 
-                    timeout = timeout(7, 15),
+                    timeout = timeout(30, 60),
                     colors = lambda switch, i: dict(
                         saturation = random.random() * 0.25 + 0.15,
                         hue = random.random()
