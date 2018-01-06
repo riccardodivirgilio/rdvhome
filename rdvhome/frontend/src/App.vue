@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="panel">
-      <h1>&#127968; Lighttardo</h1>
+      <h1>&#127968; SWITCH</h1>
       <template v-if="switches.length == 0 || ! connected">
         <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
         <div class="connection" v-if="reconnect < reconnect_limit">
