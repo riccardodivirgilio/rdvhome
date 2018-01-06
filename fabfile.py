@@ -26,13 +26,14 @@ class Device(object):
         self.id = id
 
     def host(self):
-        return "%s@%s:22" % (self.user, self.name)
+        return "%s@%s:22" % (self.user, self.name or self.ipaddress)
 
 RASPBERRY = Device(
     id = 'rasp',
-    name = "rdvpi.local",
+    name = 'rdvpi.local',
     user = "pi",
-    ipaddress = "192.168.1.113",
+    ipaddress = "192.168.1.193",
+    default_password = "!w9Ij56LaoRKnP5fpV0LGH2GEHkY="
     )
 
 
@@ -42,7 +43,7 @@ env.roledefs  = {
 }
 
 env.passwords = {
-    RASPBERRY.host(): 'server'
+    RASPBERRY.host(): RASPBERRY.default_password
 }
 
 @task
