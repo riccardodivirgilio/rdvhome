@@ -3,6 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from aiohttp import web
+from aiohttp.web_fileresponse import FileResponse
+from aiohttp.web_exceptions import HTTPForbidden, HTTPNotFound, HTTPBadRequest
 from aiohttp.client import _RequestContextManager
 from aiohttp.test_utils import make_mocked_request
 
@@ -25,16 +27,19 @@ import logging
 import sys
 import traceback
 
-class ClientError(Exception):
-    pass
-
 @web.middleware
 async def server_error(request, handler):
     try:
         return await handler(request)
 
-    except ClientError as e:
+    except HTTPBadRequest as e:
         return JsonResponse(api_response(status = 400, reason = str(e)))
+
+    except HTTPForbidden as e:
+        return JsonResponse(api_response(status = 403, reason = str(e)))
+
+    except HTTPNotFound as e:
+        return JsonResponse(api_response(status = 404, reason = str(e)))
 
     except Exception as e:
 
@@ -79,29 +84,16 @@ def JsonResponse(data, status = None, **opts):
         **opts
     )
 
-APP = """<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>%(title)s</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script>%(js)s</script>
-  </body>
-</html>"""
-
 def validate_color(spec):
     if spec in (None, '-'):
         return None
     try:
         spec = int(spec)
     except ValueError:
-        raise ClientError('spec is not an integer')
+        raise HTTPBadRequest(reason = 'NotAnInteger')
 
     if spec > 100 or spec < 0:
-        raise ClientError('spec color too big')
+        raise HTTPBadRequest(reason = 'NotInRange')
     else:
         return spec / 100
 
@@ -114,7 +106,7 @@ def validate(number = None, color = None, hue = None, saturation = None, brightn
         try:
             yield 'color', to_color(color)
         except ValueError:
-            raise ClientError('invalid color')
+            raise HTTPBadRequest(reason = 'InvalidColor')
 
     args = tuple(map(validate_color, (hue, saturation, brightness)))
 
@@ -126,18 +118,13 @@ def validate(number = None, color = None, hue = None, saturation = None, brightn
     elif mode == 'off':
         yield 'on', False
     elif not mode in ('-', None):
-        raise ClientError('invalid mode')
+        raise HTTPBadRequest(reason = 'InvalidMode')
 
 @url('/', name = 'home')
 async def view_home(request):
-    with open(module_path('rdvhome', 'frontend', 'dist', 'build.js'), 'r') as f:
-        return web.Response(
-            text = APP % dict(
-                title = 'Home',
-                js    = f.read()
-            ),
-            content_type = 'text/html'
-        )
+    return FileResponse(module_path('rdvhome', 'frontend', 'index.html'))
+
+app.router.add_static('/dist', module_path('rdvhome', 'frontend', 'dist'))
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
@@ -191,7 +178,3 @@ async def websocket(request):
         )
 
     return ws
-
-@url('/{all:.*}', name = 'not_found')
-async def view_status_list(request):
-    return JsonResponse(api_response(status = 404, message = 'PageNotFound'), status = 404)
