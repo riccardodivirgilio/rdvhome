@@ -14,6 +14,7 @@ class DispatchCommand(SimpleCommand):
         'run',
         'on',
         'off',
+        'test_gpio'
     ]
 
     def subcommand_args(self):
