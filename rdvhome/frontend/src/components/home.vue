@@ -733,13 +733,18 @@ export default {
       to_css: hsb_to_css_with_lightness,
       light_color: function(item) {
         if (item && item.on) {
-            return {fill: this.to_css(item)}
+            return {
+                fill: this.to_css(item),
+            }
         }
       },
       area_color: function(item) {
         if (item && item.on) {
             console.log(item)
-            return {fill: this.to_css(item), opacity: 0.3 + 0.2 * item.brightness}
+            return {
+                fill: this.to_css(item), 
+                opacity: 0.3 + 0.2 * item.brightness,
+            }
         }
         return {fill:'gray', opacity:0.}
       },
