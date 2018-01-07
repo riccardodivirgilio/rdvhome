@@ -202,7 +202,7 @@ body {
   display:flex;
   background:black;
   justify-content: space-around;
-  min-height: 100vh;
+
 }
 
 .connection {
@@ -247,17 +247,14 @@ body {
 */
 
 @media (min-width: 768px) {
-
-  body {
-    justify-content: center;
-    align-items:center;
-  }
   
   .container {
     flex-direction: row;
     max-width: 950px;
     background: black;
     align-items: stretch;
+    padding-top:3em
+
   }
 
   .panel-switch {
