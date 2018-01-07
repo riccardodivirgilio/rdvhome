@@ -1,7 +1,10 @@
 <template>
   <div class="container">
-    <div class="panel">
-      <h1>&#127968; SWITCH</h1>
+
+    <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches"></home>
+
+
+    <div class="panel-switch">
       <template v-if="switches.length == 0 || ! connected">
         <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
         <div class="connection" v-if="reconnect < reconnect_limit">
@@ -33,9 +36,6 @@
           </a>
         </div>
       </template>
-      <footer class="footer">
-        Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.
-      </footer>
     </div>
   </div><!-- /.container -->
 </template>
@@ -48,6 +48,8 @@ import loading  from './components/loading';
 import toggle   from './components/toggle';
 import btn      from './components/btn';
 import slider   from './components/slider';
+import home     from './components/home';
+
 import debounce from 'lodash/debounce';
 
 import {hsb_to_css_with_lightness} from './utils/color';
@@ -58,6 +60,7 @@ export default {
     loading,
     toggle,
     slider,
+    home,
     btn
   },
   data: function() {
@@ -82,13 +85,14 @@ export default {
 
       Vue.set(this.switches, data.id, data);
     },
-    toggle: function (item, value) {
-
+    toggle: function (item) {
       if (item.on) {
         this.updateSwitch({id: item.id, advanced_options: false})
       }
-
       this.send_action(item.id, ! item.on, item.hue, item.saturation, item.brightness)
+    },
+    home_toggle: function (item) {
+      this.toggle(item)
     },
     format_hsb_value: function(value) {
       if (value || value == 0) {
@@ -186,65 +190,106 @@ $border-color: #ddd;
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
   font-weight: 300;
 }
-body {
-  margin:0px;
-  padding: 0px
-}
-h1 {
-  padding: 0 15px;
-  font-weight: 200;
-  color: gray;
-  text-align: center
-}
-
-@media only screen and (max-width: 500px) {
-    h1 {
-        display: none
-    }
-}
 
 a {
   text-decoration: none;
   color: red;
 }
+
+body {
+  margin:0px;
+  padding: 0px
+}
+
 .connection {
   font-size: 0.8em;
   text-align: center
 }
+
+
+// LAYOUT MOBILE FIRST
+
 .container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
+  align-content: stretch;
   align-items: center;
-}
-.list-container {
   display: flex;
   flex-direction: column;
-  border: 1px solid $border-color;
-  border-bottom: none
+  justify-content: center;
+  width: 100%;
 }
 
-.panel {
-    width:400px;
-}
-
-footer {
-  margin-top: 30px;
-  font-size:0.8em;
-  color:#ccc;
-  width:100%;
-  text-align: center;
-}
-
-@media only screen and (max-width: 400px)  {
-  .panel {
+.panel-switch {
+    display:flex;
     width:100%;
+    order:1;
+}
+
+.panel-home {
+    display:flex;
+    width:100%;
+    order: 2;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5em
+}
+
+.panel-home svg {
+  width:100%
+}
+
+.panel-home > .home {
+
+}
+
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) {
+  
+  .container {
+    flex-direction: row;
+    height: 100vh;
   }
+
+  .panel-switch {
+    max-width: 400px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-right: 2em
+  }
+
+  .panel-home {
+    height: 100%;
+    padding-top: 0px
+
+  }
+
   .list-container {
-    border-left:none;
-    border-right:none;
+    border:1px solid $border-color;
   }
+  
+}
+
+@media (min-width: 1000px) {
+  .container {
+    width: 1000px;
+    padding-left: calc((100% - 1000px) /2)
+  }
+}
+
+
+// STARTING LIST STYLES
+
+.list-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: none;
+  border-top:1px solid $border-color;
 }
 
 .list-item {
@@ -255,6 +300,7 @@ footer {
   flex-direction: column;
   min-height: $item-size;
 }
+
 .list-item > .line {
   display: flex;
   flex-direction: row;
@@ -293,7 +339,7 @@ footer {
   left: $btn-width + $item-padding;
   top:  $item-size / 2 - 9px
 }
-.slider-hue {
+.list-item > .line.slider-hue {
      background: linear-gradient(
       to right, 
       hsl(  0, 100%, 50%)   0.0000%, 
@@ -306,19 +352,4 @@ footer {
     );
 }
 
-@keyframes off {
-    0% { background-color: #efefef; }
-    100% { background-color: none; }
-}
-
-.waiting {
-  animation: waiting 2s ease-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes waiting {
-    0% { background-color: none; }
-    50% { background-color: #e0eaf9; }
-    100% { background-color: none; }
-}
 </style>
