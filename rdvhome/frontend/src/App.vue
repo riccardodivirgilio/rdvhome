@@ -184,6 +184,8 @@ $btn-width: $item-size + 20px;
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
 $border-color: #222;
+$body-color:   #000;
+$panel-color:  #000;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -200,7 +202,7 @@ body {
   margin:0px;
   padding: 0px;
   display:flex;
-  background:black;
+  background:$body-color;
   justify-content: space-around;
   color:white
 }
@@ -252,7 +254,7 @@ body {
   .container {
     flex-direction: row;
     max-width: 950px;
-    background: black;
+    background: $panel-color;
     align-items: stretch;
     margin-top:3em;
     border: 1em solid $border-color;
