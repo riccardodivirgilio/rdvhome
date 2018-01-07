@@ -1,5 +1,7 @@
 <template>
+  <div class="page" v-bind:style="background()">
   <div class="container">
+
 
     <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches"></home>
 
@@ -38,6 +40,7 @@
       </template>
     </div>
   </div><!-- /.container -->
+  </div>
 </template>
 
 <script>
@@ -52,7 +55,7 @@ import home     from './components/home';
 
 import debounce from 'lodash/debounce';
 
-import {hsb_to_css_with_lightness} from './utils/color';
+import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
 
 export default {
   name: 'app',
@@ -73,6 +76,28 @@ export default {
   },
   methods: {
     to_css: hsb_to_css_with_lightness,
+    background: function () {
+
+      var value    = 'repeating-linear-gradient(45deg';
+      var initial  = 0;
+      var relevant = Object.values(this.switches).filter(item => (item.on && item.allow_hue));
+
+      relevant.map(item => {
+          let color = hsb_to_css_with_lightness(item, 0.15);
+          value   += ', ' + color + ' ' + initial + '%'
+          initial += 100 / relevant.length;
+          value   += ', ' + color + ' ' + initial + '%'
+        })
+
+
+      if (! initial) {
+        return {}
+      }
+
+      value += ')'
+
+      return {background:value}
+    },
     updateSwitch: function (data) {
 
       if (this.switches[data.id]) {
@@ -198,13 +223,16 @@ a {
   color: red;
 }
 
-body {
+html, body, .page {
+  width: 100%;
+  height: 100%;
   margin:0px;
   padding: 0px;
   display:flex;
   background:$body-color;
   justify-content: space-around;
-  color:white
+  color:white;
+  position:relative;
 }
 
 .connection {
@@ -216,7 +244,6 @@ body {
 // LAYOUT MOBILE FIRST
 
 .container {
-  align-items: flex-start;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -258,7 +285,7 @@ body {
     align-items: stretch;
     margin-top:3em;
     border: 1em solid $border-color;
-
+    max-height: 70vh;
   }
 
   .panel-switch {
