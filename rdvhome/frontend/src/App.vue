@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <div class="panel">
+
+    <home v-on:toggle="home_toggle($event)" class="panel-home" v-bind:switches="switches"></home>
+
+    <div class="panel-switch">
       <h1>&#127968; SWITCH</h1>
       <template v-if="switches.length == 0 || ! connected">
         <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
@@ -48,6 +51,8 @@ import loading  from './components/loading';
 import toggle   from './components/toggle';
 import btn      from './components/btn';
 import slider   from './components/slider';
+import home     from './components/home';
+
 import debounce from 'lodash/debounce';
 
 import {hsb_to_css_with_lightness} from './utils/color';
@@ -58,6 +63,7 @@ export default {
     loading,
     toggle,
     slider,
+    home,
     btn
   },
   data: function() {
@@ -82,13 +88,14 @@ export default {
 
       Vue.set(this.switches, data.id, data);
     },
-    toggle: function (item, value) {
-
+    toggle: function (item) {
       if (item.on) {
         this.updateSwitch({id: item.id, advanced_options: false})
       }
-
       this.send_action(item.id, ! item.on, item.hue, item.saturation, item.brightness)
+    },
+    home_toggle: function (item) {
+      this.toggle(item)
     },
     format_hsb_value: function(value) {
       if (value || value == 0) {
@@ -225,8 +232,26 @@ a {
   border-bottom: none
 }
 
-.panel {
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-content: stretch;
+  justify-content: center;
+  align-items:center;
+}
+
+.panel-switch {
     width:400px;
+    order:1;
+    height: 100%;
+}
+
+.panel-home {
+    flex-grow: 1;
+    order: 2;
+    height: 100%;
 }
 
 footer {
