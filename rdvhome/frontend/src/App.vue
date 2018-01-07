@@ -202,6 +202,7 @@ body {
   display:flex;
   background:black;
   justify-content: space-around;
+  min-height: 100vh;
 }
 
 .connection {
@@ -246,12 +247,16 @@ body {
 */
 
 @media (min-width: 768px) {
+
+  body {
+    justify-content: center;
+    align-items:center;
+  }
   
   .container {
     flex-direction: row;
     max-width: 950px;
     background: black;
-    margin-top: 5em;
     align-items: stretch;
   }
 
