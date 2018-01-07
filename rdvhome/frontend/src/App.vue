@@ -183,7 +183,7 @@ $btn-width: $item-size + 20px;
 
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
-$border-color: rgba(175, 175, 175, 0.5);
+$border-color: #222;
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -200,7 +200,7 @@ body {
   margin:0px;
   padding: 0px;
   display:flex;
-  background:#111;
+  background:black;
   justify-content: space-around;
 }
 
@@ -249,10 +249,9 @@ body {
   
   .container {
     flex-direction: row;
-    max-width: 1000px;
+    max-width: 950px;
     background: black;
     margin-top: 5em;
-    border: 1em solid black;
     align-items: stretch;
   }
 
@@ -262,13 +261,13 @@ body {
 
   .panel-home {
 
-    border: 1em solid #222;
+    border: 1em solid $border-color;
     border-left:none;
 
   }
 
   .list-container {
-    border: 1em solid #222;
+    border: 1em solid $border-color;
   }
 
   
@@ -282,7 +281,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  background:white;
+  
 }
 
 .list-item {
@@ -292,7 +291,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: $item-size;
-  
+  color: white;
 }
 
 
@@ -332,7 +331,7 @@ body {
   pointer-events: none;
   position:absolute;
   left: $btn-width + $item-padding;
-  top:  $item-size / 2 - 9px
+  top:  $item-size / 2 - 9px;
 }
 .list-item > .line.slider-hue {
    background: linear-gradient(
