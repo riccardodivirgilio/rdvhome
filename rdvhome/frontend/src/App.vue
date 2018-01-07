@@ -225,7 +225,7 @@ a {
 
 html, body, .page {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin:0px;
   padding: 0px;
   display:flex;
@@ -262,6 +262,7 @@ html, body, .page {
     order: 2;
     align-items: center;
     padding: 2em;
+    background: $body-color
 }
 
 .panel-home svg {
