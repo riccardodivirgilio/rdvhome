@@ -130,19 +130,19 @@ app.router.add_static('/dist', module_path('rdvhome', 'frontend', 'dist'))
 async def view_status_list(request):
     return JsonResponse(await status(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}', name = "status")
+@url('/switch/{number:[a-zA-Z-0-9_-]+}', name = "status")
 async def view_status_list(request):
     return JsonResponse(await status(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
+@url('/switch/{number:[a-zA-Z-0-9_-]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/{mode:(-|on|off)}', name = "on")
+@url('/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}', name = "on")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
-@url('/switch/{number:[a-zA-Z-0-9]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
+@url('/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
 async def view_status_list(request):
     return JsonResponse(await switch(**validate(**request.match_info)))
 
