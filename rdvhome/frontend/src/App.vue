@@ -200,7 +200,8 @@ body {
   margin:0px;
   padding: 0px;
   display:flex;
-  background:black
+  background:#111;
+  justify-content: space-around;
 }
 
 .connection {
@@ -229,16 +230,15 @@ body {
     width:100%;
     order: 2;
     align-items: center;
-    padding-top: 5em
+    padding: 2em;
 }
 
 .panel-home svg {
-  width:100%
+  width:100%;
+  
 }
 
-.panel-home > .home {
 
-}
 
 /* 
   ##Device = Tablets, Ipads (portrait)
@@ -249,33 +249,31 @@ body {
   
   .container {
     flex-direction: row;
-
+    max-width: 1000px;
+    background: black;
+    margin-top: 5em;
+    border: 1em solid black;
+    align-items: stretch;
   }
 
   .panel-switch {
     max-width: 400px;
-    padding-right: 2em;
-    padding-top: 5em
   }
 
   .panel-home {
-    padding-top: 5em
+
+    border: 1em solid #222;
+    border-left:none;
 
   }
 
   .list-container {
-    border: 1em solid #333;
+    border: 1em solid #222;
   }
 
   
 }
 
-@media (min-width: 1100px) {
-  .container {
-    width: 1100px;
-    padding-left: calc((100% - 1100px) /2)
-  }
-}
 
 
 // STARTING LIST STYLES
@@ -284,6 +282,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  background:white;
 }
 
 .list-item {
@@ -293,7 +292,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: $item-size;
-  background:white;
+  
 }
 
 
