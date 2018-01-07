@@ -198,7 +198,8 @@ a {
 
 body {
   margin:0px;
-  padding: 0px
+  padding: 0px;
+  display:flex;
 }
 
 .connection {
@@ -210,11 +211,9 @@ body {
 // LAYOUT MOBILE FIRST
 
 .container {
-  align-content: stretch;
-  align-items: center;
+  align-items: top;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: 100%;
 }
 
@@ -229,7 +228,6 @@ body {
     width:100%;
     order: 2;
     align-items: center;
-    justify-content: center;
     padding-top: 5em
 }
 
@@ -250,34 +248,27 @@ body {
   
   .container {
     flex-direction: row;
-    height: 100vh;
+
   }
 
   .panel-switch {
     max-width: 400px;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding-right: 2em
+    padding-right: 2em;
+    padding-top: 5em
   }
 
   .panel-home {
-    height: 100%;
-    padding-top: 0px
+    padding-top: 5em
 
   }
 
-  .list-container {
-    border:1px solid $border-color;
-  }
   
 }
 
-@media (min-width: 1000px) {
+@media (min-width: 1100px) {
   .container {
-    width: 1000px;
-    padding-left: calc((100% - 1000px) /2)
+    width: 1100px;
+    padding-left: calc((100% - 1100px) /2)
   }
 }
 
