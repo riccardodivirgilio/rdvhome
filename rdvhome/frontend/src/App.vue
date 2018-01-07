@@ -1,10 +1,10 @@
 <template>
   <div class="container">
 
-    <home v-on:toggle="home_toggle($event)" class="panel-home" v-bind:switches="switches"></home>
+    <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches"></home>
+
 
     <div class="panel-switch">
-      <h1>&#127968; SWITCH</h1>
       <template v-if="switches.length == 0 || ! connected">
         <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
         <div class="connection" v-if="reconnect < reconnect_limit">
@@ -36,9 +36,6 @@
           </a>
         </div>
       </template>
-      <footer class="footer">
-        Made with <span style="font-size:1.2em">&hearts;</span> in San Paolo.
-      </footer>
     </div>
   </div><!-- /.container -->
 </template>
@@ -193,83 +190,106 @@ $border-color: #ddd;
   font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
   font-weight: 300;
 }
-body {
-  margin:0px;
-  padding: 0px
-}
-h1 {
-  padding: 0 15px;
-  font-weight: 200;
-  color: gray;
-  text-align: center
-}
-
-@media only screen and (max-width: 500px) {
-    h1 {
-        display: none
-    }
-}
 
 a {
   text-decoration: none;
   color: red;
 }
+
+body {
+  margin:0px;
+  padding: 0px
+}
+
 .connection {
   font-size: 0.8em;
   text-align: center
 }
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-}
-.list-container {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid $border-color;
-  border-bottom: none
-}
+
+
+// LAYOUT MOBILE FIRST
 
 .container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
   align-content: stretch;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items:center;
+  width: 100%;
 }
 
 .panel-switch {
-    width:400px;
+    display:flex;
+    width:100%;
     order:1;
-    height: 100%;
 }
 
 .panel-home {
-    flex-grow: 1;
-    order: 2;
-    height: 100%;
-}
-
-footer {
-  margin-top: 30px;
-  font-size:0.8em;
-  color:#ccc;
-  width:100%;
-  text-align: center;
-}
-
-@media only screen and (max-width: 400px)  {
-  .panel {
+    display:flex;
     width:100%;
+    order: 2;
+    align-items: center;
+    justify-content: center;
+    padding-top: 5em
+}
+
+.panel-home svg {
+  width:100%
+}
+
+.panel-home > .home {
+
+}
+
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) {
+  
+  .container {
+    flex-direction: row;
+    height: 100vh;
   }
+
+  .panel-switch {
+    max-width: 400px;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-right: 2em
+  }
+
+  .panel-home {
+    height: 100%;
+    padding-top: 0px
+
+  }
+
   .list-container {
-    border-left:none;
-    border-right:none;
+    border:1px solid $border-color;
   }
+  
+}
+
+@media (min-width: 1000px) {
+  .container {
+    width: 1000px;
+    padding-left: calc((100% - 1000px) /2)
+  }
+}
+
+
+// STARTING LIST STYLES
+
+.list-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-bottom: none;
+  border-top:1px solid $border-color;
 }
 
 .list-item {
@@ -280,6 +300,7 @@ footer {
   flex-direction: column;
   min-height: $item-size;
 }
+
 .list-item > .line {
   display: flex;
   flex-direction: row;
@@ -318,7 +339,7 @@ footer {
   left: $btn-width + $item-padding;
   top:  $item-size / 2 - 9px
 }
-.slider-hue {
+.list-item > .line.slider-hue {
      background: linear-gradient(
       to right, 
       hsl(  0, 100%, 50%)   0.0000%, 
@@ -331,19 +352,4 @@ footer {
     );
 }
 
-@keyframes off {
-    0% { background-color: #efefef; }
-    100% { background-color: none; }
-}
-
-.waiting {
-  animation: waiting 2s ease-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes waiting {
-    0% { background-color: none; }
-    50% { background-color: #e0eaf9; }
-    100% { background-color: none; }
-}
 </style>

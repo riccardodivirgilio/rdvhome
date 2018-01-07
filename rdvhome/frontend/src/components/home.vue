@@ -737,8 +737,10 @@ export default {
       },
       area_color: function(item) {
         if (item && item.on) {
-            return {fill: this.to_css(item)}
+            console.log(item)
+            return {fill: this.to_css(item), opacity: 0.1 + 0.1 * item.brightness}
         }
+        return {fill:'gray', opacity:0.1}
       },
       area_click: function(item) {
         if (item) {
@@ -756,11 +758,11 @@ export default {
     fill: #ddd;
     stroke: rgba( 0, 0, 0, 0.5);
     stroke-width:0.36;
+    transition: .4s;
 }
 
 #area > g {
-    fill:rgba(100, 100, 100, 0.50); 
-    opacity:0.1;
+    transition: .4s;
 }
 
 .st0 { stroke-width:0.36; }
