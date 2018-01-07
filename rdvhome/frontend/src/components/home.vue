@@ -738,9 +738,9 @@ export default {
       area_color: function(item) {
         if (item && item.on) {
             console.log(item)
-            return {fill: this.to_css(item), opacity: 0.1 + 0.1 * item.brightness}
+            return {fill: this.to_css(item), opacity: 0.3 + 0.2 * item.brightness}
         }
-        return {fill:'gray', opacity:0.1}
+        return {fill:'gray', opacity:0.}
       },
       area_click: function(item) {
         if (item) {
@@ -775,7 +775,7 @@ export default {
     stroke-linecap:round;
     stroke-linejoin:round;
     stroke-miterlimit:10;
-    stroke:rgb(70, 70, 70);
+    stroke:rgb(255, 255, 255);
 }
 
 </style>

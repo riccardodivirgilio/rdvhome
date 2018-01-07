@@ -183,7 +183,7 @@ $btn-width: $item-size + 20px;
 
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
-$border-color: #ddd;
+$border-color: rgba(175, 175, 175, 0.5);
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -200,6 +200,7 @@ body {
   margin:0px;
   padding: 0px;
   display:flex;
+  background:black
 }
 
 .connection {
@@ -211,7 +212,7 @@ body {
 // LAYOUT MOBILE FIRST
 
 .container {
-  align-items: top;
+  align-items: flex-start;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -262,6 +263,10 @@ body {
 
   }
 
+  .list-container {
+    border: 1em solid #333;
+  }
+
   
 }
 
@@ -279,8 +284,6 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-bottom: none;
-  border-top:1px solid $border-color;
 }
 
 .list-item {
@@ -290,7 +293,9 @@ body {
   display: flex;
   flex-direction: column;
   min-height: $item-size;
+  background:white;
 }
+
 
 .list-item > .line {
   display: flex;
@@ -331,16 +336,16 @@ body {
   top:  $item-size / 2 - 9px
 }
 .list-item > .line.slider-hue {
-     background: linear-gradient(
-      to right, 
-      hsl(  0, 100%, 50%)   0.0000%, 
-      hsl( 60, 100%, 50%)  16.6667%, 
-      hsl(120, 100%, 50%)  33.3333%, 
-      hsl(180, 100%, 50%)  50.0000%, 
-      hsl(240, 100%, 50%)  66.6667%, 
-      hsl(300, 100%, 50%)  83.3333%, 
-      hsl(360, 100%, 50%) 100.0000%
-    );
+   background: linear-gradient(
+    to right, 
+    hsl(  0, 100%, 50%)   0.0000%, 
+    hsl( 60, 100%, 50%)  16.6667%, 
+    hsl(120, 100%, 50%)  33.3333%, 
+    hsl(180, 100%, 50%)  50.0000%, 
+    hsl(240, 100%, 50%)  66.6667%, 
+    hsl(300, 100%, 50%)  83.3333%, 
+    hsl(360, 100%, 50%) 100.0000%
+  );
 }
 
 </style>

@@ -2,7 +2,7 @@
 
   <label class="btn" v-bind:class="{disabled: disabled}">
     <input type="checkbox" @change="toggle" v-model="value" v-bind:disabled="disabled" v-bind:name="name">
-    <span class="btn-inner" v-bind:style="{backgroundColor: (! disabled && color) ? to_css(color, 0.9) : 'white'}"></span>
+    <span class="btn-inner" v-bind:style="{backgroundColor: (! disabled && color) ? to_css(color, 0.9) : 'transparent'}"></span>
     <div class="title"><slot></slot></div>
   </label>
 
