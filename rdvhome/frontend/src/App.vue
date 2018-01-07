@@ -6,13 +6,13 @@
 
     <div class="panel-switch">
       <template v-if="switches.length == 0 || ! connected">
-        <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
-        <div class="connection" v-if="reconnect < reconnect_limit">
-          Connection in progress...
-        </div>
-        <div class="connection" v-else>
-          Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
-        </div>
+          <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
+          <div class="connection" v-if="reconnect < reconnect_limit">
+            Connection in progress...
+          </div>
+          <div class="connection" v-else>
+            Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
+          </div>
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
@@ -202,7 +202,7 @@ body {
   display:flex;
   background:black;
   justify-content: space-around;
-
+  color:white
 }
 
 .connection {
@@ -222,6 +222,7 @@ body {
 
 .panel-switch {
     display:flex;
+    flex-direction: column;
     width:100%;
     order:1;
 }
@@ -253,25 +254,15 @@ body {
     max-width: 950px;
     background: black;
     align-items: stretch;
-    padding-top:3em
+    margin-top:3em;
+    border: 1em solid $border-color;
 
   }
 
   .panel-switch {
     max-width: 400px;
+    border-right: 2px solid $border-color; 
   }
-
-  .panel-home {
-
-    border: 1em solid $border-color;
-    border-left:none;
-
-  }
-
-  .list-container {
-    border: 1em solid $border-color;
-  }
-
   
 }
 
