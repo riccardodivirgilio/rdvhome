@@ -29,7 +29,7 @@ def run_rdv_command_line():
         SWITCHES = {
             'rdvhome.switches.philips.PhilipsSwitch': (
                 philips(
-                    id = 'lm', 
+                    id = 'led_living_room', 
                     name = 'Salone', 
                     ordering =  1, 
                     icon = "🛋", 
@@ -37,7 +37,7 @@ def run_rdv_command_line():
                     alias = ['default']
                 ),
                 philips(
-                    id = 'tv', 
+                    id = 'led_tv', 
                     name = 'TV',     
                     ordering =  2, 
                     icon = "📺", 
@@ -45,7 +45,7 @@ def run_rdv_command_line():
                     alias = ['default']
                 ),
                 philips(
-                    id = 'br', 
+                    id = 'led_bedroom', 
                     name = 'Letto',  
                     ordering = 10, 
                     icon = "🛏", 
