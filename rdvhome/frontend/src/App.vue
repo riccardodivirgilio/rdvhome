@@ -208,9 +208,9 @@ $btn-width: $item-size + 20px;
 
 $toggle-height: $item-size - 2 * $item-padding;
 $toggle-width:  $toggle-height * 2;
-$border-color: #222;
+$border-color: rgba(70, 70, 70, 0.3);
 $body-color:   #000;
-$panel-color:  #000;
+$panel-color:  rgba(0, 0, 0, 0.5);
 
 *, *:before, *:after {
   box-sizing: border-box;
