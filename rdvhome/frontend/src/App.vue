@@ -80,10 +80,15 @@ export default {
 
       var value    = 'repeating-linear-gradient(45deg';
       var initial  = 0;
-      var relevant = Object.values(this.switches).filter(item => (item.on && item.allow_hue));
+      var relevant = Object.values(this.switches).filter(item => (item.allow_hue));
 
       relevant.map(item => {
-          let color = hsb_to_css_with_lightness(item, 0.15);
+          if (item.on) {
+            var color = hsb_to_css_with_lightness(item, 0.15);
+          } else {
+            var color = 'transparent';
+          }
+          
           value   += ', ' + color + ' ' + initial + '%'
           initial += 100 / relevant.length;
           value   += ', ' + color + ' ' + initial + '%'
