@@ -82,7 +82,7 @@ export default {
       var initial  = 0;
       var relevant = Object.values(this.switches)
         .filter(item => item.allow_hue)
-        .sort(item => item.ordering)
+        .sort((a, b) => (a.ordering - b.ordering))
 
       relevant.map(item => {
           if (item.on) {
