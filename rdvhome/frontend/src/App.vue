@@ -269,7 +269,7 @@ html, body, .page {
     order: 2;
     align-items: center;
     padding: 2em;
-    background: $body-color
+    background: $panel-color;
 }
 
 .panel-home svg {
