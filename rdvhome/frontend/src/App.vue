@@ -80,7 +80,9 @@ export default {
 
       var value    = 'repeating-linear-gradient(45deg';
       var initial  = 0;
-      var relevant = Object.values(this.switches).filter(item => (item.allow_hue));
+      var relevant = Object.values(this.switches)
+        .filter(item => item.allow_hue)
+        .sort(item => item.ordering)
 
       relevant.map(item => {
           if (item.on) {
