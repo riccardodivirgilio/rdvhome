@@ -57,7 +57,7 @@ def run_rdv_command_line():
                 dict(
                     id = 'usa',      
                     name = "USA",    
-                    ordering = 30, 
+                    ordering = 29, 
                     icon = "🇺🇸", 
                     colors = [
                         dict(hue = 1,    saturation = 1, brightness = 1), 
@@ -65,6 +65,18 @@ def run_rdv_command_line():
                         dict(hue = 0.66, saturation = 1, brightness = 1),
                     ], 
                     timeout = 3, 
+                    automatic_on = 'default'
+                ),
+                dict(
+                    id = 'natural',    
+                    name = "Naturale",  
+                    ordering = 30, 
+                    icon = "🌞",   
+                    colors = [{
+                        "hue": 0.12845044632639047,
+                        "saturation": 0.5511811023622047,
+                        "brightness": 1.0
+                    }],
                     automatic_on = 'default'
                 ),
                 dict(
