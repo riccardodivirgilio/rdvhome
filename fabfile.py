@@ -62,9 +62,10 @@ def setup():
        'rsync',
        'python3',
        'python3-dev',
+       'python3-rpi.gpio',
        'avahi-daemon',
        'avahi-discover',
-       'libnss-mdns'
+       'libnss-mdns',
     ])
 
     #sudo("ntpdate -s time.nist.gov")
@@ -91,6 +92,13 @@ def supervisor():
         directory='/home/pi/server/',
         user=env.user
     )
+
+@task
+@roles('lights')
+def run_command(cmd = 'test_gpio'):
+    execute(deploy, restart = False)
+    run('python3.6 /home/pi/server/run.py %s' % cmd)
+
 
 @task
 @roles('lights')
