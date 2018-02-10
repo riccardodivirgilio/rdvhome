@@ -291,9 +291,8 @@ html, body, .page {
     max-width: 950px;
     background: $panel-color;
     align-items: stretch;
-    margin-top:3em;
+    margin: 3em 0em 3em 0em;
     border: 1em solid $border-color;
-    max-height: 70vh;
   }
 
   .panel-switch {
