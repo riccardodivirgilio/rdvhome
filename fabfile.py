@@ -36,10 +36,19 @@ RASPBERRY = Device(
     default_password = "!w9Ij56LaoRKnP5fpV0LGH2GEHkY="
     )
 
+NAS = Device(
+    id = 'nas',
+    name = 'rdvnas.local',
+    user = "server",
+    ipaddress = "192.168.1.200",
+    #default_password = "!w9Ij56LaoRKnP5fpV0LGH2GEHkY="
+    )
+
 
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
 env.roledefs  = {
     'lights': [RASPBERRY.host()],
+    'nas':    [NAS.host()],
 }
 
 env.passwords = {
