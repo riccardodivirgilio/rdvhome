@@ -28,9 +28,25 @@ def test(number = [RELAY1]):
         print("LED %s off" % n)
         GPIO.output(n, GPIO.LOW)
 
+def read(number = [21]):
+
+    import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+
+    for n in iterate(number):
+        GPIO.setup(n, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+    for i in range(10):
+        for n in iterate(number):
+            print(GPIO.input(n))
+            time.sleep(0.5)
+
 class Command(SimpleCommand):
 
     help = 'Test GPIO'
 
     def handle(self, **opts):
-        test(**opts)
+        #test(**opts)
+        read(**opts)
