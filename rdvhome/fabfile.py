@@ -108,14 +108,13 @@ def run_command(cmd = 'test_gpio'):
     execute(deploy, restart = False)
     run('python3.6 /home/pi/server/run.py %s' % cmd)
 
-
 @task
 @roles('lights')
 def deploy(restart = True):
 
     rsync_project(
         remote_dir="/home/pi/server/",
-        local_dir="%s/" % os.path.dirname(__file__),
+        local_dir="%s/" % os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir)),
         exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__", "node_modules"),
         delete=True
     )
