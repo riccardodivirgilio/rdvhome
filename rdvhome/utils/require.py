@@ -2,40 +2,42 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+try:
+    from pip import get_installed_distributions, main as pip_main
+except ImportError:
+    from pip._internal import get_installed_distributions, main as pip_main
+    
+def installed_modules():
+    return {
+        i.key: i.version
+        for i in get_installed_distributions()
+    }
+
 def missing_requirements(*modules):
 
-    if modules:
+    distributions = installed_modules()
 
-        import pip
+    for module in modules:
+        version = None
+        if isinstance(module, (tuple, list)):
+            module, version = module
 
-        distributions = dict(
-            (i.key, i.version)
-            for i in pip.get_installed_distributions()
-            )
-
-        #for k, v in sorted(distributions.items()):
-        #    print(k, v)
-
-        for module in modules:
-            version = None
-            if isinstance(module, (tuple, list)):
-                module, version = module
-
-            if not module in distributions or version and not distributions[module] == version:
-
-                yield version and "%s==%s" % (module, version) or module
+        if not module in distributions or version and not distributions[module] == version:
+            yield version and "%s==%s" % (module, version) or module
 
 def require_module(*modules):
 
     commands = list(missing_requirements(*modules))
 
     if commands:
-        import pip
-        from pip.locations import virtualenv_no_global
+        try:
+            from pip.locations import virtualenv_no_global
+        except ImportError:
+            from pip._internal.locations import virtualenv_no_global
 
         print("Update in progress: pip install %s --user" % " ".join(commands))
 
         if virtualenv_no_global():
-            pip.main(["install"] + commands)
+            pip_main(["install"] + commands)
         else:
-            pip.main(["install", "--user"] + commands)
+            pip_main(["install", "--user"] + commands)
