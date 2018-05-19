@@ -13,7 +13,6 @@ RELAY1 = 16
 
 def test(number = [RELAY1]):
 
-
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
