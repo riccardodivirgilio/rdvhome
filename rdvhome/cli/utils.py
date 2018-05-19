@@ -2,12 +2,25 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from rdvhome.utils.decorators import to_data
+from rdvhome.utils.importutils import module_path
+
 import argparse
 import sys
+import os
+
+@to_data
+def discover_with_convention(modules, import_name):
+    for module in modules:
+        for filename in os.listdir(module_path(module)):
+            basename, ext = os.path.splitext(filename)
+            if ext == '.py' and not basename == '__init__':
+                yield basename, '%s.%s.%s' % (module, basename, import_name)
 
 class SimpleCommand(object):
 
-    help = None
+    help  = None
+    print = print
 
     def __init__(self, argv = None):
         self.argv = (argv or sys.argv[:])
