@@ -7,11 +7,14 @@ from rdvhome.utils.functional import iterate
 
 import time
 
-LED1   = 18
-LED2   = 23
-RELAY1 = 16
+RELAY1 = [22, 27, 17,  4,  3,  2]
 
-def test(number = [RELAY1]):
+RELAY2 = [16, 12,  7,  8, 25, 24]
+
+INPUT  = [21, 20, 23, 18, 26, 19, 
+          13,  6,  5, 10,  9, 11]
+
+def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
@@ -19,34 +22,38 @@ def test(number = [RELAY1]):
 
     for n in iterate(number):
         GPIO.setup(n, GPIO.OUT)
-        print("LED %s on" % n)
-        GPIO.output(n, GPIO.HIGH)
-
-    time.sleep(2)
 
     for n in iterate(number):
-        print("LED %s off" % n)
+        GPIO.output(n, GPIO.HIGH)
+
+    #TURNING ON
+
+    for n in iterate(number):
+        print("RELAY %s on" % n)
         GPIO.output(n, GPIO.LOW)
+        time.sleep(timing)
 
-def read(number = [21]):
+    for n in iterate(number):
+        print("RELAY %s off" % n)
+        GPIO.output(n, GPIO.HIGH)
+        time.sleep(timing)
 
+def read(number = INPUT):
     import RPi.GPIO as GPIO
-
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-
     for n in iterate(number):
         GPIO.setup(n, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
     for i in range(10):
         for n in iterate(number):
-            print(GPIO.input(n))
-            time.sleep(0.5)
+            print(str(n).zfill(2), '->', GPIO.input(n))
+        time.sleep(0.5)
 
 class Command(SimpleCommand):
 
     help = 'Test GPIO'
 
     def handle(self, **opts):
-        #test(**opts)
-        read(**opts)
+        relay(**opts)
+        #read(**opts)
