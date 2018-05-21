@@ -45,9 +45,11 @@ def read(number = INPUT):
     for n in iterate(number):
         GPIO.setup(n, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
+    print(*(str(n).zfill(2) for n in iterate(number)))
+
     for i in range(10):
-        for n in iterate(number):
-            print(str(n).zfill(2), '->', GPIO.input(n))
+        print(*(str(not GPIO.input(n) and n or '-').rjust(2) for n in iterate(number)))
+            
         time.sleep(0.5)
 
 class Command(SimpleCommand):
@@ -55,5 +57,5 @@ class Command(SimpleCommand):
     help = 'Test GPIO'
 
     def handle(self, **opts):
-        relay(**opts)
-        #read(**opts)
+        #relay(**opts)
+        read(**opts)
