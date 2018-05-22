@@ -21,9 +21,7 @@ def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
     GPIO.setwarnings(False)
 
     for n in iterate(number):
-        GPIO.setup(n, GPIO.OUT)
-
-    for n in iterate(number):
+        GPIO.setup(n,  GPIO.OUT)
         GPIO.output(n, GPIO.HIGH)
 
     #TURNING ON
@@ -57,5 +55,5 @@ class Command(SimpleCommand):
     help = 'Test GPIO'
 
     def handle(self, **opts):
-        #relay(**opts)
+        relay(**opts)
         read(**opts)
