@@ -44,16 +44,3 @@ class SimpleCommand(object):
             return self.handle(*args, **cmd_options)
 
         return self.handle()
-
-def require_django_setup(func):
-    def func_wrapper(*args, **kw):
-
-        from django.conf import settings
-
-        if not getattr(settings, 'django_setup_done', False):
-            from django import setup
-            setup()
-            settings.django_setup_done = True
-
-        return func(*args, **kw)
-    return func_wrapper
