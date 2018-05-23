@@ -2,23 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from aioreactive.operators.concat import concat
-from aioreactive.operators.merge import merge
-
-from collections import OrderedDict
-
-from functools import reduce
-
-from operator import attrgetter, methodcaller
-
-from rdvhome.switches.events import EventStream, subscribe
+from rdvhome.switches.events import EventStream
 from rdvhome.utils.async import wait_all
 from rdvhome.utils.colors import to_color
 from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import decorate, to_data
-from rdvhome.utils.functional import first, iterate
+from rdvhome.utils.decorators import to_data
+from rdvhome.utils.functional import iterate
 
-import asyncio
 import six
 
 def capabilities(on = False, hue = False, saturation = False, brightness = False):

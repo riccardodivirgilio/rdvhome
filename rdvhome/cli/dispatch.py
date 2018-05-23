@@ -2,12 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.cli.utils import SimpleCommand, discover_with_convention
-from rdvhome.utils.functional import first
+from rdvhome.cli.utils import discover_with_convention, SimpleCommand
 from rdvhome.utils.importutils import import_string
 
 import sys
-
 
 class DispatchCommand(SimpleCommand):
 

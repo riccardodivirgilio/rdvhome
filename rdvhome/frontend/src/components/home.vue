@@ -742,7 +742,7 @@ export default {
         if (item && item.on) {
             console.log(item)
             return {
-                fill: this.to_css(item), 
+                fill: this.to_css(item),
                 opacity: 0.3 + 0.2 * item.brightness,
             }
         }

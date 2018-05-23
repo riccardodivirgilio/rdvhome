@@ -1,15 +1,20 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function, unicode_literals
+
+from rdvhome.utils import json
+from rdvhome.utils.importutils import module_path
+
 import os
-import json
 
 class KeyStore(object):
 
     encoder   = json
     extension = '.json'
 
-    def __init__(self, path, prefix = None, version = None, create = True):
-        self.path    = path
+    def __init__(self, path = None, prefix = None, version = None, create = True):
+
+        self.path    = path or module_path('rdvhome', 'data')
         self.prefix  = prefix
         self.version = version
 
@@ -22,8 +27,8 @@ class KeyStore(object):
     def path_for_key(self, key, prefix = None, version = None):
         return os.path.join(
             self.path, '-'.join(filter(None, (
-                prefix or self.prefix, 
-                str(key), 
+                prefix or self.prefix,
+                str(key),
                 version or self.version
             ))) + self.extension
         )

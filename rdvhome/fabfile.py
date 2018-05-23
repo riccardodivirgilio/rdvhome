@@ -2,16 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, execute, roles, run, sudo, task, put
+from fabric.api import env, execute, roles, run, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 
 from fabtools import require
 from fabtools.supervisor import restart_process
-from rdvhome.utils.importutils import module_path, import_module
-from rdvhome.utils.functional import iterate
-from rdvhome.conf import settings
 
 import os
 import sys
@@ -43,7 +40,6 @@ NAS = Device(
     ipaddress = "192.168.1.200",
     #default_password = "!w9Ij56LaoRKnP5fpV0LGH2GEHkY="
     )
-
 
 #env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
 env.roledefs  = {

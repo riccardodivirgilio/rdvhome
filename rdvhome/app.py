@@ -3,12 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from aiohttp import web
-from aiohttp.web_fileresponse import FileResponse
-from aiohttp.web_exceptions import HTTPForbidden, HTTPNotFound, HTTPBadRequest
-from aiohttp.client import _RequestContextManager
 from aiohttp.test_utils import make_mocked_request
-
-from functools import partial
+from aiohttp.web_exceptions import HTTPBadRequest, HTTPForbidden, HTTPNotFound
+from aiohttp.web_fileresponse import FileResponse
 
 from operator import methodcaller
 
@@ -25,7 +22,6 @@ import aiohttp
 import asyncio
 import logging
 import sys
-import traceback
 
 @web.middleware
 async def server_error(request, handler):

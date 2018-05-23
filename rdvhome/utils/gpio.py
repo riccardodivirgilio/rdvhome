@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from rdvhome.utils.importutils import module_path
-from rdvhome.utils.importutils import import_string
+from __future__ import absolute_import, print_function, unicode_literals
+
 from rdvhome.utils.keystore import KeyStore
 
 try:
@@ -36,10 +36,7 @@ class DebugGPIO(object):
 
     def __init__(self, path = None):
 
-        self.store = KeyStore(
-            path or module_path('rdvhome', 'data'),
-            prefix = 'gpio'
-        )
+        self.store = KeyStore(prefix = 'gpio')
 
     def setup_input(self, n):
         if self.store.get(n) is None:

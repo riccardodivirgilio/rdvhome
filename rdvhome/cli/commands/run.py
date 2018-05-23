@@ -8,11 +8,8 @@ from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.switches import switches
-from rdvhome.switches.events import EventStream, subscribe
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
-
-import asyncio
 
 async def log(event):
     print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None) or '')
