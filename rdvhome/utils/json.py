@@ -28,6 +28,12 @@ class JSONEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, obj)
 
+def dump(obj, f, indent = 4):
+    return json.dump(obj, f, indent = indent, cls = JSONEncoder)
+
+def load(f, indent = 4):
+    return json.load(f, object_hook = data)
+
 def dumps(obj, indent = 4):
     return json.dumps(obj, indent = indent, cls = JSONEncoder)
 
