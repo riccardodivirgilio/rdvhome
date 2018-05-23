@@ -4,6 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.utils.functional import iterate
+from rdvhome.utils.gpio import get_gpio
 
 import time
 
@@ -16,38 +17,34 @@ INPUT  = [21, 20, 23, 18, 26, 19,
 
 def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 
-    import RPi.GPIO as GPIO
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
+    gpio = get_gpio()
 
     for n in iterate(number):
-        GPIO.setup(n,  GPIO.OUT)
-        GPIO.output(n, GPIO.HIGH)
+        gpio.setup_output(n)
 
     #TURNING ON
 
     for n in iterate(number):
         print("RELAY %s on" % n)
-        GPIO.output(n, GPIO.LOW)
+        gpio.output(n, high = False)
         time.sleep(timing)
 
     for n in iterate(number):
         print("RELAY %s off" % n)
-        GPIO.output(n, GPIO.HIGH)
+        gpio.output(n, high = True)
         time.sleep(timing)
 
 def read(number = INPUT):
-    import RPi.GPIO as GPIO
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
+
+    gpio = get_gpio()
+
     for n in iterate(number):
-        GPIO.setup(n, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+        gpio.setup_input(n)
 
     print(*(str(n).zfill(2) for n in iterate(number)))
 
     for i in range(10):
-        print(*(str(not GPIO.input(n) and n or '-').rjust(2) for n in iterate(number)))
-            
+        print(*(str(not gpio.input(n) and n or '-').rjust(2) for n in iterate(number)))
         time.sleep(0.5)
 
 class Command(SimpleCommand):
