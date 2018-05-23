@@ -12,6 +12,7 @@ import aiohttp
 class PhilipsDebugSwitch(Switch):
 
     store = KeyStore(prefix = 'philips')
+    default_settings = {'on': False, "brightness": 1, "hue": 0.5, "saturation": 1}
 
     @to_data
     def parse_command(self, on = None, color = None):
@@ -25,7 +26,7 @@ class PhilipsDebugSwitch(Switch):
     async def switch(self, on = None, color = None):
 
         payload = dict(
-            self.store.get(self.id, {}), 
+            self.store.get(self.id, self.default_settings), 
             **self.parse_command(on, color)
         )
         self.store.set(self.id, payload)
@@ -33,7 +34,9 @@ class PhilipsDebugSwitch(Switch):
         return self.send(on = on, color = color, full = False)
 
     async def status(self):
-        return self.send(**self.store.get(self.id, {'on': False}))
+        return self.send(
+            **self.store.get(self.id, self.default_settings)
+        )
 
 class PhilipsSwitch(Switch):
 
