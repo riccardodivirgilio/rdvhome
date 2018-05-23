@@ -2,9 +2,7 @@
 
 from rdvhome.utils.importutils import module_path
 from rdvhome.utils.importutils import import_string
-
-import os
-import json
+from rdvhome.utils.keystore import KeyStore
 
 try:
     import RPi.GPIO as GPIO
@@ -37,35 +35,24 @@ class DebugGPIO(object):
     GPIO = GPIO
 
     def __init__(self, path = None):
-        self.path = module_path('rdvhome', 'gpio')
-        try:
-            os.makedirs(self.path)
-        except FileExistsError:
-            pass
 
-    def _write(self, n, payload):
-        with open(os.path.join(self.path, '%.2i.json' % n), 'w') as f:
-            json.dump(payload, f)
-
-    def _read(self, n):
-        try:
-            with open(os.path.join(self.path, '%.2i.json' % n), 'rb') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            pass
+        self.store = KeyStore(
+            path or module_path('rdvhome', 'data'),
+            prefix = 'gpio'
+        )
 
     def setup_input(self, n):
-        if self._read(n) is None:
-            self._write(n, 1)
+        if self.store.get(n) is None:
+            self.store.set(n, 1)
 
     def setup_output(self, n):
-        self._write(n, None)
+        self.store.set(n, None)
 
     def input(self, n):
-        return self._read(n)
+        return self.store.get(n)
 
     def output(self, n, high = True):
-        self._write(n, high and 1 or 0)
+        self.store.set(n, high and 1 or 0)
 
 def get_gpio():
     if GPIO:

@@ -1,7 +1,7 @@
 
 *.pyc
 .DS_Store
-rdvhome/gpio/
+rdvhome/data/
 rdvhome/frontend/node_modules/
 rdvhome/frontend/package-lock.json
 rdvhome/frontend/dist/build.js.map
