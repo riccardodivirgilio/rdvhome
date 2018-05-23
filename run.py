@@ -6,6 +6,7 @@ from rdvhome.cli.main import execute_from_command_line
 
 import random
 import uuid
+import subprocess
 
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
@@ -13,21 +14,34 @@ def timeout(min, max):
 def is_laptop():
     return uuid.getnode() == 180725258261487
 
+def is_local_network():
+
+    process = subprocess.Popen(['networksetup', '-getairportnetwork', 'en0'], stdout=subprocess.PIPE)
+    out, err = process.communicate()
+
+    return b'rdv-home' in out
+
 def run_rdv_command_line():
 
-    philips = lambda id, name, **opts: dict(
-        id        = id,
-        name      = name,
-        username  = "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W",
-        ipaddress = "192.168.1.179",
-        **opts
-    )
+    is_local = is_local_network()
+
+    if not is_local:
+        PHILIPS_PATH = 'rdvhome.switches.philips.PhilipsDebugSwitch'
+        philips = lambda philips_id, **opts: opts
+
+    else:
+        PHILIPS_PATH = 'rdvhome.switches.philips.PhilipsSwitch'
+        philips = lambda **opts: dict(
+            username  = "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W",
+            ipaddress = "192.168.1.179",
+            **opts
+        )
 
     return execute_from_command_line(
         INSTALL_DEPENDENCIES = True,
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = {
-            'rdvhome.switches.philips.PhilipsSwitch': (
+            PHILIPS_PATH: (
                 philips(
                     id = 'led_living_room', 
                     name = 'Salone', 

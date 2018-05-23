@@ -9,8 +9,6 @@ from rdvhome.utils.keystore import KeyStore
 
 import aiohttp
 
-
-
 class PhilipsDebugSwitch(Switch):
 
     store = KeyStore(prefix = 'philips')
