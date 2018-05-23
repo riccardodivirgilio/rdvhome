@@ -6,16 +6,16 @@ from rdvhome.utils.keystore import KeyStore
 
 try:
     import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+
 except ImportError:
     GPIO = None
 
 class RaspberryGPIO(object):
 
     GPIO = GPIO
-
-    def __init__(self):
-        self.GPIO.setmode(self.GPIO.BCM)
-        self.GPIO.setwarnings(False)
 
     def setup_input(self, n):
         self.GPIO.setup(n, self.GPIO.IN, pull_up_down = self.GPIO.PUD_UP)

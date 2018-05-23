@@ -3,10 +3,18 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.main import execute_from_command_line
+from rdvhome.utils.gpio import GPIO
 
 import random
 import uuid
 import subprocess
+
+RELAY1 = [22, 27, 17,  4,  3,  2]
+
+RELAY2 = [16, 12,  7,  8, 25, 24]
+
+INPUT  = [21, 20, 23, 18, 26, 19,
+          13,  6,  5, 10,  9, 11]
 
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
@@ -37,10 +45,30 @@ def run_rdv_command_line():
             **opts
         )
 
+    if not GPIO:
+        GPIO_PATH = 'rdvhome.switches.raspberry.RaspberryDebugSwitch'
+    else:
+        GPIO_PATH = 'rdvhome.switches.raspberry.RaspberrySwitch'
+
+    def rasp(gpio_relay, gpio_status, **opts):
+        assert gpio_status in INPUT
+        assert gpio_relay in RELAY1 or gpio_relay in RELAY2
+        return dict(gpio_relay = gpio_relay, gpio_status = gpio_status, **opts)
+
     return execute_from_command_line(
+        RASPBERRY_RELAY1 = RELAY1,
+        RASPBERRY_RELAY2 = RELAY2,
+        RASPBERRY_INPUT  = INPUT,
         INSTALL_DEPENDENCIES = True,
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = {
+            GPIO_PATH: (
+                rasp(
+                    id = 'test_rasp',
+                    gpio_relay  = 27,
+                    gpio_status = 20,
+                ),
+            ),
             PHILIPS_PATH: (
                 philips(
                     id = 'led_living_room', 

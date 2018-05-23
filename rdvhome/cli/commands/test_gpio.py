@@ -5,15 +5,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
+from rdvhome.conf import settings
 
 import time
 
-RELAY1 = [22, 27, 17,  4,  3,  2]
-
-RELAY2 = [16, 12,  7,  8, 25, 24]
-
-INPUT  = [21, 20, 23, 18, 26, 19,
-          13,  6,  5, 10,  9, 11]
+RELAY1 = settings.RASPBERRY_RELAY1
+RELAY2 = settings.RASPBERRY_RELAY2
+INPUT  = settings.RASPBERRY_INPUT
 
 def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 

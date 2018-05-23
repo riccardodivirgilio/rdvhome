@@ -32,7 +32,7 @@ class Switch(EventStream):
 
     def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
-        self.name = name
+        self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon

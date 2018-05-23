@@ -2,62 +2,51 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import Switch, SwitchList
+from rdvhome.switches.base import Switch, capabilities
+from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
+from rdvhome.utils.decorators import to_data
+from rdvhome.utils.keystore import KeyStore
+from rdvhome.utils.gpio import RaspberryGPIO, DebugGPIO
 
-try:
-    import RPi.GPIO as GPIO
-except ImportError:
-    GPIO = None
-
-IN  = 1
-OUT = 0
-
-if GPIO:
-    GPIO.setmode(GPIO.BOARD)
-else:
-    from django.core.cache import cache
-
-def get_input(pin):
-    if GPIO:
-        return bool(GPIO.input(pin))
-    else:
-        return cache.get('gpio-state-%s' % pin, False)
-
-def set_output(pin, mode):
-    if GPIO:
-        return bool(GPIO.output(pin, mode))
-    else:
-        cache.set('gpio-state-%s' % pin, mode)
-        return bool(mode)
-
-def setup_pin(pin = None, mode = IN):
-    if GPIO and pin:
-        GPIO.setup(pin, mode)
+import aiohttp
 
 class RaspberrySwitch(Switch):
 
-    def __init__(self, id, switch_gpio, status_gpio = None, **opts)
+    default_capabilities = capabilities(on = True)
 
-        self.switch_gpio = switch_gpio
-        self.status_gpio = status_gpio or switch_gpio
+    gpio_class = RaspberryGPIO
 
-        gpio.setup_pin(self.status_gpio, gpio.IN)
-        gpio.setup_pin(self.switch_gpio, gpio.OUT)
+    def __init__(self, gpio_relay, gpio_status, *args, **opts):
 
-        super(RaspberrySwitch, self).__init__(id, **opts)
+        super().__init__(*args, **opts)
 
-class RaspberrySwitchList(SwitchList):
+        self.gpio        = self.gpio_class()
+        self.gpio_relay  = gpio_relay
+        self.gpio_status = gpio_status
 
-    def __init__(self, server, switches = ()):
-        self.server  = server
+        self.gpio.setup_output(self.gpio_relay)
+        self.gpio.setup_input(self.gpio_status)
 
-        super(RaspberrySwitchList, self).__init__(switches)
+    def raspberry_switch(self, on = True):
+        self.gpio.output(self.gpio_relay, high = False)
 
-local_switches = SwitchList(
-    RASPBERRY, (
-        RaspberrySwitch('s1', switch_gpio = 1, name = "Salone 1", alias = ['s']),
-        RaspberrySwitch('s2', switch_gpio = 2, name = "Salone 2", alias = ['s']),
-        RaspberrySwitch('b1', switch_gpio = 3, name = "Bagno 1",  alias = ['b']),
-        RaspberrySwitch('b2', switch_gpio = 4, name = "Bagno 2",  alias = ['b']),
-    )
-)
+    def raspberry_status(self):
+        return not self.gpio.input(self.gpio_status)
+
+    async def switch(self, on = None, color = None):
+
+        if on is not None:
+            self.raspberry_switch(on)
+            
+        return self.send(on = on, full = False)
+
+    async def status(self):
+        return self.send(on = self.raspberry_status())
+
+class RaspberryDebugSwitch(RaspberrySwitch):
+
+    gpio_class = DebugGPIO
+
+    def raspberry_switch(self, on = True):
+        super().raspberry_switch(on = on)
+        self.gpio.store.set(self.gpio_status, not on and 1 or 0)
