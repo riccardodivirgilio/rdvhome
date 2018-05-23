@@ -3,10 +3,39 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import Switch
-from rdvhome.utils.colors import color_to_philips, hsb_to_color, hsb_to_hsl, hsl_to_hsb, philips_to_color, to_color
-from rdvhome.utils.decorators import decorate, to_data
+from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
+from rdvhome.utils.decorators import to_data
+from rdvhome.utils.keystore import KeyStore
 
 import aiohttp
+
+
+
+class PhilipsDebugSwitch(Switch):
+
+    store = KeyStore(prefix = 'philips')
+
+    @to_data
+    def parse_command(self, on = None, color = None):
+
+        if on is not None:
+            yield 'on', bool(on)
+
+        if color is not None:
+            yield from to_color(color).serialize().items()
+
+    async def switch(self, on = None, color = None):
+
+        payload = dict(
+            self.store.get(self.id, {}), 
+            **self.parse_command(on, color)
+        )
+        self.store.set(self.id, payload)
+
+        return self.send(on = on, color = color, full = False)
+
+    async def status(self):
+        return self.send(**self.store.get(self.id, {'on': False}))
 
 class PhilipsSwitch(Switch):
 
@@ -24,6 +53,15 @@ class PhilipsSwitch(Switch):
             extra
         )
 
+    @to_data
+    def parse_command(self, on = None, color = None):
+
+        if on is not None:
+            yield 'on', bool(on)
+
+        if color is not None:
+            yield from color_to_philips(color).items()
+
     async def status(self):
         async with aiohttp.ClientSession() as session:
             async with session.get(self.api_url()) as response:
@@ -37,19 +75,9 @@ class PhilipsSwitch(Switch):
                     ),
                 )
 
-    @to_data
-    def _parse_command(self, on = None, color = None):
-
-        if on is not None:
-            yield 'on', bool(on)
-
-        if color is not None:
-            for key, value in color_to_philips(color).items():
-                yield key, value
-
     async def switch(self, on = None, color = None):
 
-        payload = self._parse_command(on, color)
+        payload = self.parse_command(on, color)
 
         async with aiohttp.ClientSession() as session:
             async with session.put(self.api_url('/state'), json = payload) as response:
