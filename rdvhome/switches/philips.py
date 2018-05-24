@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import Switch
+from rdvhome.switches.base import Switch, capabilities
 from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.keystore import KeyStore
@@ -13,6 +13,13 @@ class PhilipsDebugSwitch(Switch):
 
     store = KeyStore(prefix = 'philips')
     default_settings = {'on': False, "brightness": 1, "hue": 0.5, "saturation": 1}
+
+    default_capabilities = capabilities(
+        on         = True,
+        hue        = True,
+        saturation = True,
+        brightness = True,
+    )
 
     @to_data
     def parse_command(self, on = None, color = None):
@@ -77,10 +84,10 @@ class PhilipsSwitch(Switch):
                 )
 
     async def switch(self, on = None, color = None):
-
         payload = self.parse_command(on, color)
-
-        async with aiohttp.ClientSession() as session:
-            async with session.put(self.api_url('/state'), json = payload) as response:
-                r = await response.json()
-                return self.send(on = on, color = color, full = False)
+        if payload:
+            async with aiohttp.ClientSession() as session:
+                async with session.put(self.api_url('/state'), json = payload) as response:
+                    await response.json()
+        
+        return self.send(on = on, color = color, full = False)

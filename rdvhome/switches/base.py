@@ -23,12 +23,7 @@ class Switch(EventStream):
 
     kind = 'switch'
     default_aliases = ['all']
-    default_capabilities = capabilities(
-        on         = True,
-        hue        = True,
-        saturation = True,
-        brightness = True,
-    )
+    default_capabilities = capabilities(on = True)
 
     def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
