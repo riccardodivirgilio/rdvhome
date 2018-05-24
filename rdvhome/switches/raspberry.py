@@ -36,7 +36,8 @@ class RaspberrySwitch(Switch):
     async def switch(self, on = None, color = None):
 
         if on is not None:
-            self.raspberry_switch(on)
+            if not on == self.raspberry_status():
+                self.raspberry_switch(on)
             
         return self.send(on = on, full = False)
 
