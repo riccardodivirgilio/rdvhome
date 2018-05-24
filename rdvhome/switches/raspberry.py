@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import capabilities, Switch
-from rdvhome.switches.philips import PhilipsSwitch
+from rdvhome.switches.philips import PhilipsDebugSwitch, PhilipsSwitch
 from rdvhome.utils.gpio import DebugGPIO, RaspberryGPIO
 
 class RaspberrySwitch(Switch):

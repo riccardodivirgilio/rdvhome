@@ -74,6 +74,14 @@ def run_rdv_command_line():
                 id = 'test_rasp',
                 gpio_relay  = 27,
                 gpio_status = 20,
+                ordering    =  0,
+            ),
+            switch(
+                id = 'test_philp_rasp',
+                gpio_relay  = 17,
+                gpio_status =  5,
+                philips_id  = 90,
+                ordering    =  0,
             ),
             switch(
                 id = 'led_living_room', 
