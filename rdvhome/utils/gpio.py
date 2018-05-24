@@ -15,6 +15,7 @@ except ImportError:
 
 class RaspberryGPIO(object):
 
+    is_debug = False
     GPIO = GPIO
 
     def setup_input(self, n):
@@ -32,6 +33,7 @@ class RaspberryGPIO(object):
 
 class DebugGPIO(object):
 
+    is_debug = True
     GPIO = GPIO
 
     def __init__(self, path = None):

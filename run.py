@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import GPIO
 from rdvhome.utils.decorators import to_data
+
 import random
 import uuid
 import subprocess
@@ -49,17 +50,14 @@ def run_rdv_command_line():
             assert gpio_status in INPUT
             yield 'gpio_status', gpio_status
 
-        if philips_id and is_local:
+        if philips_id:
             yield 'philips_id', philips_id
+
+        if philips_id and is_local:
             yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
             yield 'ipaddress', "192.168.1.179"
 
-        yield 'class_path', 'rdvhome.switches.raspberry.%s' % ''.join((
-            gpio_relay and 'Raspberry' or '',
-            philips_id and 'Philips'   or '',
-            (not GPIO or not is_local) and 'Debug' or '',
-            'Switch',
-        ))
+        yield 'class_path', 'rdvhome.switches.philips.Light'
 
         yield from opts.items()
 
@@ -74,19 +72,19 @@ def run_rdv_command_line():
                 id = 'test_rasp',
                 gpio_relay  = 27,
                 gpio_status = 20,
-                ordering    =  0,
+                ordering    =  1,
             ),
             switch(
                 id = 'test_philp_rasp',
                 gpio_relay  = 17,
                 gpio_status =  5,
                 philips_id  = 90,
-                ordering    =  0,
+                ordering    =  2,
             ),
             switch(
                 id = 'led_living_room', 
                 name = 'Salone', 
-                ordering =  1, 
+                ordering =  8, 
                 icon = "🛋", 
                 philips_id = 1, 
                 alias = ['default']
@@ -94,7 +92,7 @@ def run_rdv_command_line():
             switch(
                 id = 'led_tv', 
                 name = 'TV',     
-                ordering =  2, 
+                ordering =  9, 
                 icon = "📺", 
                 philips_id = 3, 
                 alias = ['default']

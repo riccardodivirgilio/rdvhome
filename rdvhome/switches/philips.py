@@ -3,56 +3,61 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.base import capabilities, Switch
-from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
-from rdvhome.utils.decorators import to_data
-from rdvhome.utils.keystore import KeyStore
 from rdvhome.utils import json
+from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
+from rdvhome.utils.datastructures import data
+from rdvhome.utils.decorators import to_data
+from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.keystore import KeyStore
 
 import aiohttp
 
-class PhilipsDebugSwitch(Switch):
+class Light(Switch):
 
+    gpio  = get_gpio()
     store = KeyStore(prefix = 'philips')
-    default_settings = {'on': False, "brightness": 1, "hue": 0.5, "saturation": 1}
 
-    default_capabilities = capabilities(
-        on         = True,
-        hue        = True,
-        saturation = True,
-        brightness = True,
-    )
-
-    @to_data
-    def parse_command(self, on = None, color = None):
-
-        if on is not None:
-            yield 'on', bool(on)
-
-        if color is not None:
-            yield from to_color(color).serialize().items()
-
-    async def switch(self, on = None, color = None):
-
-        payload = dict(
-            self.store.get(self.id, self.default_settings),
-            **self.parse_command(on, color)
+    @property
+    def default_capabilities(self):
+        return capabilities(
+            on         = True,
+            hue        = bool(self.philips_id),
+            saturation = bool(self.philips_id),
+            brightness = bool(self.philips_id),
         )
-        self.store.set(self.id, payload)
 
-        return self.send(on = on, color = color, full = False)
+    @property
+    @to_data
+    def philips_settings(self):
 
-    async def status(self):
-        return self.send(**self.store.get(self.id, self.default_settings))
+        if not self.gpio_relay:
+            yield "on", False
 
-class PhilipsSwitch(Switch):
+        if self.philips_id:
+            yield "brightness", 1
+            yield "hue",        0.5
+            yield "saturation", 1
 
-    def __init__(self, id, philips_id, ipaddress, username, **opts):
-        self.philips_id = philips_id
-        self.ipaddress  = ipaddress
-        self.username   = username
-        super(PhilipsSwitch, self).__init__(id, **opts)
+    def __init__(self, id, philips_id = None, ipaddress = None, username = None, gpio_relay = None, gpio_status = None, **opts):
+
+        self.philips_id  = philips_id
+        self.ipaddress   = ipaddress
+        self.username    = username
+
+        self.gpio_relay  = gpio_relay
+        self.gpio_status = gpio_status
+
+        if self.gpio_relay:
+            self.gpio.setup_output(self.gpio_relay)
+
+        if self.gpio_status:
+            self.gpio.setup_input(self.gpio_status)
+
+        super(Light, self).__init__(id, **opts)
 
     async def api_request(self, path = '', payload = None):
+
+        assert self.ipaddress and self.username and self.philips_id
 
         path = 'http://%s/api/%s/lights/%s%s' % (
             self.ipaddress,
@@ -65,6 +70,43 @@ class PhilipsSwitch(Switch):
             async with session.put(path, json = payload) as response:
                 return await response.json(loads = json.loads)
 
+    def raspberry_switch(self, on = True):
+        self.gpio.output(self.gpio_relay, high = False)
+        if self.gpio.is_debug:
+            self.gpio.store.set(self.gpio_status, not on and 1 or 0)
+
+    def raspberry_status(self):
+        return not self.gpio.input(self.gpio_status)
+
+    async def status(self):
+
+        if self.gpio_relay:
+            defaults = data(on = self.raspberry_status())
+        else:
+            defaults = data()
+
+        if self.philips_id:
+
+            if self.username:
+                response = await self.api_request()
+                response = data(
+                    on = response.state.on,
+                    color = philips_to_color(
+                        hue        = float(response.state.hue),
+                        saturation = float(response.state.sat),
+                        brightness = float(response.state.bri),
+                    ),
+                )
+
+            else:
+                #debug mode
+                response = self.store.get(self.id, self.philips_settings)
+
+            response.update(defaults)
+            return self.send(**response)
+
+        return self.send(**defaults)
+
     @to_data
     def parse_command(self, on = None, color = None):
 
@@ -72,22 +114,30 @@ class PhilipsSwitch(Switch):
             yield 'on', bool(on)
 
         if color is not None:
-            yield from color_to_philips(color).items()
-
-    async def status(self):
-        response = await self.api_request()
-        return self.send(
-            on = response.state.on,
-            color = philips_to_color(
-                hue        = float(response.state.hue),
-                saturation = float(response.state.sat),
-                brightness = float(response.state.bri),
-            ),
-        )
+            if self.username:
+                yield from color_to_philips(color).items()
+            else:
+                yield from to_color(color).serialize().items()
 
     async def switch(self, on = None, color = None):
         payload = self.parse_command(on, color)
+
+        if 'on' in payload and self.gpio_relay:
+            on = payload.pop('on')
+            if not on == self.raspberry_status():
+                self.raspberry_switch(on)
+
         if payload:
-            await self.api_request('/state', payload) 
+
+            if self.philips_id:
+                if self.username:
+                    await self.api_request('/state', payload)
+                else:
+                    #debug mode
+                    payload = data(
+                        self.store.get(self.id, self.philips_settings),
+                        **payload
+                    )
+                    self.store.set(self.id, payload)
 
         return self.send(on = on, color = color, full = False)
