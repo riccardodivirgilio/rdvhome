@@ -3,9 +3,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.utils import SimpleCommand
+from rdvhome.conf import settings
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
-from rdvhome.conf import settings
 
 import time
 
