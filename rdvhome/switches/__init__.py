@@ -6,7 +6,7 @@ from rdvhome.conf import settings
 from rdvhome.switches.base import SwitchList
 from rdvhome.utils.importutils import import_string
 
-def construct(class_path, **switch):
+def construct(class_path, active = True, **switch):
     return import_string(class_path)(**switch)
 
 switches = SwitchList(
@@ -14,5 +14,6 @@ switches = SwitchList(
     lambda: (
         construct(**switch)
         for switch in settings.SWITCHES
+        if switch.get('active', True)
     )
 )
