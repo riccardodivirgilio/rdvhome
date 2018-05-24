@@ -68,22 +68,10 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES = True,
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = [
-            switch(
-                id = 'test_rasp',
-                gpio_relay  = 27,
-                gpio_status = 20,
-                ordering    =  1,
-            ),
-            switch(
-                id = 'test_philp_rasp',
-                gpio_relay  = 17,
-                gpio_status =  5,
-                philips_id  = 90,
-                ordering    =  2,
-            ),
+
             switch(
                 id = 'led_living_room', 
-                name = 'Salone', 
+                name = 'Salone Led', 
                 ordering =  8, 
                 icon = "🛋", 
                 philips_id = 1, 
@@ -91,19 +79,74 @@ def run_rdv_command_line():
             ),
             switch(
                 id = 'led_tv', 
-                name = 'TV',     
-                ordering =  9, 
+                name = 'TV Led',     
+                ordering =  10, 
                 icon = "📺", 
                 philips_id = 3, 
                 alias = ['default']
             ),
             switch(
                 id = 'led_bedroom', 
-                name = 'Letto',  
-                ordering = 10, 
+                name = 'Letto Led',  
+                ordering = 12, 
                 icon = "🛏", 
                 philips_id = 2, 
                 alias = []
+            ),
+
+            switch(
+                id = 'spotlight_living_room', 
+                name = 'Salone', 
+                ordering =  9, 
+                icon = "🛋", 
+                alias = [],
+                gpio_relay  = RELAY1[0],
+                gpio_status = INPUT[0],
+            ),
+            switch(
+                id = 'spotlight_tv', 
+                name = 'TV',     
+                ordering =  11, 
+                icon = "📺", 
+                alias = [],
+                gpio_relay  = RELAY1[1],
+                gpio_status = INPUT[1],
+            ),
+            switch(
+                id = 'spotlight_bedroom', 
+                name = 'Letto',  
+                ordering = 13, 
+                icon = "🛏", 
+                alias = [],
+                gpio_relay  = RELAY1[2],
+                gpio_status = INPUT[2],
+            ),
+            switch(
+                id = 'spotlight_entrance', 
+                name = 'Entrata',  
+                ordering = 14, 
+                icon = "🚪", 
+                alias = [],
+                gpio_relay  = RELAY1[3],
+                gpio_status = INPUT[3],
+            ),
+            switch(
+                id = 'spotlight_kitchen', 
+                name = 'Cucina',  
+                ordering = 15, 
+                icon = "🍽", 
+                alias = [],
+                gpio_relay  = RELAY1[4],
+                gpio_status = INPUT[4],
+            ),
+            switch(
+                id = 'spotlight_room', 
+                name = 'Studio',  
+                ordering = 16, 
+                icon = "📚", 
+                alias = [],
+                gpio_relay  = RELAY1[5],
+                gpio_status = INPUT[5],
             ),
             control(
                 id = 'usa',      
