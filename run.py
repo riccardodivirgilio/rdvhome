@@ -40,7 +40,7 @@ def run_rdv_command_line():
     )
 
     @to_data
-    def switch(philips_id = None, gpio_relay = None, gpio_status = None, **opts):
+    def light(philips_id = None, gpio_relay = None, gpio_status = None, **opts):
 
         if gpio_relay:
             assert gpio_relay in RELAY1 or gpio_relay in RELAY2
@@ -69,7 +69,7 @@ def run_rdv_command_line():
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = [
 
-            switch(
+            light(
                 id = 'led_living_room', 
                 name = 'Salone Led', 
                 ordering =  8, 
@@ -77,7 +77,7 @@ def run_rdv_command_line():
                 philips_id = 1, 
                 alias = ['default']
             ),
-            switch(
+            light(
                 id = 'led_tv', 
                 name = 'TV Led',     
                 ordering =  10, 
@@ -85,7 +85,7 @@ def run_rdv_command_line():
                 philips_id = 3, 
                 alias = ['default']
             ),
-            switch(
+            light(
                 id = 'led_bedroom', 
                 name = 'Letto Led',  
                 ordering = 12, 
@@ -94,7 +94,7 @@ def run_rdv_command_line():
                 alias = []
             ),
 
-            switch(
+            light(
                 id = 'spotlight_living_room', 
                 name = 'Salone', 
                 ordering =  9, 
@@ -103,7 +103,7 @@ def run_rdv_command_line():
                 gpio_relay  = RELAY1[0],
                 gpio_status = INPUT[0],
             ),
-            switch(
+            light(
                 id = 'spotlight_tv', 
                 name = 'TV',     
                 ordering =  11, 
@@ -112,7 +112,7 @@ def run_rdv_command_line():
                 gpio_relay  = RELAY1[1],
                 gpio_status = INPUT[1],
             ),
-            switch(
+            light(
                 id = 'spotlight_bedroom', 
                 name = 'Letto',  
                 ordering = 13, 
@@ -121,7 +121,7 @@ def run_rdv_command_line():
                 gpio_relay  = RELAY1[2],
                 gpio_status = INPUT[2],
             ),
-            switch(
+            light(
                 id = 'spotlight_entrance', 
                 name = 'Entrata',  
                 ordering = 14, 
@@ -130,7 +130,7 @@ def run_rdv_command_line():
                 gpio_relay  = RELAY1[3],
                 gpio_status = INPUT[3],
             ),
-            switch(
+            light(
                 id = 'spotlight_kitchen', 
                 name = 'Cucina',  
                 ordering = 15, 
@@ -139,7 +139,7 @@ def run_rdv_command_line():
                 gpio_relay  = RELAY1[4],
                 gpio_status = INPUT[4],
             ),
-            switch(
+            light(
                 id = 'spotlight_room', 
                 name = 'Studio',  
                 ordering = 16, 
