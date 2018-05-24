@@ -6,6 +6,7 @@ from rdvhome.switches.base import capabilities, Switch
 from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.keystore import KeyStore
+from rdvhome.utils import json
 
 import aiohttp
 
@@ -62,7 +63,7 @@ class PhilipsSwitch(Switch):
 
         async with aiohttp.ClientSession() as session:
             async with session.put(path, json = payload) as response:
-                return await response.json()
+                return await response.json(loads = json.loads)
 
     @to_data
     def parse_command(self, on = None, color = None):
