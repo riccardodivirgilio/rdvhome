@@ -355,7 +355,7 @@
                     <rect x="1195.9" y="763.1" width="9.7" height="9.7" />
                     <path d="M1195.9,763.1" />
                 </g>
-                <g class="led_room" v-bind:style="light_color(switches.led_room)">
+                <g class="spotlight_room" v-bind:style="light_color(switches.spotlight_room)">
                     <rect x="1112.3" y="227.7" width="46" height="47.3" />
                 </g>
                 <g class="led_living_room" v-bind:style="light_color(switches.led_living_room)">
@@ -378,7 +378,7 @@
                 <g class="led_bedroom" v-on:click="area_click(switches.led_bedroom)" v-bind:style="area_color(switches.led_bedroom)">
                     <rect x="553.6" y="82.7" width="281.3" height="312.8" />
                 </g>
-                <g class="led_room" v-on:click="area_click(switches.led_room)" v-bind:style="area_color(switches.led_room)">
+                <g class="spotlight_room" v-on:click="area_click(switches.spotlight_room)" v-bind:style="area_color(switches.spotlight_room)">
                     <rect x="968.9" y="82.7" width="337.5" height="391.2" />
                 </g>
                 <g class="spotlight_kitchen" v-on:click="area_click(switches.spotlight_kitchen)" v-bind:style="area_color(switches.spotlight_kitchen)">
@@ -739,12 +739,14 @@ export default {
         }
       },
       area_color: function(item) {
-        if (item && item.on) {
-            console.log(item)
+        if (item && item.on && item.hue) {
             return {
                 fill: this.to_css(item),
                 opacity: 0.3 + 0.2 * item.brightness,
             }
+        }
+        if (item && item.on) {
+            return {fill:'yellow', opacity:0.2}
         }
         return {fill:'gray', opacity:0.}
       },
