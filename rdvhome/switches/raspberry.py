@@ -48,5 +48,8 @@ class RaspberryDebugSwitch(RaspberrySwitch):
         super().raspberry_switch(on = on)
         self.gpio.store.set(self.gpio_status, not on and 1 or 0)
 
-class RaspberryPhilipsDebugSwitch(PhilipsSwitch, RaspberryDebugSwitch):
+class RaspberryPhilipsSwitch(PhilipsSwitch, RaspberrySwitch):
+    pass
+
+class RaspberryPhilipsDebugSwitch(PhilipsDebugSwitch, RaspberryDebugSwitch):
     pass
