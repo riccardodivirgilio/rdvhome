@@ -41,9 +41,7 @@ class PhilipsDebugSwitch(Switch):
         return self.send(on = on, color = color, full = False)
 
     async def status(self):
-        return self.send(
-            **self.store.get(self.id, self.default_settings)
-        )
+        return self.send(**self.store.get(self.id, self.default_settings))
 
 class PhilipsSwitch(Switch):
 
@@ -53,13 +51,18 @@ class PhilipsSwitch(Switch):
         self.username   = username
         super(PhilipsSwitch, self).__init__(id, **opts)
 
-    def api_url(self, extra = ''):
-        return 'http://%s/api/%s/lights/%s%s' % (
+    async def api_request(self, path = '', payload = None):
+
+        path = 'http://%s/api/%s/lights/%s%s' % (
             self.ipaddress,
             self.username,
             self.philips_id,
-            extra
+            path
         )
+
+        async with aiohttp.ClientSession() as session:
+            async with session.put(path, json = payload) as response:
+                return await response.json()
 
     @to_data
     def parse_command(self, on = None, color = None):
@@ -71,23 +74,19 @@ class PhilipsSwitch(Switch):
             yield from color_to_philips(color).items()
 
     async def status(self):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(self.api_url()) as response:
-                r = await response.json()
-                return self.send(
-                    on = r['state']['on'],
-                    color = philips_to_color(
-                        hue        = float(r['state']['hue']),
-                        saturation = float(r['state']['sat']),
-                        brightness = float(r['state']['bri']),
-                    ),
-                )
+        response = await self.api_request()
+        return self.send(
+            on = response.state.on,
+            color = philips_to_color(
+                hue        = float(response.state.hue),
+                saturation = float(response.state.sat),
+                brightness = float(response.state.bri),
+            ),
+        )
 
     async def switch(self, on = None, color = None):
         payload = self.parse_command(on, color)
         if payload:
-            async with aiohttp.ClientSession() as session:
-                async with session.put(self.api_url('/state'), json = payload) as response:
-                    await response.json()
+            await self.api_request('/state', payload) 
 
         return self.send(on = on, color = color, full = False)
