@@ -6,7 +6,7 @@ from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.async import syncronous_wait_all
+from rdvhome.utils.async import syncronous_wait_all, wait_all
 
 import time
 import asyncio
@@ -19,8 +19,7 @@ async def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 
     gpio = get_gpio()
 
-    for n in iterate(number):
-        await gpio.setup_output(n)
+    await wait_all(map(gpio.setup_output, iterate(number)))
 
     #TURNING ON
 
@@ -38,21 +37,15 @@ async def read(number = INPUT, timing = 0.5, index = 10):
 
     gpio = get_gpio()
 
-    for n in iterate(number):
-        await gpio.setup_input(n)
+    await wait_all(map(gpio.setup_input, iterate(number)))
 
     print(*(str(n).zfill(2) for n in iterate(number)))
 
     for i in range(index):
 
-        results = [
-            (i, await gpio.input(i))
-            for i in iterate(number)
-        ]
+        results = await wait_all(map(gpio.input, iterate(number)))
 
-        print(*((not v and str(n).zfill(2) or '--') for n, v in results))
-
-        #print(*(str(not v and n or '-').rjust(2) for v, n in zip(results, iterate(n))))
+        print(*((not v and str(n).zfill(2) or '--') for v, n in zip(results, iterate(number))))
         await asyncio.sleep(timing)
 
 class Command(SimpleCommand):
@@ -61,5 +54,5 @@ class Command(SimpleCommand):
 
     def handle(self, **opts):
 
-        syncronous_wait_all(relay(**opts))
+        #syncronous_wait_all(relay(**opts))
         syncronous_wait_all(read(**opts))
