@@ -18,17 +18,17 @@ class RaspberryGPIO(object):
     is_debug = False
     GPIO = GPIO
 
-    def setup_input(self, n):
+    async def setup_input(self, n):
         self.GPIO.setup(n, self.GPIO.IN, pull_up_down = self.GPIO.PUD_UP)
 
-    def setup_output(self, n):
+    async def setup_output(self, n):
         self.GPIO.setup(n,  self.GPIO.OUT)
         self.GPIO.output(n, self.GPIO.HIGH)
 
-    def input(self, n):
+    async def input(self, n):
         return self.GPIO.input(n)
 
-    def output(self, n, high = True):
+    async def output(self, n, high = True):
         self.GPIO.output(n, high and self.GPIO.HIGH or self.GPIO.LOW)
 
 class DebugGPIO(object):
@@ -40,18 +40,18 @@ class DebugGPIO(object):
 
         self.store = KeyStore(prefix = 'gpio')
 
-    def setup_input(self, n):
-        if self.store.get(n) is None:
-            self.store.set(n, 1)
+    async def setup_input(self, n):
+        if await self.store.get(n) is None:
+            await self.store.set(n, 1)
 
-    def setup_output(self, n):
-        self.store.set(n, None)
+    async def setup_output(self, n):
+        await self.store.set(n, None)
 
-    def input(self, n):
-        return self.store.get(n)
+    async def input(self, n):
+        return await self.store.get(n)
 
-    def output(self, n, high = True):
-        self.store.set(n, high and 1 or 0)
+    async def output(self, n, high = True):
+        await self.store.set(n, high and 1 or 0)
 
 def get_gpio():
     if GPIO:

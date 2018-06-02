@@ -6,49 +6,60 @@ from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.async import syncronous_wait_all
 
 import time
+import asyncio
 
 RELAY1 = settings.RASPBERRY_RELAY1
 RELAY2 = settings.RASPBERRY_RELAY2
 INPUT  = settings.RASPBERRY_INPUT
 
-def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
+async def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 
     gpio = get_gpio()
 
     for n in iterate(number):
-        gpio.setup_output(n)
+        await gpio.setup_output(n)
 
     #TURNING ON
 
     for n in iterate(number):
         print("RELAY %s on" % n)
-        gpio.output(n, high = False)
-        time.sleep(timing)
+        await gpio.output(n, high = False)
+        await asyncio.sleep(timing)
 
     for n in iterate(number):
         print("RELAY %s off" % n)
-        gpio.output(n, high = True)
-        time.sleep(timing)
+        await gpio.output(n, high = True)
+        await asyncio.sleep(timing)
 
-def read(number = INPUT):
+async def read(number = INPUT, timing = 0.5, index = 10):
 
     gpio = get_gpio()
 
     for n in iterate(number):
-        gpio.setup_input(n)
+        await gpio.setup_input(n)
 
     print(*(str(n).zfill(2) for n in iterate(number)))
 
-    for i in range(10):
-        print(*(str(not gpio.input(n) and n or '-').rjust(2) for n in iterate(number)))
-        time.sleep(0.5)
+    for i in range(index):
+
+        results = [
+            (i, await gpio.input(i))
+            for i in iterate(number)
+        ]
+
+        print(*((not v and str(n) or '-').rjust(2) for n, v in results))
+
+        #print(*(str(not v and n or '-').rjust(2) for v, n in zip(results, iterate(n))))
+        await asyncio.sleep(timing)
 
 class Command(SimpleCommand):
 
     help = 'Test GPIO'
 
     def handle(self, **opts):
-        relay(**opts)
-        read(**opts)
+
+        syncronous_wait_all(relay(**opts))
+        syncronous_wait_all(read(**opts))

@@ -14,7 +14,6 @@ import aiohttp
 
 class Light(Switch):
 
-    gpio  = get_gpio()
     store = KeyStore(prefix = 'philips')
 
     @property
@@ -44,14 +43,10 @@ class Light(Switch):
         self.ipaddress   = ipaddress
         self.username    = username
 
+        self._gpio = None
+
         self.gpio_relay  = gpio_relay
         self.gpio_status = gpio_status
-
-        if self.gpio_relay:
-            self.gpio.setup_output(self.gpio_relay)
-
-        if self.gpio_status:
-            self.gpio.setup_input(self.gpio_status)
 
         super(Light, self).__init__(id, **opts)
 
@@ -70,18 +65,39 @@ class Light(Switch):
             async with session.put(path, json = payload) as response:
                 return await response.json(loads = json.loads)
 
-    def raspberry_switch(self, on = True):
-        self.gpio.output(self.gpio_relay, high = False)
-        if self.gpio.is_debug:
-            self.gpio.store.set(self.gpio_status, not on and 1 or 0)
+    async def setup_gpio(self):
 
-    def raspberry_status(self):
-        return not self.gpio.input(self.gpio_status)
+        if self._gpio:
+            return self._gpio
+
+        self._gpio = get_gpio()
+
+        if self.gpio_relay:
+            await self._gpio.setup_output(self.gpio_relay)
+
+        if self.gpio_status:
+            await self._gpio.setup_input(self.gpio_status)
+
+        return self._gpio
+
+    async def raspberry_switch(self, on = True):
+
+        gpio = await self.setup_gpio()
+
+        await gpio.output(self.gpio_relay, high = False)
+        if gpio.is_debug:
+            await gpio.store.set(self.gpio_status, not on and 1 or 0)
+
+    async def raspberry_status(self):
+
+        gpio = await self.setup_gpio()
+
+        return not await gpio.input(self.gpio_status)
 
     async def status(self):
 
         if self.gpio_relay:
-            defaults = data(on = self.raspberry_status())
+            defaults = data(on = await self.raspberry_status())
         else:
             defaults = data()
 
@@ -100,7 +116,7 @@ class Light(Switch):
 
             else:
                 #debug mode
-                response = self.store.get(self.id, self.philips_settings)
+                response = await self.store.get(self.id, self.philips_settings)
 
             response.update(defaults)
             return self.send(**response)
@@ -124,8 +140,8 @@ class Light(Switch):
 
         if 'on' in payload and self.gpio_relay:
             on = payload.pop('on')
-            if not on == self.raspberry_status():
-                self.raspberry_switch(on)
+            if not on == await self.raspberry_status():
+                await self.raspberry_switch(on)
 
         if payload:
 
@@ -135,9 +151,9 @@ class Light(Switch):
                 else:
                     #debug mode
                     payload = data(
-                        self.store.get(self.id, self.philips_settings),
+                        await self.store.get(self.id, self.philips_settings),
                         **payload
                     )
-                    self.store.set(self.id, payload)
+                    await self.store.set(self.id, payload)
 
         return self.send(on = on, color = color, full = False)

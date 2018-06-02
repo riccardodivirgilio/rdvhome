@@ -25,10 +25,12 @@ def is_laptop():
 
 def is_local_network():
 
+    return False
+
     process = subprocess.Popen(['networksetup', '-getairportnetwork', 'en0'], stdout=subprocess.PIPE)
     out, err = process.communicate()
 
-    return b'rdv-home' in out
+    return b'rdv-net' in out
 
 def run_rdv_command_line():
 

@@ -6,6 +6,7 @@ from rdvhome.utils import json
 from rdvhome.utils.importutils import module_path
 
 import os
+import aiofiles
 
 class KeyStore(object):
 
@@ -33,13 +34,15 @@ class KeyStore(object):
             ))) + self.extension
         )
 
-    def get(self, key, default = None, **opts):
+    async def get(self, key, default = None, **opts):
         try:
-            with open(self.path_for_key(key, **opts)) as f:
-                return self.encoder.load(f)
+            async with aiofiles.open(self.path_for_key(key, **opts), 'r') as f:
+                contents = await f.read()
+                return self.encoder.loads(contents)    
         except FileNotFoundError:
             return default
 
-    def set(self, key, value, **opts):
-        with open(self.path_for_key(key, **opts), 'w') as f:
-            self.encoder.dump(value, f)
+    async def set(self, key, value, **opts):
+        async with aiofiles.open(self.path_for_key(key, **opts), 'w') as f:
+            await f.write(self.encoder.dumps(value))
+            return value
