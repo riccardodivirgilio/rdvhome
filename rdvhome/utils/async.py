@@ -8,12 +8,15 @@ from rdvhome.utils.functional import first, iterate
 
 import asyncio
 
-async def wait_all(*args):
-    done = tuple(iterate(*args))
-    if done:
-        done, _ = await asyncio.wait(done)
-        return tuple(map(methodcaller('result'), done))
+async def _id(id, task):
+    return id, await task
 
+async def wait_all(*args):
+    done = tuple(_id(i, t) for i, t in enumerate(iterate(*args)))
+    if done:
+        futures, p = await asyncio.wait(done)
+        futures = dict(map(methodcaller('result'), futures))
+        return tuple(futures[i] for i in range(len(done)))
     return done
 
 def run_all(*args):
