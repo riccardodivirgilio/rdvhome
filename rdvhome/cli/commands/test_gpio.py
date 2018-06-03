@@ -34,7 +34,7 @@ async def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
         await gpio.output(n, high = True)
         await asyncio.sleep(timing)
 
-async def read(number = INPUT, timing = 0.5, index = 10):
+async def read(number = [17], timing = 0.5, index = 10):
 
     gpio = get_gpio()
 
@@ -55,5 +55,5 @@ class Command(SimpleCommand):
 
     def handle(self, **opts):
 
-        syncronous_wait_all(relay(**opts))
-        #syncronous_wait_all(read(**opts))
+        #syncronous_wait_all(relay(**opts))
+        syncronous_wait_all(read(**opts))
