@@ -10,12 +10,13 @@ import random
 import uuid
 import subprocess
 
-RELAY1 = [22, 27, 17,  4,  3,  2]
 
-RELAY2 = [16, 12,  7,  8, 25, 24]
+RELAY1 = [27, 22, 10,  9, 11,  5,  6, 13]
 
-INPUT  = [21, 20, 23, 18, 26, 19,
-          13,  6,  5, 10,  9, 11]
+RELAY2 = [14, 15, 18, 23, 24, 16, 20, 21]
+
+INPUT  = [ 2,  3,  4, 17, 
+          25,  8,  7, 12]
 
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
