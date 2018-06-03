@@ -10,31 +10,37 @@ from rdvhome.utils.async import syncronous_wait_all, wait_all
 
 import time
 import asyncio
+import random
 
 RELAY1 = settings.RASPBERRY_RELAY1
 RELAY2 = settings.RASPBERRY_RELAY2
 INPUT  = settings.RASPBERRY_INPUT
 
+def shuffle(iterable):
+    l = list(iterate(iterable))
+    random.shuffle(l)
+    return l
+
 async def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
 
     gpio = get_gpio()
 
-    for n in iterate(number):
+    for n in shuffle(number):
         await gpio.setup_output(n)
 
     #TURNING ON
 
-    for n in iterate(number):
+    for n in shuffle(number):
         print("RELAY %.2i on" % n)
         await gpio.output(n, high = False)
         await asyncio.sleep(timing)
-        
-    for n in iterate(number):
+
+    for n in shuffle(number):
         print("RELAY %.2i off" % n)
         await gpio.output(n, high = True)
         await asyncio.sleep(timing)
 
-async def read(number = INPUT, timing = 0.5, index = 10):
+async def read(number = INPUT, timing = 0.5, index = 1000):
 
     gpio = get_gpio()
 
@@ -56,4 +62,4 @@ class Command(SimpleCommand):
     def handle(self, **opts):
 
         syncronous_wait_all(relay(**opts))
-        #syncronous_wait_all(read(**opts))
+        syncronous_wait_all(read(**opts))
