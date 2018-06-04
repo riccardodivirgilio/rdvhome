@@ -14,7 +14,7 @@ class Command(SimpleCommand):
     def handle(self, *args, **options):
 
         from rdvhome import fabfile
-        
+
         from fabric.main import load_fabfile
         from fabric.api import execute
         from fabric import state

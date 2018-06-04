@@ -11,7 +11,7 @@ RELAY1 = [22, 27, 17,  4,  3,  2]
 
 RELAY2 = [16, 12,  7,  8, 25, 24]
 
-INPUT  = [21, 20, 23, 18, 26, 19, 
+INPUT  = [21, 20, 23, 18, 26, 19,
           13,  6,  5, 10,  9, 11]
 
 def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
@@ -47,7 +47,7 @@ def read(number = INPUT):
 
     for i in range(10):
         print(*(str(not GPIO.input(n) and n or '-').rjust(2) for n in iterate(number)))
-            
+
         time.sleep(0.5)
 
 class Command(SimpleCommand):

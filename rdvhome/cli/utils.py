@@ -6,8 +6,8 @@ from rdvhome.utils.decorators import to_data
 from rdvhome.utils.importutils import module_path
 
 import argparse
-import sys
 import os
+import sys
 
 @to_data
 def discover_with_convention(modules, import_name):

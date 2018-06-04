@@ -2,9 +2,7 @@
   <div class="page" v-bind:style="background()">
   <div class="container">
 
-
     <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches"></home>
-
 
     <div class="panel-switch">
       <template v-if="switches.length == 0 || ! connected">
@@ -90,12 +88,11 @@ export default {
           } else {
             var color = 'transparent';
           }
-          
+
           value   += ', ' + color + ' ' + initial + '%'
           initial += 100 / relevant.length;
           value   += ', ' + color + ' ' + initial + '%'
         })
-
 
       if (! initial) {
         return {}
@@ -247,7 +244,6 @@ html, body, .page {
   text-align: center
 }
 
-
 // LAYOUT MOBILE FIRST
 
 .container {
@@ -274,18 +270,16 @@ html, body, .page {
 
 .panel-home svg {
   width:100%;
-  
+
 }
 
-
-
-/* 
+/*
   ##Device = Tablets, Ipads (portrait)
   ##Screen = B/w 768px to 1024px
 */
 
 @media (min-width: 768px) {
-  
+
   .container {
     flex-direction: row;
     max-width: 950px;
@@ -297,12 +291,10 @@ html, body, .page {
 
   .panel-switch {
     max-width: 400px;
-    border-right: 2px solid $border-color; 
+    border-right: 2px solid $border-color;
   }
-  
+
 }
-
-
 
 // STARTING LIST STYLES
 
@@ -310,7 +302,7 @@ html, body, .page {
   width: 100%;
   display: flex;
   flex-direction: column;
-  
+
 }
 
 .list-item {
@@ -322,7 +314,6 @@ html, body, .page {
   min-height: $item-size;
   color: white;
 }
-
 
 .list-item > .line {
   display: flex;
@@ -364,13 +355,13 @@ html, body, .page {
 }
 .list-item > .line.slider-hue {
    background: linear-gradient(
-    to right, 
-    hsl(  0, 100%, 50%)   0.0000%, 
-    hsl( 60, 100%, 50%)  16.6667%, 
-    hsl(120, 100%, 50%)  33.3333%, 
-    hsl(180, 100%, 50%)  50.0000%, 
-    hsl(240, 100%, 50%)  66.6667%, 
-    hsl(300, 100%, 50%)  83.3333%, 
+    to right,
+    hsl(  0, 100%, 50%)   0.0000%,
+    hsl( 60, 100%, 50%)  16.6667%,
+    hsl(120, 100%, 50%)  33.3333%,
+    hsl(180, 100%, 50%)  50.0000%,
+    hsl(240, 100%, 50%)  66.6667%,
+    hsl(300, 100%, 50%)  83.3333%,
     hsl(360, 100%, 50%) 100.0000%
   );
 }
