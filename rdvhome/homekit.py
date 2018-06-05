@@ -65,15 +65,17 @@ class LightBulb(Accessory):
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
     bridge = Bridge(driver, 'Bridge')
-    temp_sensor = LightBulb(driver, 'Sensor 2')
-    temp_sensor2 = LightBulb(driver, 'Sensor 1')
-    bridge.add_accessory(temp_sensor)
-    bridge.add_accessory(temp_sensor2)
+    bridge.add_accessory(LightBulb(driver, 'Light 1', aid = 100))
+    bridge.add_accessory(LightBulb(driver, 'Light 2', aid = 200))
+    bridge.add_accessory(LightBulb(driver, 'Light 3', aid = 300))
 
     return bridge
 
 # Start the accessory on port 51826
-driver = AccessoryDriver(port=51826, loop = asyncio.get_event_loop())
+driver = AccessoryDriver(
+    port=51826, 
+    loop = asyncio.get_event_loop()
+)
 
 # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
-driver.add_accessory(accessory=LightBulb(driver, 'MyTempSensor'))
+driver.add_accessory(accessory = get_bridge(driver))
