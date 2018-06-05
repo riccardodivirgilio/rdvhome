@@ -37,7 +37,9 @@ class LightBulb(Accessory):
 
         serv_light = self.add_preload_service('Lightbulb')
         self.char_on = serv_light.configure_char(
-            'On', setter_callback=self.set_bulb)
+            'On', 
+            setter_callback = self.set_bulb
+        )
 
         self.pin = pin
         self._gpio_setup(pin)
