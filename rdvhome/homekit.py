@@ -70,7 +70,7 @@ def get_bridge(driver):
     bridge = Bridge(driver, 'Bridge')
 
     for switch in switches:
-        bridge.add_accessory(LightBulb(driver, switch.name, aid = switch.id))
+        bridge.add_accessory(LightBulb(driver, switch.name, aid = abs(hash(switch.id))))
 
     return bridge
 
