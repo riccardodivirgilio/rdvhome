@@ -16,3 +16,4 @@ yarn-error.log
 *.sln
 .babelrc
 .editorconfig
+accessory.state
