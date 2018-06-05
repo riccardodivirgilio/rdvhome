@@ -12,7 +12,8 @@ settings = data(
     INSTALL_DEPENDENCIES = False,
     DEPENDENCIES = {
         'aiohttp': '2.3.5',
-        #'fabric3': None,
+        'fabric3': None,
+        'hap-python': None,
         'aiohttp-autoreload': None,
         'aioreactive': None,
         'asyncio': None,
