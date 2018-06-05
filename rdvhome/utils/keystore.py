@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.utils import json
 from rdvhome.utils.importutils import module_path
 
-import os
 import aiofiles
+import os
 
 class KeyStore(object):
 
@@ -38,7 +38,7 @@ class KeyStore(object):
         try:
             async with aiofiles.open(self.path_for_key(key, **opts), 'r') as f:
                 contents = await f.read()
-                return self.encoder.loads(contents)    
+                return self.encoder.loads(contents)
         except FileNotFoundError:
             return default
 
