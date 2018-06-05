@@ -6,6 +6,7 @@ from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap.const import CATEGORY_LIGHTBULB
 
+from rdvhome.utils.importutils import module_path
 from rdvhome.switches import switches
 
 import asyncio
@@ -77,6 +78,7 @@ def get_bridge(driver):
 driver = AccessoryDriver(
     port = 51826, 
     loop = asyncio.get_event_loop(),
+    persist_file = module_path('rdvhome', 'data', 'accessory.state')
 )
 
 # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
