@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches.events import EventStream
 from rdvhome.utils.async import wait_all
-from rdvhome.utils.colors import to_color
+from rdvhome.utils.colors import to_color, homekit_to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.functional import iterate
@@ -35,24 +35,27 @@ class HomekitSwitch(Accessory):
         self.switch = switch
 
         run_all(
-            self.switch.subscribe(self.subscribe), 
+            self.switch.subscribe(self.on_event), 
             loop = self.driver.loop
         )
 
         self.setup_services()
 
-    def set_switch(self, value):
-        run_all(self.switch.switch(value), loop = self.driver.loop)
+    def perform_switch(self, *args, **opts):
+        run_all(self.switch.switch(*args, **opts), loop = self.driver.loop)
+
+    def set_on(self, value):
+        self.perform_switch(value)
 
     def setup_services(self):
         service = self.add_preload_service('Switch')
         self.switch_service = service.configure_char(
             'On', 
-            setter_callback = self.set_switch,
+            setter_callback = self.set_on,
             value = None
         )
 
-    async def subscribe(self, event):
+    async def on_event(self, event):
         try:
             self.switch_service.set_value(event.on)
         except AttributeError:

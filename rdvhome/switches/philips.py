@@ -10,6 +10,7 @@ from rdvhome.utils.decorators import to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
 from pyhap.const import CATEGORY_LIGHTBULB
+from rdvhome.utils.colors import to_color, homekit_to_color, color_to_homekit
 
 import aiohttp
 
@@ -18,12 +19,54 @@ class HomekitLight(HomekitSwitch):
     category = CATEGORY_LIGHTBULB
 
     def setup_services(self):
-        service = self.add_preload_service('Lightbulb')
+        service = self.add_preload_service(
+            'Lightbulb', 
+            chars = list(self.discover_characteristics())
+        )
         self.switch_service = service.configure_char(
             'On', 
-            setter_callback = self.set_switch,
+            setter_callback = self.set_on,
             value = None
         )
+
+        for attr in ('Hue', 'Saturation', 'Brightness'):
+            if self.switch.default_capabilities.get('allow_%s' % attr.lower(), False):
+                setattr(
+                    self,
+                    '%s_service' % attr.lower(),
+                    service.configure_char(
+                        attr, 
+                        setter_callback = getattr(self, 'set_%s' % attr.lower()),
+                        value = None
+                    )
+                )
+
+    def discover_characteristics(self):
+        if self.switch.default_capabilities.allow_hue:
+            yield 'Hue'
+        if self.switch.default_capabilities.allow_saturation:
+            yield 'Saturation'
+        if self.switch.default_capabilities.allow_brightness:
+            yield 'Brightness'
+
+    def set_saturation(self, value):
+        print('Homekit -> Saturation', value, homekit_to_color(saturation = value))
+        self.perform_switch(color = homekit_to_color(saturation = value))
+
+    def set_hue(self, value):
+        print('Homekit -> Hue', value, homekit_to_color(hue = value))
+        self.perform_switch(color = homekit_to_color(hue = value))
+
+    def set_brightness(self, value):
+        print('Homekit -> Brightness', value, homekit_to_color(brightness = value))
+        self.perform_switch(color = homekit_to_color(brightness = value))
+
+    async def on_event(self, event):
+        await super().on_event(event)
+
+        for attr, value in color_to_homekit(event).items():
+            print(attr, value)
+            getattr(self, '%s_service' % attr).set_value(value)
 
 class Light(Switch):
 

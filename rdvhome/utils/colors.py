@@ -6,6 +6,7 @@ from colour import Color
 
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
+from rdvhome.utils.functional import identity
 
 import math
 import random
@@ -16,9 +17,15 @@ PHILIPS_RANGE = data(
     brightness = 254,
 )
 
+HOMEKIT_RANGE = data(
+    hue        = 360,
+    saturation = 100,
+    brightness = 100,
+)
+
 class HSB(object):
 
-    def __init__(self, hue = None, saturation = None, brightness = None):
+    def __init__(self, hue = None, saturation = None, brightness = None, **opts):
         self.hue = hue
         self.saturation = saturation
         self.brightness = brightness
@@ -35,19 +42,25 @@ class HSB(object):
     def __bool__(self):
         return bool(self.serialize())
 
-def philips_to_color(**opts):
+def philips_to_color(color_range = PHILIPS_RANGE, **opts):
     return HSB(**{
         attr: opts[attr] / const
-        for attr, const in PHILIPS_RANGE.items()
+        for attr, const in color_range.items()
         if opts.get(attr, None)
     })
 
 @to_data
-def color_to_philips(color):
+def color_to_philips(color, color_range = PHILIPS_RANGE, key_function = lambda attr: attr[0:3]):
     color = to_color(color)
-    for attr, const in PHILIPS_RANGE.items():
+    for attr, const in color_range.items():
         if getattr(color, attr) is not None:
-            yield attr[0:3], int(getattr(color, attr) * const)
+            yield key_function(attr), int(getattr(color, attr) * const)
+
+def homekit_to_color(color_range = HOMEKIT_RANGE, **opts):
+    return philips_to_color(**opts, color_range = color_range)
+
+def color_to_homekit(color, color_range = HOMEKIT_RANGE):
+    return color_to_philips(color, color_range = color_range, key_function = identity)
 
 def to_color(spec):
     if isinstance(spec, HSB):
