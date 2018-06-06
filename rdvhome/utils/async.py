@@ -19,12 +19,12 @@ async def wait_all(*args):
         return tuple(futures[i] for i in range(len(done)))
     return done
 
-def run_all(*args):
+def run_all(*args, **opts):
     done = tuple(iterate(*args))
     if done and len(done) > 1:
-        return asyncio.ensure_future(asyncio.wait(done))
+        return asyncio.ensure_future(asyncio.wait(done), **opts)
     elif done:
-        return asyncio.ensure_future(first(done))
+        return asyncio.ensure_future(first(done), **opts)
     return done
 
 def syncronous_wait_all(*args, loop = None):

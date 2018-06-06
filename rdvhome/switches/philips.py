@@ -2,17 +2,32 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import capabilities, Switch
+from rdvhome.switches.base import capabilities, Switch, HomekitSwitch
 from rdvhome.utils import json
 from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
+from pyhap.const import CATEGORY_LIGHTBULB
 
 import aiohttp
 
+class HomekitLight(HomekitSwitch):
+
+    category = CATEGORY_LIGHTBULB
+
+    def setup_services(self):
+        service = self.add_preload_service('Lightbulb')
+        self.switch_service = service.configure_char(
+            'On', 
+            setter_callback = self.set_switch,
+            value = None
+        )
+
 class Light(Switch):
+
+    homekit_class = HomekitLight
 
     store = KeyStore(prefix = 'philips')
 

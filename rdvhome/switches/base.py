@@ -8,6 +8,9 @@ from rdvhome.utils.colors import to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.functional import iterate
+from rdvhome.utils.async import run_all
+from pyhap.accessory import Accessory
+from pyhap.const import CATEGORY_SWITCH
 
 import six
 
@@ -19,11 +22,49 @@ def capabilities(on = False, hue = False, saturation = False, brightness = False
         allow_brightness = brightness,
     )
 
+class HomekitSwitch(Accessory):
+
+    category = CATEGORY_SWITCH
+
+    def __init__(self, driver, switch):
+        super().__init__(
+            driver = driver, 
+            display_name = switch.name, 
+            #aid = abs(hash(switch.id))
+        )
+        self.switch = switch
+
+        run_all(
+            self.switch.subscribe(self.subscribe), 
+            loop = self.driver.loop
+        )
+
+        self.setup_services()
+
+    def set_switch(self, value):
+        run_all(self.switch.switch(value), loop = self.driver.loop)
+
+    def setup_services(self):
+        service = self.add_preload_service('Switch')
+        self.switch_service = service.configure_char(
+            'On', 
+            setter_callback = self.set_switch,
+            value = None
+        )
+
+    async def subscribe(self, event):
+        try:
+            self.switch_service.set_value(event.on)
+        except AttributeError:
+            pass
+
 class Switch(EventStream):
 
     kind = 'switch'
     default_aliases = ['all']
     default_capabilities = capabilities(on = True)
+
+    homekit_class = HomekitSwitch
 
     def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
         self.id = id
@@ -34,6 +75,9 @@ class Switch(EventStream):
         self.capabilities = self.default_capabilities.copy()
 
         super(Switch, self).__init__()
+
+    def create_homekit_accessory(self, driver):
+        return self.homekit_class(driver = driver, switch = self)
 
     @to_data
     def _send(self, on = None, color = None, intensity = None, full = True, **opts):

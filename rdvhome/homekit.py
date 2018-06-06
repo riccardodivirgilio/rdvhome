@@ -72,7 +72,8 @@ def get_bridge(driver):
     bridge = Bridge(driver, 'Bridge')
 
     for switch in switches:
-        bridge.add_accessory(LightBulb(driver, switch.name, aid = abs(hash(switch.id))))
+        #bridge.add_accessory(LightBulb(driver, switch.name))
+        bridge.add_accessory(switch.create_homekit_accessory(driver))
 
     return bridge
 
