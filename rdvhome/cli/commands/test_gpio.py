@@ -20,7 +20,7 @@ def shuffle(iterable):
     random.shuffle(l)
     return l
 
-async def relay(number = list(iterate(RELAY1, RELAY2)), timing = 0.1):
+async def relay(number = [RELAY1[0], RELAY2[0]], timing = 0.1):
 
     gpio = get_gpio()
 
