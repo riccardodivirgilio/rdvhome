@@ -144,7 +144,7 @@ class Light(Switch):
         gpio = await self.setup_gpio()
 
         await gpio.output(self.gpio_relay, high = False)
-        await asyncio.sleep(0.02)
+        await asyncio.sleep(0.025)
         await gpio.output(self.gpio_relay, high = True)
 
         if gpio.is_debug:
