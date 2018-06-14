@@ -46,7 +46,10 @@ def run_rdv_command_line():
     def light(philips_id = None, gpio_relay = None, gpio_status = None, **opts):
 
         if gpio_relay:
-            assert gpio_relay in RELAY1 or gpio_relay in RELAY2
+            assert gpio_relay in RELAY1 or gpio_relay in RELAY2, '%s not in %s' % (
+                gpio_relay,
+                ', '.join(map(str, (*RELAY1, *RELAY2)))
+            )
             yield 'gpio_relay', gpio_relay
 
         if gpio_status:
@@ -126,8 +129,8 @@ def run_rdv_command_line():
                 name = 'Letto Led',  
                 icon = "🛏", 
                 philips_id = 2, 
-                gpio_relay = 8,
-                gpio_status = 14,
+                gpio_relay = 14,
+                gpio_status = 8,
                 alias = []
             ),
             light(
