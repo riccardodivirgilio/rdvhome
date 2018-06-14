@@ -9,6 +9,7 @@ try:
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
+    GPIO.cleanup()
 
 except ImportError:
     GPIO = None
@@ -18,8 +19,12 @@ class RaspberryGPIO(object):
     is_debug = False
     GPIO = GPIO
 
-    async def setup_input(self, n):
+    async def setup_input(self, n, callback = None, **opts):
         self.GPIO.setup(n, self.GPIO.IN, pull_up_down = self.GPIO.PUD_UP)
+
+        if callback:
+            self.GPIO.remove_event_detect(n)
+            self.GPIO.add_event_detect(n, self.GPIO.RISING, callback = callback, **opts)
 
     async def setup_output(self, n):
         self.GPIO.setup(n,  self.GPIO.OUT)
@@ -40,7 +45,7 @@ class DebugGPIO(object):
 
         self.store = KeyStore(prefix = 'gpio')
 
-    async def setup_input(self, n):
+    async def setup_input(self, n, **opts):
         if await self.store.get(n) is None:
             await self.store.set(n, 1)
 
