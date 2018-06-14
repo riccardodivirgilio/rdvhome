@@ -12,9 +12,9 @@ settings = data(
     INSTALL_DEPENDENCIES = False,
     DEPENDENCIES = {
         'aiohttp': '2.3.5',
-        'aiofiles': '0.3.2',
-        'fabric3': None,
-        'hap-python': None,
+        #'aiofiles': '0.3.2',
+        #'fabric3': None,
+        #'hap-python': None,
         'aiohttp-autoreload': None,
         'aioreactive': None,
         'asyncio': None,
