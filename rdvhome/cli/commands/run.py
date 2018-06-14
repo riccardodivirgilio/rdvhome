@@ -7,16 +7,12 @@ from aiohttp import web
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
+from rdvhome.homekit import driver
 from rdvhome.switches import switches
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
 
 import signal
-
-try:
-    from rdvhome.homekit import driver
-except ImportError:
-    driver = None
 
 async def log(event):
     print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None) or '')
@@ -45,16 +41,13 @@ class Command(SimpleCommand):
 
         #code borrowed from pyhap
         try:
-            if driver:
-                driver.add_job(driver._do_start)
+            driver.add_job(driver._do_start)
             web.run_app(app, port=port)
         except KeyboardInterrupt:
-            if driver:
-                driver.loop.call_soon_threadsafe(
-                    driver.loop.create_task,
-                    driver.async_stop()
-                )
-                driver.loop.run_forever()
+            driver.loop.call_soon_threadsafe(
+                driver.loop.create_task,
+                driver.async_stop()
+            )
+            driver.loop.run_forever()
         finally:
-            if driver:
-                driver.loop.close()
+            driver.loop.close()
