@@ -13,6 +13,7 @@ from pyhap.const import CATEGORY_LIGHTBULB
 from rdvhome.utils.colors import to_color, homekit_to_color, color_to_homekit
 
 import aiohttp
+import asyncio
 
 class HomekitLight(HomekitSwitch):
 
@@ -143,6 +144,9 @@ class Light(Switch):
         gpio = await self.setup_gpio()
 
         await gpio.output(self.gpio_relay, high = False)
+        await asyncio.sleep(0.02)
+        await gpio.output(self.gpio_relay, high = True)
+
         if gpio.is_debug:
             await gpio.store.set(self.gpio_status, not on and 1 or 0)
 
