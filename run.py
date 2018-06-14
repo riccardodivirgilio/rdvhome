@@ -71,90 +71,99 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES = True,
         DEBUG    = is_laptop(), #my laptop everything else is production.
         SWITCHES = [
-
+            light(
+                id = 'spotlight_kitchen', 
+                name = 'Cucina',  
+                icon = "🍽", 
+                alias = [], 
+                gpio_relay = 24,
+                gpio_status = 17,
+            ),
             light(
                 id = 'led_living_room', 
                 name = 'Salone Led', 
-                ordering =  8, 
                 icon = "🛋", 
                 philips_id = 1, 
+                gpio_relay = 20,
+                gpio_status = 4,
                 alias = ['default']
+            ),
+            light(
+                id = 'spotlight_living_room', 
+                name = 'Salone', 
+                icon = "🛋", 
+                alias = [], 
+                gpio_relay = 23,
+                gpio_status = 2,
             ),
             light(
                 id = 'led_tv', 
                 name = 'TV Led',     
-                ordering =  10, 
                 icon = "📺", 
                 philips_id = 3, 
+                gpio_relay = 20,
+                gpio_status = 4,
                 alias = ['default']
-            ),
-            light(
-                id = 'led_bedroom', 
-                name = 'Letto Led',  
-                ordering = 12, 
-                icon = "🛏", 
-                philips_id = 2, 
-                alias = []
-            ),
-
-            light(
-                id = 'spotlight_living_room', 
-                name = 'Salone', 
-                ordering =  9, 
-                icon = "🛋", 
-                alias = [],
-                gpio_relay  = RELAY1[0],
-                gpio_status = INPUT[0],
             ),
             light(
                 id = 'spotlight_tv', 
                 name = 'TV',     
-                ordering =  11, 
                 icon = "📺", 
-                alias = [],
-                gpio_relay  = RELAY1[1],
-                gpio_status = INPUT[1],
-            ),
-            light(
-                id = 'spotlight_bedroom', 
-                name = 'Letto',  
-                ordering = 13, 
-                icon = "🛏", 
-                alias = [],
-                gpio_relay  = RELAY1[2],
-                gpio_status = INPUT[2],
+                alias = [], 
+                gpio_relay = 15,
+                gpio_status = 25,
             ),
             light(
                 id = 'spotlight_entrance', 
                 name = 'Entrata',  
-                ordering = 14, 
                 icon = "🚪", 
-                alias = [],
-                gpio_relay  = RELAY1[3],
-                gpio_status = INPUT[3],
+                alias = [], 
+                gpio_relay = 18,
+                gpio_status = 7,
             ),
             light(
-                id = 'spotlight_kitchen', 
-                name = 'Cucina',  
-                ordering = 15, 
-                icon = "🍽", 
-                alias = [],
-                gpio_relay  = RELAY1[4],
-                gpio_status = INPUT[4],
+                id = 'led_bedroom', 
+                name = 'Letto Led',  
+                icon = "🛏", 
+                philips_id = 2, 
+                gpio_relay = 8,
+                gpio_status = 14,
+                alias = []
+            ),
+            light(
+                id = 'spotlight_bedroom', 
+                name = 'Letto',  
+                icon = "🛏", 
+                alias = [], 
+                gpio_relay = 21,
+                gpio_status = 3,
             ),
             light(
                 id = 'spotlight_room', 
                 name = 'Studio',  
-                ordering = 16, 
                 icon = "📚", 
-                alias = [],
-                gpio_relay  = RELAY1[5],
-                gpio_status = INPUT[5],
+                alias = [], 
+                gpio_relay = 18,
+                gpio_status = 12,
             ),
+            #window(
+            #    id = 'window_kitchen',
+            #    gpio_up = 10,
+            #    gpio_down = 9,
+            #),
+            #window(
+            #    id = 'window_living_room',
+            #    gpio_up = 11,
+            #    gpio_down = 5,
+            #),
+            #window(
+            #    id = 'window_tv',
+            #    gpio_up = 22,
+            #    gpio_down = 27,
+            #),
             control(
                 id = 'usa',      
                 name = "USA",    
-                ordering = 29, 
                 icon = "🇺🇸", 
                 colors = [
                     dict(hue = 1,    saturation = 1, brightness = 1), 
@@ -167,7 +176,6 @@ def run_rdv_command_line():
             control(
                 id = 'natural',    
                 name = "Naturale",  
-                ordering = 30, 
                 icon = "🌞",   
                 colors = [{
                     "hue": 0.12845044632639047,
@@ -179,27 +187,23 @@ def run_rdv_command_line():
             control(
                 id = 'artic',    
                 name = "Artic",  
-                ordering = 31, 
                 icon = "⛄",   
                 colors = ['#bcf5ff', '#b2ffc5', '#87ffc7']
             ),
             control(
                 id = 'random',   
                 name = "Random", 
-                ordering = 32, 
                 icon = "❓"
             ),
             control(
                 id = 'loop',     
                 name = "Random Loop", 
-                ordering = 33, 
                 icon = "➰", 
                 timeout = timeout(30, 60)
             ),
             control(
                 id = 'hloop',     
                 name = "Random Hipster Loop", 
-                ordering = 34, 
                 icon = "🤓", 
                 timeout = timeout(30, 60),
                 colors = lambda switch, i: dict(
@@ -210,7 +214,6 @@ def run_rdv_command_line():
             control(
                 id = 'disco',    
                 name = "Disco",  
-                ordering = 35, 
                 icon = "🌐", 
                 timeout = timeout(0.3, 1.2), 
                 automatic_on = 'default'
