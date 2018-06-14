@@ -4,6 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.utils.datastructures import data
 
+import asyncio
+
+loop = asyncio.get_event_loop()
+
 settings = data(
     DEBUG          = False,
     SERVER_PORT    = 8500,
