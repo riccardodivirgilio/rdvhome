@@ -7,6 +7,7 @@ from rdvhome.conf import settings
 from rdvhome.utils.async import syncronous_wait_all, wait_all
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.decorators import debounce
 
 import asyncio
 import random
@@ -54,11 +55,28 @@ async def read(number = INPUT, timing = 0.5, index = 1000):
         print(*((not v and str(n).zfill(2) or '--') for v, n in zip(results, iterate(number))))
         await asyncio.sleep(timing)
 
+async def callback(number = INPUT):
+
+    gpio = get_gpio()
+
+    def echo(n):
+        @debounce(0.1)
+        def echo(e):
+            print(n)
+
+    await wait_all((gpio.setup_input(n, callback = echo(n), bouncetime=200) for n in iterate(number)))
+
+    print(*(str(n).zfill(2) for n in iterate(number)))
+
+    while True:
+        await asyncio.sleep(0.1)
+
 class Command(SimpleCommand):
 
     help = 'Test GPIO'
 
     def handle(self, **opts):
 
-        syncronous_wait_all(relay(**opts))
-        syncronous_wait_all(read(**opts))
+        #syncronous_wait_all(relay(**opts))
+        #syncronous_wait_all(read(**opts))
+        syncronous_wait_all(callback(**opts))
