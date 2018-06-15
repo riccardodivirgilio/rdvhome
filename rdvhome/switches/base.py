@@ -107,8 +107,8 @@ class Switch(EventStream):
 
         yield from opts.items()
 
-    def send(self, **opts):
-        return super(Switch, self).send(self._send(**opts))
+    async def send(self, **opts):
+        return await super(Switch, self).send(self._send(**opts))
 
     async def switch(self, *args, **opts):
         raise NotImplementedError

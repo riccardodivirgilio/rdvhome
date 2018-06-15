@@ -32,12 +32,12 @@ class ControlSwitch(Switch):
         super(ControlSwitch, self).__init__(id = id, **opts)
 
     async def status(self):
-        return self.send(on = self.on)
+        return await self.send(on = self.on)
 
     async def switch(self, on = None, **opts):
 
         if on is None or (on and self.on) or (not on and not self.on):
-            return self.send(on = self.on)
+            return await self.send(on = self.on)
 
         if self._future_when_on:
             self._future_when_on.cancel()
@@ -55,7 +55,7 @@ class ControlSwitch(Switch):
         if self.on:
             self._future_when_on  = run_all(self.when_on())
 
-        return self.send(on = self.on)
+        return await self.send(on = self.on)
 
     async def when_on(self):
         run_all((

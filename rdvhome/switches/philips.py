@@ -189,9 +189,9 @@ class Light(Switch):
                 response = await self.store.get(self.id, self.philips_settings)
 
             response.update(defaults)
-            return self.send(**response)
+            return await self.send(**response)
 
-        return self.send(**defaults)
+        return await self.send(**defaults)
 
     @to_data
     def parse_command(self, on = None, color = None):
@@ -226,4 +226,4 @@ class Light(Switch):
                     )
                     await self.store.set(self.id, payload)
 
-        return self.send(on = on, color = color, full = False)
+        return await self.send(on = on, color = color, full = False)

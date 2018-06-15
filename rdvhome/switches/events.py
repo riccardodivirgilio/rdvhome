@@ -11,8 +11,8 @@ class EventStream(AsyncStream):
     def subscribe(self, func):
         return subscribe(self, func)
 
-    def send(self, event):
-        run_all(self.asend(event))
+    async def send(self, event):
+        await self.asend(event)
         return event
 
 def subscribe(observable, func):
