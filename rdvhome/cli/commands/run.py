@@ -7,7 +7,6 @@ from aiohttp import web
 from rdvhome.app import app
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
-from rdvhome.homekit import driver
 from rdvhome.switches import switches
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
@@ -30,10 +29,19 @@ class Command(SimpleCommand):
             import aiohttp_autoreload
             aiohttp_autoreload.start()
 
-        run_all(switches.subscribe(log))
+        run_all(
+            switches.subscribe(log),
+            switches.watch()
+        )
 
         if auto_open:
             system_open('http://%s:%s' % (address, port))
+
+        web.run_app(app, port=port)
+
+        return
+
+        from rdvhome.homekit import driver
 
         # We want SIGTERM (kill) to be handled by the driver itself,
         # so that it can gracefully stop the accessory, server and advertising.

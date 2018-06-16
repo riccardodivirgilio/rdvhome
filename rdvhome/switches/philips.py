@@ -11,7 +11,6 @@ from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
 from pyhap.const import CATEGORY_LIGHTBULB
 from rdvhome.utils.colors import to_color, homekit_to_color, color_to_homekit
-from rdvhome.utils.async import run_all
 from rdvhome.conf import loop
 from rdvhome.utils.decorators import debounce
 
@@ -127,6 +126,23 @@ class Light(Switch):
             async with session.put(path, json = payload) as response:
                 return await response.json(loads = json.loads)
 
+    async def watch(self):
+        if self.gpio_status:
+
+            status = await self.raspberry_status()
+
+            while True:
+
+                current = await self.raspberry_status()
+
+                if not current == status:
+
+                    status = current
+
+                    await self.send(on = status)
+               
+                await asyncio.sleep(0.3)
+
     async def setup_gpio(self):
 
         if self._gpio:
@@ -138,15 +154,11 @@ class Light(Switch):
             await self._gpio.setup_output(self.gpio_relay)
 
         if self.gpio_status:
-            await self._gpio.setup_input(self.gpio_status, callback=self.update_status_from_gpio, bouncetime=200)
+            await self._gpio.setup_input(self.gpio_status)
 
         return self._gpio
 
-    @debounce(0.1)
-    def update_status_from_gpio(self, event):
-        print('EVENT', self.gpio_status)
-        run_all(self.status(), loop = loop)
-
+    @debounce(1)
     async def raspberry_switch(self, on = True):
 
         gpio = await self.setup_gpio()

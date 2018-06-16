@@ -60,7 +60,7 @@ async def callback(number = INPUT):
     gpio = get_gpio()
 
     @debounce(0.1)
-    def echo(e):
+    async def echo(e):
         print(e)
 
     await wait_all((gpio.setup_input(n, callback = echo, bouncetime=200) for n in iterate(number)))

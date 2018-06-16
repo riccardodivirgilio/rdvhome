@@ -82,6 +82,9 @@ class Switch(EventStream):
     def create_homekit_accessory(self, driver):
         return self.homekit_class(driver = driver, switch = self)
 
+    async def watch_switch(self):
+        pass
+
     @to_data
     def _send(self, on = None, color = None, intensity = None, full = True, **opts):
         yield 'id',         self.id
@@ -127,6 +130,12 @@ class SwitchList(object):
     async def subscribe(self, func):
         return await wait_all(
             switch.subscribe(func)
+            for switch in self
+        )
+
+    async def watch(self):
+        return await wait_all(
+            switch.watch()
             for switch in self
         )
 
