@@ -111,7 +111,14 @@ def deploy(restart = True):
     rsync_project(
         remote_dir="/home/pi/server/",
         local_dir="%s/" % os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir)),
-        exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__", "node_modules"),
+        exclude=(
+            "*.pyc", 
+            ".git/*", 
+            "__pycache__/", 
+            "__pycache__", 
+            "node_modules",
+            "rdvhome/data/", 
+        ),
         delete=True
     )
 
