@@ -2,17 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import capabilities, Switch, HomekitSwitch
+from pyhap.const import CATEGORY_LIGHTBULB
+
+from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
 from rdvhome.utils import json
-from rdvhome.utils.colors import color_to_philips, philips_to_color, to_color
+from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, philips_to_color, to_color
 from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import to_data
+from rdvhome.utils.decorators import debounce, to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
-from pyhap.const import CATEGORY_LIGHTBULB
-from rdvhome.utils.colors import to_color, homekit_to_color, color_to_homekit
-from rdvhome.conf import loop
-from rdvhome.utils.decorators import debounce
 
 import aiohttp
 import asyncio
@@ -23,11 +21,11 @@ class HomekitLight(HomekitSwitch):
 
     def setup_services(self):
         service = self.add_preload_service(
-            'Lightbulb', 
+            'Lightbulb',
             chars = list(self.discover_characteristics())
         )
         self.switch_service = service.configure_char(
-            'On', 
+            'On',
             setter_callback = self.set_on,
             value = None
         )
@@ -38,7 +36,7 @@ class HomekitLight(HomekitSwitch):
                     self,
                     '%s_service' % attr.lower(),
                     service.configure_char(
-                        attr, 
+                        attr,
                         setter_callback = getattr(self, 'set_%s' % attr.lower()),
                         value = None
                     )
@@ -140,7 +138,7 @@ class Light(Switch):
                     status = current
 
                     await self.send(on = status)
-               
+
                 await asyncio.sleep(0.3)
 
     async def setup_gpio(self):

@@ -2,15 +2,15 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+from pyhap.accessory import Accessory
+from pyhap.const import CATEGORY_SWITCH
+
 from rdvhome.switches.events import EventStream
-from rdvhome.utils.async import wait_all
-from rdvhome.utils.colors import to_color, homekit_to_color
+from rdvhome.utils.async import run_all, wait_all
+from rdvhome.utils.colors import to_color
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.functional import iterate
-from rdvhome.utils.async import run_all
-from pyhap.accessory import Accessory
-from pyhap.const import CATEGORY_SWITCH
 
 import six
 
@@ -28,14 +28,14 @@ class HomekitSwitch(Accessory):
 
     def __init__(self, driver, switch):
         super().__init__(
-            driver = driver, 
-            display_name = switch.name, 
+            driver = driver,
+            display_name = switch.name,
             #aid = abs(hash(switch.id))
         )
         self.switch = switch
 
         run_all(
-            self.switch.subscribe(self.on_event), 
+            self.switch.subscribe(self.on_event),
             loop = self.driver.loop
         )
 
@@ -50,7 +50,7 @@ class HomekitSwitch(Accessory):
     def setup_services(self):
         service = self.add_preload_service('Switch')
         self.switch_service = service.configure_char(
-            'On', 
+            'On',
             setter_callback = self.set_on,
             value = None
         )

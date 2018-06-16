@@ -6,8 +6,8 @@ from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap.const import CATEGORY_LIGHTBULB
 
-from rdvhome.utils.importutils import module_path
 from rdvhome.switches import switches
+from rdvhome.utils.importutils import module_path
 
 import asyncio
 import logging
@@ -37,7 +37,7 @@ class LightBulb(Accessory):
 
         serv_light = self.add_preload_service('Lightbulb')
         self.char_on = serv_light.configure_char(
-            'On', 
+            'On',
             setter_callback = self.set_bulb
         )
 
@@ -79,7 +79,7 @@ def get_bridge(driver):
 
 # Start the accessory on port 51826
 driver = AccessoryDriver(
-    port = 51826, 
+    port = 51826,
     loop = asyncio.get_event_loop(),
     persist_file = module_path('rdvhome', 'data', 'accessory.state')
 )

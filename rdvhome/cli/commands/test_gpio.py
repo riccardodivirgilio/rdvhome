@@ -5,9 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.utils.async import syncronous_wait_all, wait_all
+from rdvhome.utils.decorators import debounce
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.decorators import debounce
 
 import asyncio
 import random

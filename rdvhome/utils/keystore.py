@@ -5,8 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.utils import json
 from rdvhome.utils.importutils import module_path
 
-import os
 import aiofiles
+import os
 
 class KeyStore(object):
 
