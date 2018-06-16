@@ -81,7 +81,8 @@ def get_bridge(driver):
 driver = AccessoryDriver(
     port = 51826,
     loop = asyncio.get_event_loop(),
-    persist_file = module_path('rdvhome', 'data', 'accessory.state')
+    persist_file = module_path('rdvhome', 'data', 'accessory.state'),
+    pincode = b"000-00-000"
 )
 
 # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
