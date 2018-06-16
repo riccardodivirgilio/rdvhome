@@ -8,12 +8,28 @@ from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
 from rdvhome.utils import json
 from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, philips_to_color, to_color
 from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import debounce, to_data
+from rdvhome.utils.decorators import to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
 
 import aiohttp
 import asyncio
+import time
+
+def debounce(s):
+    """Decorator ensures function that can only be called once every `s` seconds.
+    """
+    def decorate(f):
+        async def wrapped(self, *args, **kwargs):
+            self._t = None
+            t_ = time.time()
+            result = None
+            if self._t is None or t_ - self._t >= s:
+                result = await f(self, *args, **kwargs)
+                self._t = time.time()
+            return result
+        return wrapped
+    return decorate
 
 class HomekitLight(HomekitSwitch):
 

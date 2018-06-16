@@ -17,19 +17,3 @@ def decorate(*func):
 
 to_tuple = decorate(tuple)
 to_data  = decorate(data)
-
-def debounce(s):
-    """Decorator ensures function that can only be called once every `s` seconds.
-    """
-    def decorate(f):
-        t = None
-        async def wrapped(*args, **kwargs):
-            nonlocal t
-            t_ = time.time()
-            result = None
-            if t is None or t_ - t >= s:
-                result = await f(*args, **kwargs)
-                t = time.time()
-            return result
-        return wrapped
-    return decorate
