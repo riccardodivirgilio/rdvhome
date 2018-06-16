@@ -146,7 +146,7 @@ def run_rdv_command_line():
                 name = 'Studio',  
                 icon = "📚", 
                 alias = [], 
-                gpio_relay = 18,
+                gpio_relay = 16,
                 gpio_status = 12,
             ),
             #window(
