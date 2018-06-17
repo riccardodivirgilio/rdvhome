@@ -169,18 +169,21 @@ def run_rdv_command_line():
                 name = 'Finestra Cucina',
                 gpio_up = 10,
                 gpio_down = 9,
+                icon = '☀️'
             ),
             window(
                 id = 'window_living_room',
                 name = 'Finestra Salone',
                 gpio_up = 11,
                 gpio_down = 5,
+                icon = '☀️'
             ),
             window(
                 id = 'window_tv',
                 name = 'Finestra Tv',
                 gpio_up = 22,
                 gpio_down = 27,
+                icon = '☀️'
             ),
             control(
                 id = 'usa',      
