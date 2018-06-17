@@ -24,7 +24,8 @@
               </btn>
               <slider v-if="item.on && item.allow_brightness" v-bind:color="item" v-bind:value="item.brightness" v-on:input="toggle_hsb(item, null, null, $event)"/>
               <div class="title">{{ item.name }}</div>
-              <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item"/>
+              <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item" v-if='item.allow_on'/>
+              <updown v-bind:value="item.direction" v-on:input="toggle(item, $event)" v-if='item.allow_direction'/>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
               <slider v-bind:value="item.hue" v-on:input="toggle_hsb(item, $event, null, null)"/>
@@ -45,13 +46,14 @@
 
 import Vue from 'vue'
 
-import loading  from './components/loading';
-import toggle   from './components/toggle';
-import btn      from './components/btn';
-import slider   from './components/slider';
-import home     from './components/home';
+import loading   from './components/loading';
+import toggle    from './components/toggle';
+import btn       from './components/btn';
+import slider    from './components/slider';
+import updown    from './components/updown';
+import home      from './components/home';
 
-import debounce from 'lodash/debounce';
+import debounce  from 'lodash/debounce';
 
 import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
 
@@ -61,6 +63,7 @@ export default {
     loading,
     toggle,
     slider,
+    updown,
     home,
     btn
   },
