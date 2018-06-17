@@ -5,7 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.utils.async import syncronous_wait_all, wait_all
-from rdvhome.utils.decorators import debounce
 from rdvhome.utils.functional import iterate
 from rdvhome.utils.gpio import get_gpio
 
@@ -21,7 +20,7 @@ def shuffle(iterable):
     random.shuffle(l)
     return l
 
-async def relay(number = [RELAY1[0], RELAY2[0]], timing = 0.1):
+async def relay(number = [RELAY2[5]], timing = 0.1):
 
     gpio = get_gpio()
 
@@ -59,7 +58,6 @@ async def callback(number = INPUT):
 
     gpio = get_gpio()
 
-    @debounce(0.1)
     async def echo(e):
         print(e)
 
@@ -76,6 +74,6 @@ class Command(SimpleCommand):
 
     def handle(self, **opts):
 
-        #syncronous_wait_all(relay(**opts))
+        syncronous_wait_all(relay(**opts))
         #syncronous_wait_all(read(**opts))
-        syncronous_wait_all(callback(**opts))
+        #syncronous_wait_all(callback(**opts))
