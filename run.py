@@ -67,6 +67,21 @@ def run_rdv_command_line():
 
         yield from opts.items()
 
+    @to_data
+    def window(gpio_up, gpio_down, **opts):
+
+        for pin in (gpio_up, gpio_down):
+            assert pin in RELAY1 or pin in RELAY2, '%s not in %s' % (
+                pin,
+                ', '.join(map(str, (*RELAY1, *RELAY2)))
+            )
+
+        yield 'class_path', 'rdvhome.switches.windows.Window'
+        yield 'gpio_up',   gpio_up
+        yield 'gpio_down', gpio_down
+
+        yield from opts.items()
+
     return execute_from_command_line(
         RASPBERRY_RELAY1 = RELAY1,
         RASPBERRY_RELAY2 = RELAY2,
@@ -149,21 +164,24 @@ def run_rdv_command_line():
                 gpio_relay = 16,
                 gpio_status = 12,
             ),
-            #window(
-            #    id = 'window_kitchen',
-            #    gpio_up = 10,
-            #    gpio_down = 9,
-            #),
-            #window(
-            #    id = 'window_living_room',
-            #    gpio_up = 11,
-            #    gpio_down = 5,
-            #),
-            #window(
-            #    id = 'window_tv',
-            #    gpio_up = 22,
-            #    gpio_down = 27,
-            #),
+            window(
+                id = 'window_kitchen',
+                name = 'Finestra Cucina',
+                gpio_up = 10,
+                gpio_down = 9,
+            ),
+            window(
+                id = 'window_living_room',
+                name = 'Finestra Salone',
+                gpio_up = 11,
+                gpio_down = 5,
+            ),
+            window(
+                id = 'window_tv',
+                name = 'Finestra Tv',
+                gpio_up = 22,
+                gpio_down = 27,
+            ),
             control(
                 id = 'usa',      
                 name = "USA",    
