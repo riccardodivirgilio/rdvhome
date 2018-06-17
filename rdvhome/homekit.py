@@ -5,7 +5,8 @@ from __future__ import absolute_import, print_function, unicode_literals
 from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap.const import CATEGORY_LIGHTBULB
-
+from rdvhome.utils.gpio import get_gpio
+from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.utils.importutils import module_path
 
@@ -69,11 +70,13 @@ class LightBulb(Accessory):
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
-    bridge = Bridge(driver, 'Bridge')
+    bridge = Bridge(driver, get_gpio().is_debug and 'RdvTest' or 'RdvHome')
 
     for switch in switches:
         #bridge.add_accessory(LightBulb(driver, switch.name))
-        bridge.add_accessory(switch.create_homekit_accessory(driver))
+        accessory = switch.create_homekit_accessory(driver)
+        if accessory:
+            bridge.add_accessory(accessory)
 
     return bridge
 
@@ -82,7 +85,7 @@ driver = AccessoryDriver(
     port = 51826,
     loop = asyncio.get_event_loop(),
     persist_file = module_path('rdvhome', 'data', 'accessory.state'),
-    pincode = b"000-00-000"
+    #pincode = b"000-00-000"
 )
 
 # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
