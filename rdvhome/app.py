@@ -113,6 +113,13 @@ def validate(number = None, color = None, hue = None, saturation = None, brightn
         yield 'on', True
     elif mode == 'off':
         yield 'on', False
+    elif mode == 'stop':
+        yield 'direction', None
+    elif mode == 'up':
+        yield 'direction', 'up'
+    elif mode == 'down':
+        yield 'direction', 'down'
+
     elif not mode in ('-', None):
         raise HTTPBadRequest(reason = 'InvalidMode')
 
