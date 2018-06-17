@@ -123,7 +123,7 @@ class Light(Switch):
         self.gpio_relay  = gpio_relay
         self.gpio_status = gpio_status
 
-        super(Light, self).__init__(id, **opts)
+        super().__init__(id, **opts)
 
     async def api_request(self, path = '', payload = None):
 
