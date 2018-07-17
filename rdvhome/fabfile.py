@@ -2,13 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, execute, roles, run, sudo, task
+from fabric.api import env, execute, roles, run, sudo, task, local
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 
 from fabtools import require
 from fabtools.supervisor import restart_process
+from operator import attrgetter
 
 import os
 import sys
@@ -201,6 +202,42 @@ def backup_master():
 @roles('nas')
 def backup_slave():
     execute(backup, master = False, slave = True)
+
+@task
+@roles('nas')
+def move_pictures(to_keep = 1000):
+
+    LOCAL  = os.path.expanduser('~/Pictures/')
+    REMOTE = '/Volumes/Master/raw'
+
+    if not os.path.exists(REMOTE):
+        local('open afp://%s:server@%s/Master' % (
+            NAS.user,
+            NAS.name,
+        ))
+
+    files = sorted(
+        filter(
+            lambda f: not f.is_symlink() and os.path.splitext(f)[1].lower() == '.nef',
+            os.scandir(LOCAL)
+        ),
+        key = lambda f: f.stat().st_ctime
+    )
+
+    if len(files) > to_keep:
+
+        symlinks = frozenset(map(attrgetter('name'), files[:-to_keep])).intersection(os.listdir(REMOTE))
+
+        for name in symlinks:
+
+            local  = os.path.join(LOCAL, name)
+            remote = os.path.join(REMOTE, name)
+
+            os.remove(local)
+            os.symlink(remote, local)
+
+            print(local, '>>', remote)
+
 
 if __name__ == '__main__':
     sys.argv = ['fab', '-f', __file__] + sys.argv[1:]
