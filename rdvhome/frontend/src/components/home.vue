@@ -721,15 +721,13 @@
 
 <script>
 
+import Vue from 'vue'
+
 import {hsb_to_css_with_lightness} from '../utils/color';
 
 export default {
   name: 'home',
   props: ['switches'],
-  data: function() {
-    return {
-    }
-  },
   methods: {
       to_css: hsb_to_css_with_lightness,
       light_color: function(item) {
@@ -753,7 +751,8 @@ export default {
       },
       area_click: function(item) {
         if (item) {
-          this.$emit('toggle', item);
+            Vue.set(item, 'on', ! item.on)
+            this.$emit('toggle', item);
         }
       }
   }
