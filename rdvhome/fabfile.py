@@ -175,10 +175,10 @@ def backup(master = True, slave = True, verbose = False):
     for local, remote, extra in (
         ("~/Pictures/",    "raw/",     ''),
         ("~/Photos/",      "photos/",  ''),
-        ("~/Git/",         "git/",     '--delete'),
-        ("~/Wolfram/git/", "wolfram/", '--delete'),
-        ("~/Private/",     "private/", '--delete'),
-        ("~/Desktop/",     "desktop/", '--delete'),
+        #("~/Git/",         "git/",     '--delete'),
+        #("~/Wolfram/git/", "wolfram/", '--delete'),
+        #("~/Private/",     "private/", '--delete'),
+        #("~/Desktop/",     "desktop/", '--delete'),
         ):
 
         if verbose:
