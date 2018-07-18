@@ -3,7 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.main import execute_from_command_line
-from rdvhome.utils.gpio import GPIO
+from rdvhome.utils.gpio import has_gpio
 from rdvhome.utils.decorators import to_data
 
 import random
@@ -21,21 +21,7 @@ INPUT  = [ 2,  3,  4, 17,
 def timeout(min, max):
     return lambda switch, i: random.random() * (max-min) + min
 
-def is_laptop():
-    return uuid.getnode() == 180725258261487
-
-def is_local_network():
-
-    return False
-
-    process = subprocess.Popen(['networksetup', '-getairportnetwork', 'en0'], stdout=subprocess.PIPE)
-    out, err = process.communicate()
-
-    return b'rdv-net' in out
-
 def run_rdv_command_line():
-
-    is_local = is_local_network()
 
     control = lambda **opts: dict(
         class_path = 'rdvhome.switches.controls.ControlSwitch',
@@ -59,7 +45,7 @@ def run_rdv_command_line():
         if philips_id:
             yield 'philips_id', philips_id
 
-        if philips_id and is_local:
+        if philips_id and has_gpio():
             yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
             yield 'ipaddress', "192.168.1.179"
 
@@ -69,7 +55,7 @@ def run_rdv_command_line():
 
     @to_data
     def window(gpio_up, gpio_down, **opts):
-        if is_laptop():
+        if not has_gpio():
             for pin in (gpio_up, gpio_down):
                 assert pin in RELAY1 or pin in RELAY2, '%s not in %s' % (
                     pin,
@@ -87,7 +73,7 @@ def run_rdv_command_line():
         RASPBERRY_RELAY2 = RELAY2,
         RASPBERRY_INPUT  = INPUT,
         INSTALL_DEPENDENCIES = True,
-        DEBUG    = is_laptop(), #my laptop everything else is production.
+        DEBUG    = not has_gpio(), #raspberry is production.
         SWITCHES = [
             light(
                 id = 'spotlight_kitchen', 

@@ -137,8 +137,12 @@ class Light(Switch):
         )
 
         async with aiohttp.ClientSession() as session:
-            async with session.put(path, json = payload) as response:
-                return await response.json(loads = json.loads)
+            if payload:
+                async with session.put(path, json = payload) as response:
+                    return await response.json(loads = json.loads)
+            else:
+                async with session.get(path) as response:
+                    return await response.json(loads = json.loads)                
 
     async def watch(self):
         if self.gpio_status:
