@@ -145,8 +145,9 @@ export default {
       200
     ),
     toggle_direction: function (item, direction) {
-      console.log(direction)
-      console.log(item[direction])
+      this.send_action(item.id, {
+        mode: this.format_direction_value(item[direction], direction),
+      })
     },
     home_toggle: function (item) {
       this.toggle(item)
@@ -163,6 +164,15 @@ export default {
       }
       if (value == false) {
         return 'off'
+      }
+      return '-'
+    },
+    format_direction_value: function(value, direction) {
+      if (value == true) {
+        return direction
+      }
+      if (value == false) {
+        return 'stop'
       }
       return '-'
     },
