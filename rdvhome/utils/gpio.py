@@ -58,7 +58,10 @@ class DebugGPIO(object):
     async def output(self, n, high = True):
         await self.store.set(n, high and 1 or 0)
 
+def has_gpio():
+    return bool(GPIO)
+
 def get_gpio():
-    if GPIO:
+    if has_gpio():
         return RaspberryGPIO()
     return DebugGPIO()
