@@ -342,12 +342,17 @@ html, body, .page {
   border-bottom:1px solid $border-color
 }
 
+
 .list-item > .line > .toggle {
   position: absolute;
   right:  $item-padding;
-  width:  $toggle-width;
-  height: $toggle-height;
   top:    $item-padding;
+}
+
+.list-item > .line > .updown {
+  position: absolute;
+  right:  $item-padding;
+  top:    $item-padding;  
 }
 
 .list-item > .line > .title {

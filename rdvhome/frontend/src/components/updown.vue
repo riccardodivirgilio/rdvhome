@@ -1,30 +1,35 @@
 <template>
-
-  <label class="toggle">
-    <input type="checkbox" @change="toggle" :checked="value" :name="name">
-    <span class="toggle-button">➧</span>
-  </label>
-
+  <div class="updown">
+    <label class="toggle" >
+      <input type="checkbox" @change="toggle" :checked="value" :name="name">
+      <span class="toggle-arrow">
+        <span class="arrow one up"/>
+        <span class="arrow two up"/>
+        <span class="arrow three up"/>
+      </span>
+    </label>
+    <label class="toggle">
+      <input type="checkbox" @change="toggle" :checked="value" :name="name">
+      <span class="toggle-arrow">
+        <span class="arrow one down"/>
+        <span class="arrow two down"/>
+        <span class="arrow three down"/>
+      </span>
+    </label>
+  </div>
 </template>
 
 <script>
 
+import abstract from './toggle';
+
 export default {
-  props: ['name', 'value'],
-  data: function() {
-    return {
-    }
-  },
-  methods: {
-      toggle (e) {
-          this.$emit('input', this.value);
-      }
-  },
+  extends: abstract,
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss">
 
 .toggle {
   position: relative;
@@ -36,7 +41,16 @@ export default {
 
 .toggle input {display:none;}
 
-.toggle .toggle-button {
+.arrow {
+  position: absolute;
+  left: 14px;
+  border: solid rgba(255, 255, 255, 0.5);
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 4px;
+}
+
+.toggle .toggle-arrow {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -45,32 +59,47 @@ export default {
   bottom: 0;
   -webkit-transition: .4s;
   transition: .4s;
-  border:1px solid #ddd;
+  border:1px solid rgba(255, 255, 255, 0.5);
 }
 
-.toggle .toggle-button:before {
-  position: absolute;
-  content: "";
-  height: 100%;
-  width: 50%;
-  left: 0px;
-  bottom: 0px;
-
+.toggle .toggle-arrow .arrow {
   -webkit-transition: .4s;
   transition: .4s;
-  border:           1px solid #ddd;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-color:     rgba(  0,   0,   0, 0.5);
 }
 
-.toggle input:not(:checked) + .toggle-button {
-  background-color: rgba(  0,   0,   0, 0.5);
-  border-color:     rgba(255, 255, 255, 0.5);
+.toggle input:checked + .toggle-arrow .arrow,
+.toggle input:checked + .toggle-arrow {
+  border-color: #ddd;
 }
 
-.toggle input:checked + .toggle-button:before {
-  -webkit-transform: translateX(100%);
-  -ms-transform: translateX(100%);
-  transform: translateX(100%);
+.one {
+  top: 4px;
+  border-color: rgba(255, 255, 255, 0);
+  &.down {
+    top: -1px
+  }
+}
+.two {
+  top: 7px;
+  &.down {
+    top: 2px
+  }
+}
+.three {
+  top: 10px;
+  border-color: rgba(255, 255, 255, 0);
+  &.down {
+    top: 5px
+  }
+}
+
+.up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
 </style>
