@@ -29,7 +29,7 @@ class ControlSwitch(Switch):
         self._future_when_on  = None
         self._future_when_off = None
 
-        super(ControlSwitch, self).__init__(id = id, **opts)
+        super().__init__(id = id, **opts)
 
     async def status(self):
         return await self.send(on = self.on)

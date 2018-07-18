@@ -2,13 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, execute, roles, run, sudo, task
+from fabric.api import env, execute, roles, run, sudo, task, local
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 
 from fabtools import require
 from fabtools.supervisor import restart_process
+from operator import attrgetter
 
 import os
 import sys
@@ -106,13 +107,12 @@ def run_command(cmd = 'test_gpio'):
 
 @task
 @roles('lights')
-def deploy(restart = True):
+def deploy(restart = True, branch = 'master'):
 
-    rsync_project(
-        remote_dir="/home/pi/server/",
-        local_dir="%s/" % os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir)),
-        exclude=("*.pyc", ".git/*", "__pycache__/", "__pycache__", "node_modules"),
-        delete=True
+    require.git.working_copy(
+        remote_url = 'git@bitbucket.org:riccardodivirgilio/rdvhome.git',
+        path = '/home/pi/server/',
+        branch = branch
     )
 
     if restart:
@@ -167,10 +167,10 @@ def backup(master = True, slave = True, verbose = False):
     for local, remote, extra in (
         ("~/Pictures/",    "raw/",     ''),
         ("~/Photos/",      "photos/",  ''),
-        ("~/Git/",         "git/",     '--delete'),
-        ("~/Wolfram/git/", "wolfram/", '--delete'),
-        ("~/Private/",     "private/", '--delete'),
-        ("~/Desktop/",     "desktop/", '--delete'),
+        #("~/Git/",         "git/",     '--delete'),
+        #("~/Wolfram/git/", "wolfram/", '--delete'),
+        #("~/Private/",     "private/", '--delete'),
+        #("~/Desktop/",     "desktop/", '--delete'),
         ):
 
         if verbose:
@@ -194,6 +194,42 @@ def backup_master():
 @roles('nas')
 def backup_slave():
     execute(backup, master = False, slave = True)
+
+@task
+@roles('nas')
+def move_pictures(to_keep = 1000):
+
+    LOCAL  = os.path.expanduser('~/Pictures/')
+    REMOTE = '/Volumes/Master/raw'
+
+    if not os.path.exists(REMOTE):
+        local('open afp://%s:server@%s/Master' % (
+            NAS.user,
+            NAS.name,
+        ))
+
+    files = sorted(
+        filter(
+            lambda f: not f.is_symlink() and os.path.splitext(f)[1].lower() == '.nef',
+            os.scandir(LOCAL)
+        ),
+        key = lambda f: f.stat().st_ctime
+    )
+
+    if len(files) > to_keep:
+
+        symlinks = frozenset(map(attrgetter('name'), files[:-to_keep])).intersection(os.listdir(REMOTE))
+
+        for name in symlinks:
+
+            local  = os.path.join(LOCAL, name)
+            remote = os.path.join(REMOTE, name)
+
+            os.remove(local)
+            os.symlink(remote, local)
+
+            print(local, '>>', remote)
+
 
 if __name__ == '__main__':
     sys.argv = ['fab', '-f', __file__] + sys.argv[1:]

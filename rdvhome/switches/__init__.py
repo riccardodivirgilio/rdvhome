@@ -14,6 +14,6 @@ switches = SwitchList(
     lambda: (
         construct(n, **switch)
         for n, switch in enumerate(settings.SWITCHES)
-        if switch.get('active', True)
+        if switch and switch.get('active', True)
     )
 )

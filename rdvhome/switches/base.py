@@ -14,12 +14,13 @@ from rdvhome.utils.functional import iterate
 
 import six
 
-def capabilities(on = False, hue = False, saturation = False, brightness = False):
+def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False):
     return data(
         allow_on         = on,
         allow_hue        = hue,
         allow_saturation = saturation,
         allow_brightness = brightness,
+        allow_direction  = direction,
     )
 
 class HomekitSwitch(Accessory):
@@ -77,10 +78,11 @@ class Switch(EventStream):
         self.icon = icon
         self.capabilities = self.default_capabilities.copy()
 
-        super(Switch, self).__init__()
+        super().__init__()
 
     def create_homekit_accessory(self, driver):
-        return self.homekit_class(driver = driver, switch = self)
+        if self.homekit_class:
+            return self.homekit_class(driver = driver, switch = self)
 
     async def watch_switch(self):
         pass
