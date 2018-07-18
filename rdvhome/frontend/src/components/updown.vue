@@ -1,22 +1,12 @@
 <template>
-  <div class="updown">
-    <label class="toggle" >
-      <input type="checkbox" @change="toggle" :checked="value" :name="name">
-      <span class="toggle-arrow">
-        <span class="arrow one up"/>
-        <span class="arrow two up"/>
-        <span class="arrow three up"/>
-      </span>
-    </label>
-    <label class="toggle">
-      <input type="checkbox" @change="toggle" :checked="value" :name="name">
-      <span class="toggle-arrow">
-        <span class="arrow one down"/>
-        <span class="arrow two down"/>
-        <span class="arrow three down"/>
-      </span>
-    </label>
-  </div>
+  <label class="toggle" >
+    <input type="checkbox" @change="toggle" :checked="value" :name="name">
+    <span class="toggle-arrow">
+      <span class="arrow one" :class='direction'/>
+      <span class="arrow two" :class='direction'/>
+      <span class="arrow three" :class='direction'/>
+    </span>
+  </label>
 </template>
 
 <script>
@@ -25,6 +15,7 @@ import abstract from './toggle';
 
 export default {
   extends: abstract,
+  props: ['direction'],
 }
 </script>
 

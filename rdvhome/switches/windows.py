@@ -28,7 +28,8 @@ class Window(Switch):
         self.gpio_up   = gpio_up
         self.gpio_down = gpio_down
 
-        self.direction = None
+        self.up   = False
+        self.down = False
 
         super().__init__(id, **opts)
 
@@ -45,7 +46,7 @@ class Window(Switch):
         return self._gpio
 
     async def status(self):
-        return await self.send(direction = self.direction)
+        return await self.send(up = self.up, down = self.down)
 
     async def switch(self, direction = None):
         print('WINDOW', self, direction)

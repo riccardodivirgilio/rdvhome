@@ -2,7 +2,9 @@
   <div class="page" v-bind:style="background()">
   <div class="container">
 
-    <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches"></home>
+    <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches">
+      <pre>{{ switches }}</pre>
+    </home>
 
     <div class="panel-switch">
       <template v-if="switches.length == 0 || ! connected">
@@ -24,8 +26,11 @@
               </btn>
               <slider v-if="item.on && item.allow_brightness" v-bind:color="item" v-bind:value="item.brightness" v-on:input="toggle_hsb(item, null, null, $event)"/>
               <div class="title">{{ item.name }}</div>
-              <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item" v-if='item.allow_on'/>
-              <updown v-bind:value="item.direction" v-on:input="toggle(item, $event)" v-if='item.allow_direction'/>
+              <div class="controls">
+                <updown v-bind:value="item.up" v-on:input="toggle_direction(item, 'up', $event)" v-if='item.allow_direction' direction='up'/>
+                <updown v-bind:value="item.down" v-on:input="toggle_direction(item, 'down', $event)" v-if='item.allow_direction' direction='down'/>
+                <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item" v-if='item.allow_on'/>
+              </div>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
               <slider v-bind:value="item.hue" v-on:input="toggle_hsb(item, $event, null, null)"/>
@@ -122,6 +127,10 @@ export default {
         this.updateSwitch({id: item.id, advanced_options: false})
       }
       this.send_action(item.id, ! item.on, item.hue, item.saturation, item.brightness)
+    },
+    toggle_direction: function (item, direction) {
+      console.log(direction)
+      console.log(item[direction])
     },
     home_toggle: function (item) {
       this.toggle(item)
@@ -343,16 +352,10 @@ html, body, .page {
 }
 
 
-.list-item > .line > .toggle {
+.list-item > .line > .controls {
   position: absolute;
   right:  $item-padding;
   top:    $item-padding;
-}
-
-.list-item > .line > .updown {
-  position: absolute;
-  right:  $item-padding;
-  top:    $item-padding;  
 }
 
 .list-item > .line > .title {
