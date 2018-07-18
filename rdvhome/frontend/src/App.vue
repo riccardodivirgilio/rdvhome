@@ -58,7 +58,7 @@ import slider    from './components/slider';
 import updown    from './components/updown';
 import home      from './components/home';
 
-import debounce  from 'lodash/debounce';
+import debounce  from './utils/debounce';
 
 import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
 
