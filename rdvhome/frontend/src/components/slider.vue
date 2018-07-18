@@ -1,9 +1,9 @@
 <template>
 
   <label class="slider">
-    <input type="range"  @input="toggle" class="slider-range" v-model.number="value" :name="name"  min="0" max="1" step="0.001">
-    <div v-if="color" class="overlay" :style="{backgroundColor: to_css(color), opacity: 0.10 + 0.65 * value, width: value * 100 + '%'}"></div>
-    <div class="track" :style="{left: value * 100 + '%'}"></div>
+    <input type="range" @change="toggle" class="slider-range" v-model.number="item[name]" min="0" max="1" step="0.001">
+    <div v-if="name == 'brightness'" class="overlay" :style="{backgroundColor: to_css(item), opacity: 0.10 + 0.65 * item[name], width: item[name] * 100 + '%'}"></div>
+    <div class="track" :style="{left: item[name] * 100 + '%'}"></div>
 
   </label>
 
@@ -11,21 +11,12 @@
 
 <script>
 
-import {hsb_to_css_with_lightness} from '../utils/color';
+import abstract from './toggle';
 
 export default {
   name: 'slider',
-  props: ['color', 'value'],
-  data: function() {
-    return {
-    }
-  },
-  methods: {
-      to_css: hsb_to_css_with_lightness,
-      toggle (e) {
-          this.$emit('input', this.value);
-      }
-  },
+  props: ['color'],
+  extends: abstract,
 }
 </script>
 

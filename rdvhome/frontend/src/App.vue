@@ -1,5 +1,5 @@
 <template>
-  <div class="page" :style="background()">
+  <div class="page">
   <div class="container">
 
     <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
@@ -18,11 +18,11 @@
         <div id="toggles" class="list-container" >
           <a v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}">
             <div class="line">
-              <btn :value="item.advanced_options" :color="item" :disabled="item.off || ! item.allow_hue" @input="toggle_advanced_options(item, $event)">
+              <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
                 <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>
                 <div v-else>{{ item.icon }}</div>
               </btn>
-              <slider v-if="item.on && item.allow_brightness" :color="item" :value="item.brightness" @input="toggle_hsb(item, null, null, $event)"/>
+              <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness'/>
               <div class="title">{{ item.name }}</div>
               <div class="controls">
                 <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
@@ -31,11 +31,11 @@
               </div>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
-              <slider :value="item.hue" @toggle="toggle_hsb(item, $event, null, null)"/>
+              <slider :item="item" name='hue'/>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
               'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
-              <slider :value="item.saturation" @input="toggle_hsb(item, null, $event, null)"/>
+              <slider :item="item" name='saturation'/>
             </div>
           </a>
         </div>
@@ -82,15 +82,16 @@ export default {
       reconnect_limit: 4
     }
   },
-  methods: {
-    to_css: hsb_to_css_with_lightness,
+  computed: {
+    colored_switches: function() {
+      return values(this.switches)
+        .filter(item => item.allow_hue)
+        .sort((a, b) => (a.ordering - b.ordering))
+    },
     background: function () {
 
       var value    = 'repeating-linear-gradient(45deg';
       var initial  = 0;
-      var relevant = values(this.switches)
-        .filter(item => item.allow_hue)
-        .sort((a, b) => (a.ordering - b.ordering))
 
       scan(item => {
           if (item.on) {
@@ -100,10 +101,10 @@ export default {
           }
 
           value   += ', ' + color + ' ' + initial + '%'
-          initial += 100 / relevant.length;
+          initial += 100 / this.colored_switches.length;
           value   += ', ' + color + ' ' + initial + '%'
         },
-        relevant
+        this.colored_switches
       )
 
       if (! initial) {
@@ -114,6 +115,9 @@ export default {
 
       return {background:value}
     },
+  },
+  methods: {
+    to_css: hsb_to_css_with_lightness,
     updateSwitch: function (data) {
       Vue.set(
         this.switches, 
@@ -160,9 +164,6 @@ export default {
       },
       200
     ),
-    toggle_advanced_options: function(item, value) {
-      this.updateSwitch({id: item.id, advanced_options: ! item.advanced_options})
-    },
     connect: function(force) {
 
       if (force) {

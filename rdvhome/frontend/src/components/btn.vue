@@ -1,8 +1,8 @@
 <template>
 
   <label class="btn" :class="{disabled: disabled}">
-    <input type="checkbox" @change="toggle" v-model="value" :disabled="disabled" :name="name">
-    <span class="btn-inner" :style="{opacity: 0.5, backgroundColor: (! disabled && color) ? to_css(color, 0.5) : 'transparent'}"></span>
+    <input type="checkbox" @change="toggle" v-model="item[name]">
+    <span class="btn-inner" :style="{opacity: 0.5, backgroundColor: (! disabled && item) ? to_css(item, 0.5) : 'transparent'}"></span>
     <div class="title"><slot/></div>
   </label>
 
@@ -10,21 +10,14 @@
 
 <script>
 
-import {hsb_to_css} from '../utils/color';
+import abstract from './toggle';
 
 export default {
-  name: 'btn',
-  props: ['name', 'color', 'disabled', 'value'],
-  data: function() {
-    return {}
-  },
-  methods: {
-      to_css: hsb_to_css,
-      toggle (e) {
-          this.$emit('input', this.value);
-      }
-  },
+  name: 'slider',
+  props: ['disabled'],
+  extends: abstract,
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
