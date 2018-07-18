@@ -107,20 +107,12 @@ def run_command(cmd = 'test_gpio'):
 
 @task
 @roles('lights')
-def deploy(restart = True):
+def deploy(restart = True, branch = 'master'):
 
-    rsync_project(
-        remote_dir="/home/pi/server/",
-        local_dir="%s/" % os.path.normpath(os.path.join(os.path.dirname(__file__), os.pardir)),
-        exclude=(
-            "*.pyc", 
-            ".git/*", 
-            "__pycache__/", 
-            "__pycache__", 
-            "node_modules",
-            "rdvhome/data/", 
-        ),
-        delete=True
+    require.git.working_copy(
+        remote_url = 'git@bitbucket.org:riccardodivirgilio/rdvhome.git',
+        path = '/home/pi/server/',
+        branch = branch
     )
 
     if restart:
