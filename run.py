@@ -10,7 +10,6 @@ import random
 import uuid
 import subprocess
 
-
 RELAY1 = [27, 22, 10,  9, 11,  5,  6, 13]
 
 RELAY2 = [14, 15, 18, 23, 24, 16, 20, 21]
@@ -153,8 +152,8 @@ def run_rdv_command_line():
             window(
                 id = 'window_kitchen',
                 name = 'Finestra Cucina',
-                gpio_up = 10,
-                gpio_down = 9,
+                gpio_up = 6,
+                gpio_down = 13,
                 icon = '☀️'
             ),
             window(
