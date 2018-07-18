@@ -273,12 +273,12 @@
                 <line x1="338" y1="877" x2="390" y2="877" />
             </g>
             <g id="lights">
-                <g class="spotlight_bedroom" v-bind:style="light_color(switches.spotlight_bedroom)">
+                <g class="spotlight_bedroom" :style="light_color(switches.spotlight_bedroom)">
                     <rect x="760.2" y="427.7" width="9.7" height="9.7" />
                     <rect x="677.2" y="427.7" width="9.7" height="9.7" />
                     <rect x="592.2" y="427.7" width="9.7" height="9.7" />
                 </g>
-                <g class="spotlight_entrance" v-bind:style="light_color(switches.spotlight_entrance)">
+                <g class="spotlight_entrance" :style="light_color(switches.spotlight_entrance)">
                     <rect x="898.2" y="571.7" width="9.7" height="9.7" />
                     <rect x="898.2" y="427.7" width="9.7" height="9.7" />
                     <path d="M908,571.7" />
@@ -290,7 +290,7 @@
                     <path d="M726,571.7" />
                     <path d="M634,571.7" />
                 </g>
-                <g class="spotlight_living_room" v-bind:style="light_color(switches.spotlight_living_room)">
+                <g class="spotlight_living_room" :style="light_color(switches.spotlight_living_room)">
                     <rect x="898.2" y="879.4" width="9.7" height="9.7" />
                     <path d="M908,889.1" />
                     <rect x="898.2" y="859.7" width="9.7" height="9.9" />
@@ -316,7 +316,7 @@
                     <rect x="716.2" y="763.1" width="9.7" height="9.7" />
                     <path d="M726,763.1" />
                 </g>
-                <g class="spotlight_kitchen" v-bind:style="light_color(switches.spotlight_kitchen)">
+                <g class="spotlight_kitchen" :style="light_color(switches.spotlight_kitchen)">
                     <rect x="581.2" y="879.4" width="9.7" height="9.7" />
                     <path d="M591,889.1" />
                     <rect x="581.2" y="859.7" width="9.7" height="9.9" />
@@ -338,7 +338,7 @@
                     <rect x="376.2" y="763.1" width="9.7" height="9.7" />
                     <path d="M386,763.1" />
                 </g>
-                <g class="spotlight_tv" v-bind:style="light_color(switches.spotlight_tv)">
+                <g class="spotlight_tv" :style="light_color(switches.spotlight_tv)">
                     <rect x="1060.2" y="879.4" width="9.7" height="9.7" />
                     <path d="M1070,889.1" />
                     <rect x="1060.2" y="859.7" width="9.7" height="9.9" />
@@ -356,45 +356,45 @@
                     <rect x="1195.9" y="763.1" width="9.7" height="9.7" />
                     <path d="M1195.9,763.1" />
                 </g>
-                <g class="spotlight_room" v-bind:style="light_color(switches.spotlight_room)">
+                <g class="spotlight_room" :style="light_color(switches.spotlight_room)">
                     <rect x="1112.3" y="227.7" width="46" height="47.3" />
                 </g>
-                <g class="led_living_room" v-bind:style="light_color(switches.led_living_room)">
+                <g class="led_living_room" :style="light_color(switches.led_living_room)">
                     <rect x="631" y="628" width="330" height="7" />
                 </g>
-                <g class="led_bedroom" v-bind:style="light_color(switches.led_bedroom)">
+                <g class="led_bedroom" :style="light_color(switches.led_bedroom)">
                     <rect x="553.6" y="395.5" width="280.4" height="5.9" />
                 </g>
-                <g class="led_tv" v-bind:style="light_color(switches.led_tv)">
+                <g class="led_tv" :style="light_color(switches.led_tv)">
                     <path d="M1020.6,704h224.7v224.7h-224.7L1020.6,704L1020.6,704z M1010.6,939H1255V694h-244.4V939z" />
                 </g>
             </g>
             <g id="area">
-                <g class="led_tv" v-on:click="area_click(switches.led_tv)" v-bind:style="area_color(switches.led_tv)">
+                <g class="led_tv" @click="area_click(switches.led_tv)" :style="area_color(switches.led_tv)">
                     <rect x="961.7" y="635.1" width="344.1" height="338.7" />
                 </g>
-                <g class="led_living_room" v-on:click="area_click(switches.led_living_room)" v-bind:style="area_color(switches.led_living_room)">
+                <g class="led_living_room" @click="area_click(switches.led_living_room)" :style="area_color(switches.led_living_room)">
                     <rect x="629.8" y="628.1" width="332.1" height="60" />
                 </g>
-                <g class="led_bedroom" v-on:click="area_click(switches.led_bedroom)" v-bind:style="area_color(switches.led_bedroom)">
+                <g class="led_bedroom" @click="area_click(switches.led_bedroom)" :style="area_color(switches.led_bedroom)">
                     <rect x="553.6" y="82.7" width="281.3" height="312.8" />
                 </g>
-                <g class="spotlight_room" v-on:click="area_click(switches.spotlight_room)" v-bind:style="area_color(switches.spotlight_room)">
+                <g class="spotlight_room" @click="area_click(switches.spotlight_room)" :style="area_color(switches.spotlight_room)">
                     <rect x="968.9" y="82.7" width="337.5" height="391.2" />
                 </g>
-                <g class="spotlight_kitchen" v-on:click="area_click(switches.spotlight_kitchen)" v-bind:style="area_color(switches.spotlight_kitchen)">
+                <g class="spotlight_kitchen" @click="area_click(switches.spotlight_kitchen)" :style="area_color(switches.spotlight_kitchen)">
                     <polygon points="336.9,881.9 273.3,881.9 273.3,973.8 619.5,973.8 621.3,665 337.9,665 " />
                 </g>
-                <g class="spotlight_living_room" v-on:click="area_click(switches.spotlight_living_room)" v-bind:style="area_color(switches.spotlight_living_room)">
+                <g class="spotlight_living_room" @click="area_click(switches.spotlight_living_room)" :style="area_color(switches.spotlight_living_room)">
                     <rect x="630.1" y="688" width="331.8" height="285.8" />
                 </g>
-                <g class="spotlight_tv" v-on:click="area_click(switches.spotlight_tv)" v-bind:style="area_color(switches.spotlight_tv)">
+                <g class="spotlight_tv" @click="area_click(switches.spotlight_tv)" :style="area_color(switches.spotlight_tv)">
                     <rect x="1012.4" y="694" width="242.6" height="245" />
                 </g>
-                <g class="spotlight_entrance" v-on:click="area_click(switches.spotlight_entrance)" v-bind:style="area_color(switches.spotlight_entrance)">
+                <g class="spotlight_entrance" @click="area_click(switches.spotlight_entrance)" :style="area_color(switches.spotlight_entrance)">
                     <polyline points="508,525.4 507.8,628.1 961.9,628.1 961.9,389.7 844,389.7 844,525.4  " />
                 </g>
-                <g class="spotlight_bedroom" v-on:click="area_click(switches.spotlight_bedroom)" v-bind:style="area_color(switches.spotlight_bedroom)">
+                <g class="spotlight_bedroom" @click="area_click(switches.spotlight_bedroom)" :style="area_color(switches.spotlight_bedroom)">
                     <rect x="552.8" y="401.4" width="281.2" height="74" />
                 </g>
             </g>

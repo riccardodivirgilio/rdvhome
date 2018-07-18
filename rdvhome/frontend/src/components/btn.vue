@@ -1,8 +1,8 @@
 <template>
 
-  <label class="btn" v-bind:class="{disabled: disabled}">
-    <input type="checkbox" @change="toggle" v-model="value" v-bind:disabled="disabled" v-bind:name="name">
-    <span class="btn-inner" v-bind:style="{opacity: 0.5, backgroundColor: (! disabled && color) ? to_css(color, 0.5) : 'transparent'}"></span>
+  <label class="btn" :class="{disabled: disabled}">
+    <input type="checkbox" @change="toggle" v-model="value" :disabled="disabled" :name="name">
+    <span class="btn-inner" :style="{opacity: 0.5, backgroundColor: (! disabled && color) ? to_css(color, 0.5) : 'transparent'}"></span>
     <div class="title"><slot/></div>
   </label>
 

@@ -1,7 +1,7 @@
 <template>
 
-  <label class="toggle" v-bind:style="{backgroundColor: color ? to_css(color) : 'white'}">
-    <input type="checkbox" @change="toggle" :checked="value" :name="name">
+  <label class="toggle" :style="{backgroundColor: to_css(item)}">
+    <input type="checkbox" @change="toggle" v-model="item[name]">
     <span class="toggle-button"></span>
   </label>
 
@@ -13,15 +13,13 @@ import {hsb_to_css_with_lightness} from '../utils/color';
 
 export default {
   name: 'toggle',
-  props: ['name', 'color', 'value'],
-  data: function() {
-    return {
-    }
-  },
+  props: ['name', 'item', 'onchange'],
   methods: {
       to_css: hsb_to_css_with_lightness,
       toggle (e) {
-          this.$emit('input', this.value);
+        if (this.onchange) {
+          this.onchange(this.item, this.name)
+        }
       }
   },
 }

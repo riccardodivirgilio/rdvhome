@@ -1,10 +1,10 @@
 <template>
-  <label class="toggle" >
-    <input type="checkbox" @change="toggle" :checked="value" :name="name">
+  <label class="toggle">
+    <input type="checkbox" @change="toggle" v-model="item[name]">
     <span class="toggle-arrow">
-      <span class="arrow one" :class='direction'/>
-      <span class="arrow two" :class='direction'/>
-      <span class="arrow three" :class='direction'/>
+      <span class="arrow one" :class='name'/>
+      <span class="arrow two" :class='name'/>
+      <span class="arrow three" :class='name'/>
     </span>
   </label>
 </template>
@@ -15,7 +15,6 @@ import abstract from './toggle';
 
 export default {
   extends: abstract,
-  props: ['direction'],
 }
 </script>
 
@@ -30,7 +29,7 @@ export default {
   transition: .4s;
 }
 
-.toggle input {display:none;}
+.toggle input {display:none}
 
 .arrow {
   position: absolute;

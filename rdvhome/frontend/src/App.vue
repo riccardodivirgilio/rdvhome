@@ -1,43 +1,41 @@
 <template>
-  <div class="page" v-bind:style="background()">
+  <div class="page" :style="background()">
   <div class="container">
 
-    <home class="panel-home" v-on:toggle="home_toggle($event)" v-bind:switches="switches">
-      <pre>{{ switches }}</pre>
-    </home>
+    <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
 
     <div class="panel-switch">
       <template v-if="switches.length == 0 || ! connected">
-          <loading v-bind:class="{active: reconnect < reconnect_limit}"></loading>
+          <loading :class="{active: reconnect < reconnect_limit}"></loading>
           <div class="connection" v-if="reconnect < reconnect_limit">
             Connection in progress...
           </div>
           <div class="connection" v-else>
-            Disconnected. <a href="/connect" v-on:click.stop.prevent="connect(true)">Try again &rarr;</a>
+            Disconnected. <a href="/connect" @click.stop.prevent="connect(true)">Try again &rarr;</a>
           </div>
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a v-for="item in switches" class="list-item" v-bind:class="{on: item.on, off: item.off}" :key="item.id" v-bind:style="{order: item.ordering}">
+          <a v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}">
             <div class="line">
-              <btn v.bind:value="item.advanced_options" v-bind:color="item" v-bind:disabled="item.off || ! item.allow_hue" v-on:input="toggle_advanced_options(item, $event)">
+              <btn :value="item.advanced_options" :color="item" :disabled="item.off || ! item.allow_hue" @input="toggle_advanced_options(item, $event)">
                 <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>
                 <div v-else>{{ item.icon }}</div>
               </btn>
-              <slider v-if="item.on && item.allow_brightness" v-bind:color="item" v-bind:value="item.brightness" v-on:input="toggle_hsb(item, null, null, $event)"/>
+              <slider v-if="item.on && item.allow_brightness" :color="item" :value="item.brightness" @input="toggle_hsb(item, null, null, $event)"/>
               <div class="title">{{ item.name }}</div>
               <div class="controls">
-                <updown v-bind:value="item.up" v-on:input="toggle_direction(item, 'up', $event)" v-if='item.allow_direction' direction='up'/>
-                <updown v-bind:value="item.down" v-on:input="toggle_direction(item, 'down', $event)" v-if='item.allow_direction' direction='down'/>
-                <toggle v-bind:value="item.on" v-on:input="toggle(item, $event)" v-bind:color="item" v-if='item.allow_on'/>
+                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
+                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='down'/>
+                <toggle :item="item" :onchange="toggle" v-if='item.allow_on' name='on'/>
               </div>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
-              <slider v-bind:value="item.hue" v-on:input="toggle_hsb(item, $event, null, null)"/>
+              <slider :value="item.hue" @toggle="toggle_hsb(item, $event, null, null)"/>
             </div>
-            <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" v-bind:style="{background:
+            <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
               'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
-              <slider v-bind:value="item.saturation" v-on:input="toggle_hsb(item, null, $event, null)"/>
+              <slider :value="item.saturation" @input="toggle_hsb(item, null, $event, null)"/>
             </div>
           </a>
         </div>
@@ -59,6 +57,10 @@ import updown    from './components/updown';
 import home      from './components/home';
 
 import debounce  from './utils/debounce';
+
+import values    from 'rfuncs/functions/values'
+import merge     from 'rfuncs/functions/merge'
+import scan      from 'rfuncs/functions/scan'
 
 import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
 
@@ -86,11 +88,11 @@ export default {
 
       var value    = 'repeating-linear-gradient(45deg';
       var initial  = 0;
-      var relevant = Object.values(this.switches)
+      var relevant = values(this.switches)
         .filter(item => item.allow_hue)
         .sort((a, b) => (a.ordering - b.ordering))
 
-      relevant.map(item => {
+      scan(item => {
           if (item.on) {
             var color = hsb_to_css_with_lightness(item, 0.15);
           } else {
@@ -100,7 +102,9 @@ export default {
           value   += ', ' + color + ' ' + initial + '%'
           initial += 100 / relevant.length;
           value   += ', ' + color + ' ' + initial + '%'
-        })
+        },
+        relevant
+      )
 
       if (! initial) {
         return {}
@@ -111,22 +115,18 @@ export default {
       return {background:value}
     },
     updateSwitch: function (data) {
-
-      if (this.switches[data.id]) {
-        data = Object.assign(this.switches[data.id], data);
-      }
-
-      if (! data.advanced_options) {
-        data.advanced_options = false;
-      }
-
-      Vue.set(this.switches, data.id, data);
+      Vue.set(
+        this.switches, 
+        data.id, 
+        merge(
+          {advanced_options: false},
+          this.switches[data.id] || {}, 
+          data
+        )
+      );
     },
     toggle: function (item) {
-      if (item.on) {
-        this.updateSwitch({id: item.id, advanced_options: false})
-      }
-      this.send_action(item.id, ! item.on, item.hue, item.saturation, item.brightness)
+      this.send_action(item.id, item.on, item.hue, item.saturation, item.brightness)
     },
     toggle_direction: function (item, direction) {
       console.log(direction)
@@ -203,7 +203,10 @@ export default {
 
         this.ws.onmessage = (e) => {
             if (typeof e.data === 'string') {
-                this.updateSwitch(JSON.parse(e.data))
+              const data = JSON.parse(e.data)
+              console.log('Incoming:')
+              console.log(data)
+              this.updateSwitch(data)
             }
         };
       }
