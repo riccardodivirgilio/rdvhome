@@ -12,7 +12,7 @@ def api_response(status = 200, **opts):
         success = status == 200,
     )
 
-async def status(number = None):
+async def status(number = None, **opts):
     objs = switches.filter(number)
     return api_response(
         mode     = "status",

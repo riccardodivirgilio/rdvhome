@@ -93,8 +93,11 @@ def validate_color(spec):
     else:
         return spec / 100
 
+def getargs(request):
+    return validate(**dict(request.query, **request.match_info))
+
 @to_data
-def validate(number = None, color = None, hue = None, saturation = None, brightness = None, mode = None):
+def validate(number = None, color = None, hue = None, saturation = None, brightness = None, mode = None, **extra):
     if number:
         yield 'number', number
 
@@ -131,23 +134,27 @@ app.router.add_static('/dist', module_path('rdvhome', 'frontend', 'dist'))
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
-    return JsonResponse(await status(**validate(**request.match_info)))
+    return JsonResponse(await status(**getargs(request)))
 
 @url('/switch/{number:[a-zA-Z-0-9_-]+}', name = "status")
 async def view_status_list(request):
-    return JsonResponse(await status(**validate(**request.match_info)))
+    return JsonResponse(await status(**getargs(request)))
+
+@url('/switch/{number:[a-zA-Z-0-9_-]+}/set', name = "switch")
+async def view_status_list(request):
+    return JsonResponse(await switch(**getargs(request)))
 
 @url('/switch/{number:[a-zA-Z-0-9_-]+}/color/{color:[a-zA-Z-0-9]+}', name = "color")
 async def view_status_list(request):
-    return JsonResponse(await switch(**validate(**request.match_info)))
+    return JsonResponse(await switch(**getargs(request)))
 
 @url('/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}', name = "on")
 async def view_status_list(request):
-    return JsonResponse(await switch(**validate(**request.match_info)))
+    return JsonResponse(await switch(**getargs(request)))
 
 @url('/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}', name = "hsb")
 async def view_status_list(request):
-    return JsonResponse(await switch(**validate(**request.match_info)))
+    return JsonResponse(await switch(**getargs(request)))
 
 @url('/websocket', name = "websocket")
 async def websocket(request):
