@@ -54,18 +54,17 @@ def run_rdv_command_line():
 
     @to_data
     def window(gpio_up, gpio_down, **opts):
-        if not has_gpio():
-            for pin in (gpio_up, gpio_down):
-                assert pin in RELAY1 or pin in RELAY2, '%s not in %s' % (
-                    pin,
-                    ', '.join(map(str, (*RELAY1, *RELAY2)))
-                )
+        for pin in (gpio_up, gpio_down):
+            assert pin in RELAY1 or pin in RELAY2, '%s not in %s' % (
+                pin,
+                ', '.join(map(str, (*RELAY1, *RELAY2)))
+            )
 
-            yield 'class_path', 'rdvhome.switches.windows.Window'
-            yield 'gpio_up',   gpio_up
-            yield 'gpio_down', gpio_down
+        yield 'class_path', 'rdvhome.switches.windows.Window'
+        yield 'gpio_up',   gpio_up
+        yield 'gpio_down', gpio_down
 
-            yield from opts.items()
+        yield from opts.items()
 
     return execute_from_command_line(
         RASPBERRY_RELAY1 = RELAY1,
