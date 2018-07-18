@@ -22,7 +22,7 @@
                 <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>
                 <div v-else>{{ item.icon }}</div>
               </btn>
-              <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness'/>
+              <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="toggle_hsb"/>
               <div class="title">{{ item.name }}</div>
               <div class="controls">
                 <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
@@ -31,11 +31,11 @@
               </div>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
-              <slider :item="item" name='hue'/>
+              <slider :item="item" name='hue' :onchange="toggle_hsb"/>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
               'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
-              <slider :item="item" name='saturation'/>
+              <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
             </div>
           </a>
         </div>
@@ -61,6 +61,7 @@ import debounce  from './utils/debounce';
 import values    from 'rfuncs/functions/values'
 import merge     from 'rfuncs/functions/merge'
 import scan      from 'rfuncs/functions/scan'
+import map       from 'rfuncs/functions/map'
 
 import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
 
@@ -130,8 +131,19 @@ export default {
       );
     },
     toggle: function (item) {
-      this.send_action(item.id, item.on, item.hue, item.saturation, item.brightness)
+      this.send_action(item.id, {
+        mode:       this.format_on_value(item.on),
+        hue:        this.format_hsb_value(item.hue),
+        brightness: this.format_hsb_value(item.brightness),
+        saturation: this.format_hsb_value(item.saturation),
+      })
     },
+    toggle_hsb: debounce(
+      function(item, name) {
+        this.send_action(item.id, {[name]: this.format_hsb_value(item[name])})
+      },
+      200
+    ),
     toggle_direction: function (item, direction) {
       console.log(direction)
       console.log(item[direction])
@@ -154,16 +166,17 @@ export default {
       }
       return '-'
     },
-    send_action: function(id, on, h, s, b) {
-      const url = '/switch/' + id + '/' + this.format_on_value(on) + '/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b);
+    send_action: function(id, data) {
+      const url = '/switch/' + id + '/set?' + values(
+          map(
+          (v, k) => k + '=' + encodeURIComponent(v),
+          data
+        )
+      ).join('&')
+
+      //+ this.format_on_value(on) + '/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b);
       this.ws.send(url)
     },
-    toggle_hsb: debounce(
-      function(item, h, s, b) {
-        this.send_action(item.id, null, h, s, b)
-      },
-      200
-    ),
     connect: function(force) {
 
       if (force) {
