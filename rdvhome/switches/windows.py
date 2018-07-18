@@ -90,7 +90,7 @@ class Window(Switch):
         await gpio.output(to_deactivate, high = True)
         await gpio.output(to_activate,   high = False)
 
-        await asyncio.sleep(12)
+        await asyncio.sleep(direction == 'down' and 12 or 13)
 
         await gpio.output(to_activate, high = True)
         setattr(self, direction, False) 
