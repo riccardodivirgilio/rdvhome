@@ -25,5 +25,6 @@ settings = data(
         'colour':  None,
         'django':  None,
         'six':     None,
+        'yarl':   '0.18.0'
     }
 )
