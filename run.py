@@ -75,6 +75,13 @@ def run_rdv_command_line():
         DEBUG    = not has_gpio(), #raspberry is production.
         SWITCHES = [
             light(
+                id = 'led_kitchen', 
+                name = 'Cucina Led',  
+                icon = "🍽", 
+                alias = [], 
+                philips_id = 4,
+            ),
+            light(
                 id = 'spotlight_kitchen', 
                 name = 'Cucina',  
                 icon = "🍽", 
@@ -125,6 +132,13 @@ def run_rdv_command_line():
                 gpio_status = 7,
             ),
             light(
+                id = 'led_bathroom_entrance', 
+                name = 'Entrata Bagno',  
+                icon = "🚽", 
+                alias = [], 
+                philips_id = 5
+            ),
+            light(
                 id = 'led_bedroom', 
                 name = 'Letto Led',  
                 icon = "🛏", 
@@ -141,6 +155,13 @@ def run_rdv_command_line():
                 gpio_relay = 21,
                 gpio_status = 3,
             ),
+            #light(
+            #    id = 'led_bathroom_bedroom', 
+            #    name = 'Bagno Letto',  
+            #    icon = "🚽", 
+            #    philips_id = 6, 
+            #    alias = []
+            #),
             light(
                 id = 'spotlight_room', 
                 name = 'Studio',  

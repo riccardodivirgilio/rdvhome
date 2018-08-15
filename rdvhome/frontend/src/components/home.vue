@@ -383,7 +383,10 @@
                     <rect x="968.9" y="82.7" width="337.5" height="391.2" />
                 </g>
                 <g class="spotlight_kitchen" @click="area_click(switches.spotlight_kitchen)" :style="area_color(switches.spotlight_kitchen)">
-                    <polygon points="336.9,881.9 273.3,881.9 273.3,973.8 619.5,973.8 621.3,665 337.9,665 " />
+                    <polygon points="336.9,881.9 273.3,881.9 273.3,973.8 619.5,973.8 621.3,717 337.9,717 " />
+                </g>
+                <g class="spotlight_kitchen" @click="area_click(switches.led_kitchen)" :style="area_color(switches.led_kitchen)">
+                    <polygon points="337.9,717 621.3,717 621.3,665 337.9,665" />
                 </g>
                 <g class="spotlight_living_room" @click="area_click(switches.spotlight_living_room)" :style="area_color(switches.spotlight_living_room)">
                     <rect x="630.1" y="688" width="331.8" height="285.8" />
@@ -394,8 +397,14 @@
                 <g class="spotlight_entrance" @click="area_click(switches.spotlight_entrance)" :style="area_color(switches.spotlight_entrance)">
                     <polyline points="508,525.4 507.8,628.1 961.9,628.1 961.9,389.7 844,389.7 844,525.4  " />
                 </g>
+                <g class="led_bathroom_entrance" @click="area_click(switches.led_bathroom_entrance)" :style="area_color(switches.led_bathroom_entrance)">
+                    <rect x="843" y="82" width="119" height="300" />
+                </g>
                 <g class="spotlight_bedroom" @click="area_click(switches.spotlight_bedroom)" :style="area_color(switches.spotlight_bedroom)">
                     <rect x="552.8" y="401.4" width="281.2" height="74" />
+                </g>
+                <g class="led_bathroom_bedroom" @click="area_click(switches.led_bathroom_bedroom)" :style="area_color(switches.led_bathroom_bedroom)">
+                    <rect x="406" y="82" width="138" height="393" />
                 </g>
             </g>
             <g id="house">
