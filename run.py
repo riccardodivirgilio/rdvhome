@@ -80,6 +80,7 @@ def run_rdv_command_line():
                 icon = "🍽", 
                 alias = [], 
                 philips_id = 4,
+                alias = ['default']
             ),
             light(
                 id = 'spotlight_kitchen', 
