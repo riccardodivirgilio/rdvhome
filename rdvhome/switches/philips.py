@@ -206,14 +206,14 @@ class Light(Switch):
             if self.username:
                 response = await self.api_request()
                 response = data(
-                    on = response.state.on,
+                    on = response.state.reachable and response.state.on or False,
                     color = philips_to_color(
                         hue        = float(response.state.hue),
                         saturation = float(response.state.sat),
                         brightness = float(response.state.bri),
                     ),
+                    allow_on = response.state.reachable or self.gpio_relay,
                 )
-
             else:
                 #debug mode
                 response = await self.store.get(self.id, self.philips_settings)
