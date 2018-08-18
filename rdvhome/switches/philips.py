@@ -219,7 +219,7 @@ class Light(PhilipsBase):
 
         gpio = await self.setup_gpio()
 
-        return not await gpio.input(self.gpio_status)
+        return not await gpio.input(self.gpio_status or self.gpio_status_sync)
 
     async def saved_status(self):
         return await self.store.get(self.id, self.philips_default_settings)
