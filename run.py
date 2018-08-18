@@ -98,7 +98,7 @@ def run_rdv_command_line():
                 id = 'led_kitchen', 
                 name = 'Cucina Led',  
                 icon = "🍽", 
-                philips_id = 4,
+                philips_id = 6, 
                 alias = ['default'],
             ),
             light(
@@ -171,7 +171,7 @@ def run_rdv_command_line():
                 id = 'led_bathroom_bedroom', 
                 name = 'Bagno Letto',  
                 icon = "🚽", 
-                philips_id = 6, 
+                philips_id = 4,
                 alias = []
             ),
             light(
