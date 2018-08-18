@@ -168,8 +168,12 @@ class Light(PhilipsBase):
                     current = await self.raspberry_status()
                     status  = await self.saved_status()
 
+                    print(current, status)
+
                     if not current.on == status.on:
                         self.switch(on = current.on)
+
+                    await asyncio.sleep(interval)
             else:
 
                 status = await self.raspberry_status()
