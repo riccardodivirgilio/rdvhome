@@ -95,7 +95,9 @@ def run_rdv_command_line():
                 name = 'Cucina Led',  
                 icon = "🍽", 
                 philips_id = 4,
-                alias = ['default']
+                alias = ['default'],
+                gpio_relay = 20,
+                gpio_status_sync = 4,
             ),
             light(
                 id = 'spotlight_kitchen', 

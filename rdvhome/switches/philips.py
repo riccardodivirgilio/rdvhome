@@ -157,9 +157,9 @@ class Light(PhilipsBase):
     async def api_request(self, path = '', *args, **opts):
         return await super().api_request(path = '%s%s' % (self.philips_id, path), *args, **opts)
 
-    async def watch(self):
+    async def watch(self, interval = 0.3):
 
-        if self.gpio_status or self.gpio_status_sync:
+        if self.gpio_status:
 
             status = await self.raspberry_status()
 
@@ -171,13 +171,19 @@ class Light(PhilipsBase):
 
                     status = current
 
-                    if self.gpio_status:
-                        await self.send(on = status)
-                    else:
-                        await self.switch(on = status)
+                    iawait self.send(on = status)
 
-                await asyncio.sleep(0.3)
+                await asyncio.sleep(interval)
 
+        elif self.gpio_status_sync:
+
+            while True:
+
+                current = await self.raspberry_status()
+                status  = await self.saved_status()
+
+                if not current.on == status.on:
+                    self.switch(on = current.on)
 
     async def setup_gpio(self):
 
