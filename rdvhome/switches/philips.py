@@ -11,6 +11,7 @@ from rdvhome.utils.datastructures import data
 from rdvhome.utils.decorators import to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
+from rdvhome.switches.base import capabilities, Switch
 
 import aiohttp
 import asyncio
@@ -257,3 +258,13 @@ class Light(Switch):
                     await self.store.set(self.id, payload)
 
         return await self.send(on = on, color = color, full = False)
+
+class PhilipsPoolControl(Switch):
+    
+    default_capabilities = capabilities(visibility = False)
+
+    async def status(self):
+        return await self.send()
+
+    async def watch(self):
+        print('hello from philips')
