@@ -220,8 +220,8 @@ def run_rdv_command_line():
                 name = "Naturale",  
                 icon = "🌞",   
                 colors = [{
-                    "hue": 0.12845044632639047,
-                    "saturation": 0.5511811023622047,
+                    "hue":        0.13,
+                    "saturation": 0.6,
                     "brightness": 1.0
                 }],
                 automatic_on = 'default'

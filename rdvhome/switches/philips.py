@@ -160,11 +160,11 @@ class Light(PhilipsBase):
 
         if self.gpio_status:
 
-            status = await self.raspberry_status()
+            status = await self.is_on()
 
             while True:
 
-                current = await self.raspberry_status()
+                current = await self.is_on()
 
                 if not current == status:
 
@@ -173,7 +173,6 @@ class Light(PhilipsBase):
                     await self.send(on = status)
 
                 await asyncio.sleep(interval)
-
 
     async def setup_gpio(self):
 
@@ -202,11 +201,14 @@ class Light(PhilipsBase):
         if gpio.is_debug:
             await gpio.store.set(self.gpio_status, not on and 1 or 0)
 
-    async def raspberry_status(self):
+    async def is_on(self):
 
-        gpio = await self.setup_gpio()
+        if self.gpio_status:
+            gpio = await self.setup_gpio()
+            return not await gpio.input(self.gpio_status)
 
-        return not await gpio.input(self.gpio_status)
+        status = await self.saved_status()
+        return status.on
 
     async def saved_status(self):
         return await self.store.get(self.id, self.philips_default_settings)
@@ -221,7 +223,7 @@ class Light(PhilipsBase):
     async def status(self):
 
         if self.gpio_status:
-            defaults = data(on = await self.raspberry_status())
+            defaults = data(on = await self.is_on())
         else:
             defaults = data()
 
@@ -237,7 +239,7 @@ class Light(PhilipsBase):
     async def switch(self, on = None, color = None):
 
         if on is not None and self.gpio_relay:
-            if not on == await self.raspberry_status():
+            if not on == await self.is_on():
                 await self.raspberry_switch(on)
 
         if self.philips_id and self.username:
