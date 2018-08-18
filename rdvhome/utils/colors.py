@@ -32,9 +32,15 @@ class HSB(object):
 
     @to_data
     def serialize(self, full = False):
-        for attr in ['hue', 'saturation', 'brightness']:
+        for attr in ('hue', 'saturation', 'brightness'):
             if full or (getattr(self, attr) is not None):
                 yield attr, getattr(self, attr) or 0
+
+    def __eq__(self, other):
+        return isinstance(other, HSB) and all(
+            getattr(self, attr) == getattr(other, attr)
+            for attr in ('hue', 'saturation', 'brightness')
+        )
 
     def __repr__(self):
         return '<HSB h=%(hue)s s=%(saturation)s b=%(brightness)s>' % self.serialize(full = True)
@@ -46,7 +52,7 @@ def philips_to_color(color_range = PHILIPS_RANGE, **opts):
     return HSB(**{
         attr: opts[attr] / const
         for attr, const in color_range.items()
-        if opts.get(attr, None)
+        if opts.get(attr, None) is not None
     })
 
 @to_data
