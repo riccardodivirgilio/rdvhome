@@ -38,7 +38,7 @@ class HSB(object):
 
     def __eq__(self, other):
         return isinstance(other, HSB) and all(
-            getattr(self, attr) == getattr(other, attr)
+            round(getattr(self, attr), 2) == round(getattr(other, attr), 2)
             for attr in ('hue', 'saturation', 'brightness')
         )
 
@@ -77,6 +77,8 @@ def to_color(spec):
         return HSB(*hsl_to_hsb(spec.hue, spec.saturation, spec.luminance))
     elif spec:
         return to_color(Color(spec))
+    else:
+        return HSB()
 
 def hsb_to_hsl(h, s, b):
     l = 0.5 * b  * (2 - s)
