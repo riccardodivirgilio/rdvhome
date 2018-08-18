@@ -171,7 +171,7 @@ class Light(PhilipsBase):
 
                     status = current
 
-                    iawait self.send(on = status)
+                    await self.send(on = status)
 
                 await asyncio.sleep(interval)
 
