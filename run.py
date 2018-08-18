@@ -53,8 +53,6 @@ def run_rdv_command_line():
 
         if philips_id:
             yield 'philips_id', philips_id
-
-        if philips_id and has_gpio():
             yield from philips_control().items()
 
         yield 'class_path', 'rdvhome.switches.philips.Light'
