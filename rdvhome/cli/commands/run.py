@@ -31,7 +31,7 @@ class Command(SimpleCommand):
             aiohttp_autoreload.start()
 
         run_all(
-            switches.subscribe(log),
+            #switches.subscribe(log),
             switches.watch()
         )
 
