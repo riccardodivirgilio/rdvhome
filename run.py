@@ -155,13 +155,13 @@ def run_rdv_command_line():
                 gpio_relay = 21,
                 gpio_status = 3,
             ),
-            #light(
-            #    id = 'led_bathroom_bedroom', 
-            #    name = 'Bagno Letto',  
-            #    icon = "🚽", 
-            #    philips_id = 6, 
-            #    alias = []
-            #),
+            light(
+                id = 'led_bathroom_bedroom', 
+                name = 'Bagno Letto',  
+                icon = "🚽", 
+                philips_id = 6, 
+                alias = []
+            ),
             light(
                 id = 'spotlight_room', 
                 name = 'Studio',  
