@@ -29,7 +29,7 @@ def run_rdv_command_line():
 
     @to_data
     def philips_control(**opts):
-        yield 'class_path', 'rdvhome.switches.controls.ControlSwitch'
+        yield 'class_path', 'rdvhome.switches.philips.PhilipsPoolControl'
 
         if has_gpio():
             yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"

@@ -12,6 +12,7 @@ from rdvhome.utils.decorators import to_data
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
 from rdvhome.switches.base import capabilities, Switch
+from rdvhome.switches import switches
 
 import aiohttp
 import asyncio
@@ -97,7 +98,7 @@ class PhilipsBase(Switch):
 
         super().__init__(id, **opts)
 
-class Light(Switch):
+class Light(PhilipsBase):
 
     homekit_class = HomekitLight
 
@@ -273,4 +274,7 @@ class PhilipsPoolControl(PhilipsBase):
         return await self.send()
 
     async def watch(self):
-        print('hello from philips')
+
+        lights = switches.filter(lambda switch: getattr(switch, 'philips_id', None))
+
+        print(lights)
