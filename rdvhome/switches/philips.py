@@ -143,14 +143,13 @@ class Light(PhilipsBase):
         saturation = 1,
     )
 
-    def __init__(self, id, philips_id = None, gpio_relay = None, gpio_status = None, gpio_status_sync = None, **opts):
+    def __init__(self, id, philips_id = None, gpio_relay = None, gpio_status = None, **opts):
 
         self._gpio = None
 
         self.philips_id  = philips_id
         self.gpio_relay  = gpio_relay
         self.gpio_status = gpio_status
-        self.gpio_status_sync = gpio_status_sync
 
         super().__init__(id, **opts)
 
@@ -161,34 +160,19 @@ class Light(PhilipsBase):
 
         if self.gpio_status:
 
-            if self.gpio_status_sync:
-                
-                while True:
+            status = await self.raspberry_status()
 
-                    current = await self.raspberry_status()
-                    status  = await self.saved_status()
+            while True:
 
-                    print(current, status)
+                current = await self.raspberry_status()
 
-                    if not current.on == status.on:
-                        self.switch(on = current.on)
+                if not current == status:
 
-                    await asyncio.sleep(interval)
-            else:
+                    status = current
 
-                status = await self.raspberry_status()
+                    await self.send(on = status)
 
-                while True:
-
-                    current = await self.raspberry_status()
-
-                    if not current == status:
-
-                        status = current
-
-                        await self.send(on = status)
-
-                    await asyncio.sleep(interval)
+                await asyncio.sleep(interval)
 
 
     async def setup_gpio(self):
