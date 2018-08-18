@@ -52,7 +52,7 @@ def run_rdv_command_line():
             yield 'gpio_status', gpio_status
 
         if gpio_status_sync:
-            assert gpio_status in INPUT:
+            assert gpio_status in INPUT
             yield 'gpio_status_sync', gpio_status_sync
 
         if philips_id:
