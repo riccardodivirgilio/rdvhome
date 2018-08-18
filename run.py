@@ -22,10 +22,20 @@ def timeout(min, max):
 
 def run_rdv_command_line():
 
-    control = lambda class_path = None, **opts: dict(
-        class_path = class_path or 'rdvhome.switches.controls.ControlSwitch',
+    control = lambda **opts: dict(
+        class_path = 'rdvhome.switches.controls.ControlSwitch',
         **opts
     )
+
+    @to_data
+    def philips_control(**opts):
+        yield 'class_path', 'rdvhome.switches.controls.ControlSwitch'
+
+        if has_gpio():
+            yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
+            yield 'ipaddress', "192.168.1.179"
+
+        yield from opts.items()
 
     @to_data
     def light(philips_id = None, gpio_relay = None, gpio_status = None, **opts):
@@ -45,8 +55,7 @@ def run_rdv_command_line():
             yield 'philips_id', philips_id
 
         if philips_id and has_gpio():
-            yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-            yield 'ipaddress', "192.168.1.179"
+            yield from philips_control().items()
 
         yield 'class_path', 'rdvhome.switches.philips.Light'
 
@@ -74,11 +83,10 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES = True,
         DEBUG    = not has_gpio(), #raspberry is production.
         SWITCHES = [
-            control(
+            philips_control(
                 id = 'philips_pool',    
                 name = "Philips Pool",  
                 icon = "💡",
-                class_path = 'rdvhome.switches.philips.PhilipsPoolControl'
             ),
             light(
                 id = 'led_kitchen', 

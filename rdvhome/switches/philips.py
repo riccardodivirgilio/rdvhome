@@ -86,11 +86,20 @@ class HomekitLight(HomekitSwitch):
             print(attr, value)
             getattr(self, '%s_service' % attr).set_value(value)
 
+class PhilipsBase(Switch):
+
+    store = KeyStore(prefix = 'philips')
+
+    def __init__(self, id, ipaddress = None, username = None, **opts):
+
+        self.ipaddress   = ipaddress
+        self.username    = username
+
+        super().__init__(id, **opts)
+
 class Light(Switch):
 
     homekit_class = HomekitLight
-
-    store = KeyStore(prefix = 'philips')
 
     @property
     def default_capabilities(self):
@@ -113,14 +122,11 @@ class Light(Switch):
             yield "hue",        0.5
             yield "saturation", 1
 
-    def __init__(self, id, philips_id = None, ipaddress = None, username = None, gpio_relay = None, gpio_status = None, **opts):
-
-        self.philips_id  = philips_id
-        self.ipaddress   = ipaddress
-        self.username    = username
+    def __init__(self, id, philips_id = None, gpio_relay = None, gpio_status = None, **opts):
 
         self._gpio = None
 
+        self.philips_id  = philips_id
         self.gpio_relay  = gpio_relay
         self.gpio_status = gpio_status
 
@@ -259,7 +265,7 @@ class Light(Switch):
 
         return await self.send(on = on, color = color, full = False)
 
-class PhilipsPoolControl(Switch):
+class PhilipsPoolControl(PhilipsBase):
     
     default_capabilities = capabilities(visibility = False)
 
