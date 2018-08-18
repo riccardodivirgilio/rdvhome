@@ -102,6 +102,14 @@ def run_rdv_command_line():
                 alias = ['default'],
             ),
             light(
+                id = 'spotlight_living_room', 
+                name = 'Salone', 
+                icon = "🛋", 
+                alias = [], 
+                gpio_relay = 23,
+                gpio_status = 2,
+            ),
+            light(
                 id = 'led_living_room', 
                 name = 'Salone Led', 
                 icon = "🛋", 
@@ -109,14 +117,6 @@ def run_rdv_command_line():
                 gpio_relay = 20,
                 gpio_status = 4,
                 alias = ['default']
-            ),
-            light(
-                id = 'spotlight_living_room', 
-                name = 'Salone', 
-                icon = "🛋", 
-                alias = [], 
-                gpio_relay = 23,
-                gpio_status = 2,
             ),
             light(
                 id = 'spotlight_tv', 
