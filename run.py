@@ -22,8 +22,8 @@ def timeout(min, max):
 
 def run_rdv_command_line():
 
-    control = lambda **opts: dict(
-        class_path = 'rdvhome.switches.controls.ControlSwitch',
+    control = lambda class_path = None, **opts: dict(
+        class_path = class_path or 'rdvhome.switches.controls.ControlSwitch',
         **opts
     )
 
@@ -74,6 +74,12 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES = True,
         DEBUG    = not has_gpio(), #raspberry is production.
         SWITCHES = [
+            control(
+                id = 'philips_pool',    
+                name = "Philips Pool",  
+                icon = "💡",
+                class_path = 'rdvhome.switches.philips.PhilipsPoolControl'
+            ),
             light(
                 id = 'led_kitchen', 
                 name = 'Cucina Led',  

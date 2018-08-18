@@ -16,7 +16,7 @@
       </template>
       <template v-else>
         <div id="toggles" class="list-container" >
-          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}">
+          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
             <div class="line">
               <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
                 <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>

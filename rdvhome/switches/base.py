@@ -14,13 +14,14 @@ from rdvhome.utils.functional import iterate
 
 import six
 
-def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False):
+def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False, visibility = True):
     return data(
         allow_on         = on,
         allow_hue        = hue,
         allow_saturation = saturation,
         allow_brightness = brightness,
         allow_direction  = direction,
+        allow_visibility = visibility
     )
 
 class HomekitSwitch(Accessory):
