@@ -38,7 +38,7 @@ def run_rdv_command_line():
         yield from opts.items()
 
     @to_data
-    def light(philips_id = None, gpio_relay = None, gpio_status = None, **opts):
+    def light(philips_id = None, gpio_relay = None, gpio_status = None, gpio_status_sync = None, **opts):
 
         if gpio_relay:
             assert gpio_relay in RELAY1 or gpio_relay in RELAY2, '%s not in %s' % (
@@ -50,6 +50,10 @@ def run_rdv_command_line():
         if gpio_status:
             assert gpio_status in INPUT
             yield 'gpio_status', gpio_status
+
+        if gpio_status_sync:
+            assert gpio_status in INPUT:
+            yield 'gpio_status_sync', gpio_status_sync
 
         if philips_id:
             yield 'philips_id', philips_id

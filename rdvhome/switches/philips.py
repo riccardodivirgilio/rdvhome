@@ -143,13 +143,14 @@ class Light(PhilipsBase):
         saturation = 1,
     )
 
-    def __init__(self, id, philips_id = None, gpio_relay = None, gpio_status = None, **opts):
+    def __init__(self, id, philips_id = None, gpio_relay = None, gpio_status = None, gpio_status_sync = None, **opts):
 
         self._gpio = None
 
         self.philips_id  = philips_id
         self.gpio_relay  = gpio_relay
         self.gpio_status = gpio_status
+        self.gpio_status_sync = gpio_status_sync
 
         super().__init__(id, **opts)
 
@@ -157,7 +158,8 @@ class Light(PhilipsBase):
         return await super().api_request(path = '%s%s' % (self.philips_id, path), *args, **opts)
 
     async def watch(self):
-        if self.gpio_status:
+
+        if self.gpio_status or self.gpio_status_sync:
 
             status = await self.raspberry_status()
 
@@ -169,9 +171,13 @@ class Light(PhilipsBase):
 
                     status = current
 
-                    await self.send(on = status)
+                    if self.gpio_status:
+                        await self.send(on = status)
+                    else:
+                        await self.switch(on = status)
 
                 await asyncio.sleep(0.3)
+
 
     async def setup_gpio(self):
 
@@ -184,6 +190,9 @@ class Light(PhilipsBase):
             await self._gpio.setup_output(self.gpio_relay)
 
         if self.gpio_status:
+            await self._gpio.setup_input(self.gpio_status)
+
+        if self.gpio_status_sync:
             await self._gpio.setup_input(self.gpio_status)
 
         return self._gpio
@@ -218,7 +227,7 @@ class Light(PhilipsBase):
 
     async def status(self):
 
-        if self.gpio_relay:
+        if self.gpio_status:
             defaults = data(on = await self.raspberry_status())
         else:
             defaults = data()
