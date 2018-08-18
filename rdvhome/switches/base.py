@@ -77,7 +77,7 @@ class Switch(EventStream):
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
-        self.capabilities = self.default_capabilities.copy()
+        self.capabilities = data(self.default_capabilities)
 
         super().__init__()
 
@@ -147,8 +147,11 @@ class SwitchList(object):
         if callable(self._switches):
             self._switches = self._switches()
 
-        if not isinstance(self._switches, (tuple, list, set, frozenset)):
-            self._switches = tuple(iterate(self._switches))
+        if not isinstance(self._switches, dict):
+            self._switches = {
+                s.id: s
+                for s in iterate(self._switches)
+            }
 
         return self._switches
 
@@ -170,9 +173,7 @@ class SwitchList(object):
         }
 
     def get(self, pk):
-        for obj in self:
-            if obj.id == pk:
-                return obj
+        return self.switches.get(pk)
 
     def copy(self, *args, **opts):
         return self.__class__(*args, **opts)
@@ -195,7 +196,7 @@ class SwitchList(object):
         return len(self.switches)
 
     def __iter__(self):
-        return iter(self.switches)
+        return iter(self.switches.values())
 
     def __repr__(self):
-        return repr(self.switches)
+        return repr(tuple(self.switches))
