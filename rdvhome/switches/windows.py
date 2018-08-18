@@ -2,20 +2,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from pyhap.const import CATEGORY_LIGHTBULB
-from rdvhome.utils.async import run_all, wait_all
-from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
-from rdvhome.utils import json
-from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, philips_to_color, to_color
-from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import to_data
+from rdvhome.switches.base import capabilities, Switch
+from rdvhome.utils.async import run_all
 from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.keystore import KeyStore
 
-import aiohttp
 import asyncio
-import time
-
 
 class Window(Switch):
 
@@ -75,9 +66,9 @@ class Window(Switch):
                 to_activate   = self.gpio_down
                 to_deactivate = self.gpio_up
             else:
-                raise ValueError('Wrong direction %s' % direction)  
+                raise ValueError('Wrong direction %s' % direction)
 
-            setattr(self, direction, True) 
+            setattr(self, direction, True)
 
             self._current_action = run_all(self.perform_window_action(direction, to_activate, to_deactivate))
 
@@ -93,6 +84,6 @@ class Window(Switch):
         await asyncio.sleep(direction == 'down' and 12 or 13)
 
         await gpio.output(to_activate, high = True)
-        setattr(self, direction, False) 
+        setattr(self, direction, False)
 
         await self.send(up = self.up, down = self.down)

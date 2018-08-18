@@ -121,11 +121,11 @@ export default {
     to_css: hsb_to_css_with_lightness,
     updateSwitch: function (data) {
       Vue.set(
-        this.switches, 
-        data.id, 
+        this.switches,
+        data.id,
         merge(
           {advanced_options: false},
-          this.switches[data.id] || {}, 
+          this.switches[data.id] || {},
           data
         )
       );
@@ -377,7 +377,6 @@ html, body, .page {
 .list-item > .line:not(:last-child) {
   border-bottom:1px solid $border-color
 }
-
 
 .list-item > .line > .controls {
   position: absolute;

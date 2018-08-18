@@ -29,7 +29,7 @@ class Command(SimpleCommand):
         if settings.DEBUG:
             import aiohttp_autoreload
             aiohttp_autoreload.start()
-            
+
         run_all(
             #switches.subscribe(log),
             switches.watch()

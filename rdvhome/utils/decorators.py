@@ -5,8 +5,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.utils.datastructures import data
 from rdvhome.utils.functional import composition
 
-import time
-
 def decorate(*func):
     comp = composition(*func)
     def multipass(fn):

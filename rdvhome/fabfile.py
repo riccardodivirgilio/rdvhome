@@ -2,13 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from fabric.api import env, execute, roles, run, sudo, task, local
+from fabric.api import env, execute, local, roles, run, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 
 from fabtools import require
 from fabtools.supervisor import restart_process
+
 from operator import attrgetter
 
 import os
@@ -229,7 +230,6 @@ def move_pictures(to_keep = 1000):
             os.symlink(remote, local)
 
             print(local, '>>', remote)
-
 
 if __name__ == '__main__':
     sys.argv = ['fab', '-f', __file__] + sys.argv[1:]
