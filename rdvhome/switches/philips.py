@@ -161,29 +161,31 @@ class Light(PhilipsBase):
 
         if self.gpio_status:
 
-            status = await self.raspberry_status()
+            if self.gpio_status_sync:
+                
+                while True:
 
-            while True:
+                    current = await self.raspberry_status()
+                    status  = await self.saved_status()
 
-                current = await self.raspberry_status()
+                    if not current.on == status.on:
+                        self.switch(on = current.on)
+            else:
 
-                if not current == status:
+                status = await self.raspberry_status()
 
-                    status = current
+                while True:
 
-                    await self.send(on = status)
+                    current = await self.raspberry_status()
 
-                await asyncio.sleep(interval)
+                    if not current == status:
 
-        elif self.gpio_status_sync:
+                        status = current
 
-            while True:
+                        await self.send(on = status)
 
-                current = await self.raspberry_status()
-                status  = await self.saved_status()
+                    await asyncio.sleep(interval)
 
-                if not current.on == status.on:
-                    self.switch(on = current.on)
 
     async def setup_gpio(self):
 
@@ -196,9 +198,6 @@ class Light(PhilipsBase):
             await self._gpio.setup_output(self.gpio_relay)
 
         if self.gpio_status:
-            await self._gpio.setup_input(self.gpio_status)
-
-        if self.gpio_status_sync:
             await self._gpio.setup_input(self.gpio_status)
 
         return self._gpio
@@ -219,7 +218,7 @@ class Light(PhilipsBase):
 
         gpio = await self.setup_gpio()
 
-        return not await gpio.input(self.gpio_status or self.gpio_status_sync)
+        return not await gpio.input(self.gpio_status)
 
     async def saved_status(self):
         return await self.store.get(self.id, self.philips_default_settings)

@@ -38,7 +38,7 @@ def run_rdv_command_line():
         yield from opts.items()
 
     @to_data
-    def light(philips_id = None, gpio_relay = None, gpio_status = None, gpio_status_sync = None, **opts):
+    def light(philips_id = None, gpio_relay = None, gpio_status = None,  = False, **opts):
 
         if gpio_relay:
             assert gpio_relay in RELAY1 or gpio_relay in RELAY2, '%s not in %s' % (
@@ -51,9 +51,7 @@ def run_rdv_command_line():
             assert gpio_status in INPUT
             yield 'gpio_status', gpio_status
 
-        if gpio_status_sync:
-            assert gpio_status_sync in INPUT
-            yield 'gpio_status_sync', gpio_status_sync
+        yield 'gpio_status_sync', gpio_status_sync
 
         if philips_id:
             yield 'philips_id', philips_id
@@ -97,7 +95,8 @@ def run_rdv_command_line():
                 philips_id = 4,
                 alias = ['default'],
                 gpio_relay = 20,
-                gpio_status_sync = 4,
+                gpio_status = 4,
+                gpio_status_sync = True
             ),
             light(
                 id = 'spotlight_kitchen', 
