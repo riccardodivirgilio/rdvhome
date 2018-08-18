@@ -87,19 +87,19 @@ def run_rdv_command_line():
                 icon = "💡",
             ),
             light(
-                id = 'led_kitchen', 
-                name = 'Cucina Led',  
-                icon = "🍽", 
-                philips_id = 4,
-                alias = ['default'],
-            ),
-            light(
                 id = 'spotlight_kitchen', 
                 name = 'Cucina',  
                 icon = "🍽", 
                 alias = [], 
                 gpio_relay = 24,
                 gpio_status = 17,
+            ),
+            light(
+                id = 'led_kitchen', 
+                name = 'Cucina Led',  
+                icon = "🍽", 
+                philips_id = 4,
+                alias = ['default'],
             ),
             light(
                 id = 'led_living_room', 
@@ -119,6 +119,14 @@ def run_rdv_command_line():
                 gpio_status = 2,
             ),
             light(
+                id = 'spotlight_tv', 
+                name = 'TV',     
+                icon = "📺", 
+                alias = [], 
+                gpio_relay = 15,
+                gpio_status = 25,
+            ),
+            light(
                 id = 'led_tv', 
                 name = 'TV Led',     
                 icon = "📺", 
@@ -126,14 +134,6 @@ def run_rdv_command_line():
                 gpio_relay = 20,
                 gpio_status = 4,
                 alias = ['default']
-            ),
-            light(
-                id = 'spotlight_tv', 
-                name = 'TV',     
-                icon = "📺", 
-                alias = [], 
-                gpio_relay = 15,
-                gpio_status = 25,
             ),
             light(
                 id = 'spotlight_entrance', 
@@ -151,6 +151,14 @@ def run_rdv_command_line():
                 philips_id = 5
             ),
             light(
+                id = 'spotlight_bedroom', 
+                name = 'Letto',  
+                icon = "🛏", 
+                alias = [], 
+                gpio_relay = 21,
+                gpio_status = 3,
+            ),
+            light(
                 id = 'led_bedroom', 
                 name = 'Letto Led',  
                 icon = "🛏", 
@@ -158,14 +166,6 @@ def run_rdv_command_line():
                 gpio_relay = 14,
                 gpio_status = 8,
                 alias = []
-            ),
-            light(
-                id = 'spotlight_bedroom', 
-                name = 'Letto',  
-                icon = "🛏", 
-                alias = [], 
-                gpio_relay = 21,
-                gpio_status = 3,
             ),
             light(
                 id = 'led_bathroom_bedroom', 
@@ -240,7 +240,7 @@ def run_rdv_command_line():
             control(
                 id = 'loop',     
                 name = "Random Loop", 
-                icon = "➰", 
+                icon = "♾️", 
                 timeout = timeout(30, 60)
             ),
             control(
