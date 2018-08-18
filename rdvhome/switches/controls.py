@@ -66,17 +66,18 @@ class ControlSwitch(Switch):
         )
 
     async def when_switch_on(self, switch, i):
-        await switch.switch(color = self.assign_color(switch, i))
-        t = 0
-        if self.timeout:
-            while self.on:
-                await switch.switch(
-                    color = to_color(self.assign_color(switch, i + t)),
-                )
-                await asyncio.sleep(
-                    self.assign_timeout(switch, i + t)
-                )
-                t += 1
+        if switch.capabilities.allow_hue:
+            await switch.switch(color = self.assign_color(switch, i))
+            t = 0
+            if self.timeout:
+                while self.on:
+                    await switch.switch(
+                        color = to_color(self.assign_color(switch, i + t)),
+                    )
+                    await asyncio.sleep(
+                        self.assign_timeout(switch, i + t)
+                    )
+                    t += 1
 
     async def delay_off(self, timeout = 0.5):
         await asyncio.sleep(timeout)
