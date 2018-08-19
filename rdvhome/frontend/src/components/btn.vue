@@ -2,7 +2,6 @@
 
   <label class="btn" :class="{disabled: disabled}">
     <input type="checkbox" @change="toggle" v-model="item[name]">
-    <span class="btn-inner" :style="{opacity: 0.5, backgroundColor: (! disabled && item) ? to_css(item, 0.5) : 'transparent'}"></span>
     <div class="title"><slot/></div>
   </label>
 
@@ -48,15 +47,4 @@ export default {
   margin-top:1px;
   position: relative;
 }
-
-.btn .btn-inner {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.btn input:checked + .btn-inner {
-
-}
-
 </style>

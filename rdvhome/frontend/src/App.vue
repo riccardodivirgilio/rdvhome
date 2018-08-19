@@ -15,13 +15,13 @@
         <template v-else>
           <div id="toggles" class="list-container" >
             <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
-              <div class="line">
+              <div class="line" :style="{backgroundColor: to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0}, item.allow_hue ? 0.1 * item.on : 0.2 * item.on)}">
                 <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
-                  <div v-if="item.advanced_options && item.on" style="padding-top:3px">&times;</div>
+                  <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
                   <div v-else>{{ item.icon }}</div>
                 </btn>
                 <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="toggle_hsb"/>
-                <div class="title">{{ item.name }}</div>
+                <div class="title">{{ item.name }} </div>
                 <div class="controls">
                   <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
                   <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='down'/>
@@ -261,14 +261,27 @@ a {
   color: red;
 }
 
-html, body, .page {
+
+html, body, 
+.page,
+.container,
+.panel-home,
+.panel-switch,
+.panel-home svg {
+
   margin: 0px;
   padding: 0px;
   display: flex;
+  flex-direction: column;
   background: $background-color;
   justify-content: space-around;
   color: $primary-color;
   position:relative;
+
+  width:100vw;
+  &::-webkit-scrollbar { 
+    display: none;  // Safari and Chrome
+  }
 }
 
 .connection {
@@ -278,32 +291,12 @@ html, body, .page {
 
 // LAYOUT MOBILE FIRST
 
-.container {
-  display: flex;
-  flex-direction: column;
-}
-
 .panel-switch {
-  display:flex;
-  flex-direction: column;
   width:100%;
   order:1;
 }
 
-html, body, 
-.page,
-.container,
-.panel-home,
-.panel-switch,
-.panel-home svg {
-  width:100vw;
-  &::-webkit-scrollbar { 
-    display: none;  // Safari and Chrome
-  }
-}
-
 .panel-home {
-  display:flex;
   order: 2;
   align-items: center;
   padding: 2em;
@@ -315,7 +308,6 @@ html, body,
   width: 100%;
   display: flex;
   flex-direction: column;
-
 }
 
 .list-item {
@@ -324,12 +316,14 @@ html, body,
   flex-direction: column;
   min-height: $item-size;
   color: $primary-color;
+  flex-shrink: 0;
 }
 
 .list-item > .line {
   display: flex;
   flex-direction: row;
-  position:relative
+  position: relative;
+  min-height: $item-size
 }
 .list-item > .line > .btn {
   width: $btn-width;
@@ -394,7 +388,6 @@ html, body,
 
   .container {
     flex-direction: row;
-    align-items: stretch;
   }
 
   .panel-switch {
