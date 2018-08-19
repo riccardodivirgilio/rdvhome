@@ -90,27 +90,6 @@ export default {
         "ordering": 13,
         "allow_visibility": true
     },
-    "window_kitchen": {
-        "id": "window_kitchen",
-        "name": "Finestra Cucina",
-        "icon": "\u2600\ufe0f",
-        "ordering": 14,
-        "allow_visibility": true
-    },
-    "window_living_room": {
-        "id": "window_living_room",
-        "name": "Finestra Salone",
-        "icon": "\u2600\ufe0f",
-        "ordering": 15,
-        "allow_visibility": true
-    },
-    "window_tv": {
-        "id": "window_tv",
-        "name": "Finestra Tv",
-        "icon": "\u2600\ufe0f",
-        "ordering": 16,
-        "allow_visibility": true
-    },
     "usa": {
         "id": "usa",
         "name": "USA",

@@ -61,7 +61,7 @@ def run_rdv_command_line():
 
     @to_data
     def window(gpio_up, gpio_down, **opts):
-        if not has_gpio():
+        if False:
             for pin in (gpio_up, gpio_down):
                 assert pin in RELAY1 or pin in RELAY2, '%s not in %s' % (
                     pin,
