@@ -326,6 +326,8 @@ class PhilipsPoolControl(PhilipsBase):
 
                         if saved_color == self.philips_initial_color:
                             saved_color = to_color(light.philips_default_settings)
+                        else:
+                            saved_color.brightness = 1
 
                         await light.switch(color = saved_color)
                         current_color = saved_color
