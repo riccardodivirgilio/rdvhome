@@ -3,43 +3,41 @@
     <div class="container">
       <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
       <div class="panel-switch">
-        <template v-if="switches.length == 0 || ! connected">
-            <loading :class="{active: reconnect < reconnect_limit}"></loading>
-            <div class="connection" v-if="reconnect < reconnect_limit">
-              Connection in progress...
+        <div id="toggles" class="list-container" >
+          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
+            <div class="line" :style="{backgroundColor: to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0}, item.allow_hue ? 0.1 * item.on : 0.2 * item.on)}">
+              <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
+                <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
+                <div v-else>{{ item.icon }}</div>
+              </btn>
+              <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="toggle_hsb"/>
+              <div class="title">{{ item.name }} </div>
+              <div class="controls">
+                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
+                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='down'/>
+                <toggle :item="item" :onchange="toggle" v-if='item.allow_on' name='on'/>
+              </div>
             </div>
-            <div class="connection" v-else>
-              Disconnected. <a href="/connect" @click.stop.prevent="connect(true)">Try again &rarr;</a>
+            <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
+              <slider :item="item" name='hue' :onchange="toggle_hsb"/>
             </div>
-        </template>
-        <template v-else>
-          <div id="toggles" class="list-container" >
-            <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
-              <div class="line" :style="{backgroundColor: to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0}, item.allow_hue ? 0.1 * item.on : 0.2 * item.on)}">
-                <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
-                  <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
-                  <div v-else>{{ item.icon }}</div>
-                </btn>
-                <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="toggle_hsb"/>
-                <div class="title">{{ item.name }} </div>
-                <div class="controls">
-                  <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
-                  <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='down'/>
-                  <toggle :item="item" :onchange="toggle" v-if='item.allow_on' name='on'/>
-                </div>
-              </div>
-              <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
-                <slider :item="item" name='hue' :onchange="toggle_hsb"/>
-              </div>
-              <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
-                'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
-                <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
-              </div>
-            </a>
-          </div>
-        </template>
+            <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
+              'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
+              <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
+            </div>
+          </a>
+        </div>
       </div>
     </div><!-- /.container -->
+    <div class="panel-loading" v-if="switches.length == 0 || ! connected">
+      <loading :class="{active: reconnect < reconnect_limit}"></loading>
+      <div class="connection" v-if="reconnect < reconnect_limit">
+        Connection in progress...
+      </div>
+      <div class="connection" v-else>
+        Disconnected. <a href="/connect" @click.stop.prevent="connect(true)">Try again &rarr;</a>
+      </div>
+  </div>
   </div>
 </template>
 
@@ -53,6 +51,7 @@ import btn       from './components/btn';
 import slider    from './components/slider';
 import updown    from './components/updown';
 import home      from './components/home';
+import switches  from './data/switches';
 
 import debounce  from './utils/debounce';
 
@@ -75,7 +74,7 @@ export default {
   },
   data: function() {
     return {
-      switches: {},
+      switches: switches,
       reconnect: 0,
       connected: false,
       reconnect_limit: 4
@@ -369,6 +368,16 @@ html, body,
   );
 }
 
+.panel-loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba($background-color, 0.5);
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding-top: 30vh
+}
 
 /*
   ##Device = Tablets, Ipads (portrait)

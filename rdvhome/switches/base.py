@@ -89,7 +89,7 @@ class Switch(EventStream):
         pass
 
     @to_data
-    def _send(self, on = None, color = None, intensity = None, full = True, **opts):
+    def serialize(self, on = None, color = None, intensity = None, full = True, **opts):
         yield 'id',         self.id
 
         if full:
@@ -114,7 +114,7 @@ class Switch(EventStream):
         yield from opts.items()
 
     async def send(self, **opts):
-        return await super(Switch, self).send(self._send(**opts))
+        return await super(Switch, self).send(self.serialize(**opts))
 
     async def switch(self, *args, **opts):
         raise NotImplementedError

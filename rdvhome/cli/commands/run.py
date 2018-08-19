@@ -11,6 +11,8 @@ from rdvhome.homekit import driver
 from rdvhome.switches import switches
 from rdvhome.utils.async import run_all
 from rdvhome.utils.process import system_open
+from rdvhome.utils.json import dumps
+from rdvhome.utils.importutils import module_path
 
 import signal
 
@@ -29,6 +31,24 @@ class Command(SimpleCommand):
         if settings.DEBUG:
             import aiohttp_autoreload
             aiohttp_autoreload.start()
+
+            with open(module_path('rdvhome', 'frontend', 'src', 'data', 'switches.js'), 'wb') as f:
+
+                data = 'export default %s' % dumps(
+                    {s.id: dict(
+                        id = s.id, 
+                        name = s.name, 
+                        icon = s.icon,
+                        ordering = s.ordering,
+                        allow_visibility = s.capabilities.allow_visibility
+                    ) 
+                    for s in switches
+                    }, 
+                    indent = 4
+                )
+
+                f.write(data.encode('utf-8'))
+
 
         run_all(
             #switches.subscribe(log),
