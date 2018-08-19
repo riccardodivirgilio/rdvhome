@@ -759,7 +759,7 @@ export default {
         return {fill:'gray', opacity:0.}
       },
       area_click: function(item) {
-        if (item) {
+        if (item && item.allow_on) {
             Vue.set(item, 'on', ! item.on)
             this.$emit('toggle', item);
         }
