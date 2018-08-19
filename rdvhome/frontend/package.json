@@ -5,9 +5,11 @@
   "author": "Riccardo Di Virgilio",
   "license": "MIT",
   "private": true,
+  "main": "electron.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "start": "electron ."
   },
   "browserslist": [
     "> 1%",
@@ -15,6 +17,7 @@
     "not ie <= 8"
   ],
   "devDependencies": {
+    "electron": "^2.0.0",
     "rfuncs": "^1.2.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
