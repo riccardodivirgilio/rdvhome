@@ -12,8 +12,8 @@ function createWindow () {
     height: 600,
   })
 
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  // and load the electron.html of the app.
+  mainWindow.loadFile('electron.html')
 
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()

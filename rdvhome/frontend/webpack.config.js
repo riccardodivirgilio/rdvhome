@@ -3,11 +3,14 @@ var webpack = require('webpack')
 const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: {
+    web:      './src/main.js',
+    electron: './src/electron.js'
+  },
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: "[name].js"
   },
   module: {
     rules: [
