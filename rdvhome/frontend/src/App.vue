@@ -322,7 +322,8 @@ html, body,
   display: flex;
   flex-direction: row;
   position: relative;
-  min-height: $item-size
+  min-height: $item-size;
+  transition: background-color 300ms linear;
 }
 .list-item > .line > .btn {
   width: $btn-width;
