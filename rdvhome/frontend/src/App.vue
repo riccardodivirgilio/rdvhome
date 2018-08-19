@@ -270,9 +270,9 @@ a {
 }
 
 html, body, .page {
-  margin:0px;
+  margin: 0px;
   padding: 0px;
-  display:flex;
+  display: flex;
   background:$body-color;
   justify-content: space-around;
   color:white;
@@ -315,51 +315,6 @@ html, body,
   background: $panel-color;
 }
 
-
-/*
-  ##Device = Tablets, Ipads (portrait)
-  ##Screen = B/w 768px to 1024px
-*/
-
-@media (min-width: 600px) {
-
-  .page,
-  .container,
-  .panel-switch,
-  .panel-home {
-    height: 100vh;
-  }
-
-  @media (pointer:coarse) {
-    .page,
-    .container,
-    .panel-switch,
-    .panel-home {
-      height: calc(100vh - 30px)
-    } 
-  }
-
-  .container {
-    flex-direction: row;
-    background: $panel-color;
-    align-items: stretch;
-  }
-
-  .panel-switch {
-    max-width: 400px;
-    border-right: 2px solid $border-color;
-    overflow-y: scroll;
-    &::-webkit-scrollbar { 
-      display: none;  // Safari and Chrome
-    }
-  }
-
-  .panel-home svg {
-    width: 100%
-  }
-
-}
-
 // STARTING LIST STYLES
 
 .list-container {
@@ -372,7 +327,7 @@ html, body,
 .list-item {
   border-bottom:1px solid $border-color;
   color:black;
-  position:relative;
+
   display: flex;
   flex-direction: column;
   min-height: $item-size;
@@ -426,6 +381,44 @@ html, body,
     hsl(300, 100%, 50%)  83.3333%,
     hsl(360, 100%, 50%) 100.0000%
   );
+}
+
+
+/*
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 600px) {
+
+  html, body, 
+  .page,
+  .container,
+  .panel-switch,
+  .panel-home {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .container {
+    flex-direction: row;
+    background: $panel-color;
+    align-items: stretch;
+  }
+
+  .panel-switch {
+    max-width: 400px;
+    border-right: 2px solid $border-color;
+    overflow-y: scroll;
+    &::-webkit-scrollbar { 
+      display: none;  // Safari and Chrome
+    }
+  }
+
+  .panel-home svg {
+    width: 100%
+  }
+
 }
 
 </style>
