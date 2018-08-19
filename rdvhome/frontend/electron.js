@@ -12,6 +12,7 @@ function createWindow () {
     minWidth:   350,
     height:     622,
     minHeight:  422,
+    backgroundColor: '#000000'
   })
 
   // and load the html of the app.
@@ -27,6 +28,7 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
 }
 
 // This method will be called when Electron has finished
