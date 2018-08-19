@@ -248,15 +248,7 @@ export default {
 
 <style lang="scss">
 
-$item-size: 50px;
-$item-padding: 15px;
-$btn-width: $item-size + 20px;
-
-$toggle-height: $item-size - 2 * $item-padding;
-$toggle-width:  $toggle-height * 2;
-$border-color: rgba(70, 70, 70, 0.3);
-$body-color:   black;
-$panel-color:  rgba(0, 0, 0, 0.5);
+@import "./variables.scss";
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -273,9 +265,9 @@ html, body, .page {
   margin: 0px;
   padding: 0px;
   display: flex;
-  background:$body-color;
+  background: $background-color;
   justify-content: space-around;
-  color:white;
+  color: $primary-color;
   position:relative;
 }
 
@@ -312,7 +304,6 @@ html, body,
   order: 2;
   align-items: center;
   padding: 2em;
-  background: $panel-color;
 }
 
 // STARTING LIST STYLES
@@ -326,12 +317,10 @@ html, body,
 
 .list-item {
   border-bottom:1px solid $border-color;
-  color:black;
-
   display: flex;
   flex-direction: column;
   min-height: $item-size;
-  color: white;
+  color: $primary-color;
 }
 
 .list-item > .line {
@@ -402,7 +391,6 @@ html, body,
 
   .container {
     flex-direction: row;
-    background: $panel-color;
     align-items: stretch;
   }
 

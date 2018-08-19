@@ -26,7 +26,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss">
+
+@import "../variables";
 
 .toggle {
   position: relative;
@@ -47,7 +49,7 @@ export default {
   bottom: 0;
   -webkit-transition: .4s;
   transition: .4s;
-  border:1px solid #ddd;
+  border:1px solid $border-color;
 }
 
 .toggle .toggle-button:before {
@@ -60,7 +62,7 @@ export default {
 
   -webkit-transition: .4s;
   transition: .4s;
-  border:           1px solid #ddd;
+  border:           1px solid $border-color;
   background-color: rgba(255, 255, 255, 0.5);
   border-color:     rgba(  0,   0,   0, 0.5);
 }

@@ -23,6 +23,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 
+@import "../variables";
+
 .slider {
   padding:0px;
   margin:0px;
