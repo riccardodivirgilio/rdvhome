@@ -297,6 +297,9 @@ html, body,
 .panel-switch,
 .panel-home svg {
   width:100vw;
+  &::-webkit-scrollbar { 
+    display: none;  // Safari and Chrome
+  }
 }
 
 .panel-home {
@@ -398,9 +401,6 @@ html, body,
     max-width: 400px;
     border-right: 2px solid $border-color;
     overflow-y: scroll;
-    &::-webkit-scrollbar { 
-      display: none;  // Safari and Chrome
-    }
   }
 
   .panel-home svg {
