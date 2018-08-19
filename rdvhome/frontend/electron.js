@@ -12,8 +12,8 @@ function createWindow () {
     height: 600,
   })
 
-  // and load the electron.html of the app.
-  mainWindow.loadFile('electron.html')
+  // and load the html of the app.
+  mainWindow.loadFile('index.html')
 
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
@@ -49,3 +49,4 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+

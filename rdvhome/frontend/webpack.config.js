@@ -5,7 +5,7 @@ const MinifyPlugin = require('babel-minify-webpack-plugin');
 module.exports = {
   entry: {
     web:      './src/main.js',
-    electron: './src/electron.js'
+    //electron: './src/electron.js'
   },
   output: {
     path: path.resolve(__dirname, './dist'),
