@@ -3,7 +3,7 @@
 .DS_Store
 rdvhome/data/
 rdvhome/frontend/node_modules/
-rdvhome/frontend/release-builds/
+rdvhome/frontend/builds/
 rdvhome/frontend/package-lock.json
 rdvhome/frontend/dist/build.js.map
 npm-debug.log

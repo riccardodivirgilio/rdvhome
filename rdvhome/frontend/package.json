@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "Switch",
   "description": "Home frontend",
   "version": "1.0.0",
   "author": "Riccardo Di Virgilio",
@@ -10,7 +10,7 @@
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "start": "electron .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=dist/icon.icns --prune=true --out=release-builds"
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=dist/icon.icns --prune=true --out=builds"
   },
   "browserslist": [
     "> 1%",
