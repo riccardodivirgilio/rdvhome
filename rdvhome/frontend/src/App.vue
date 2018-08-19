@@ -270,8 +270,6 @@ a {
 }
 
 html, body, .page {
-  width: 100%;
-  min-height: 100%;
   margin:0px;
   padding: 0px;
   display:flex;
@@ -291,7 +289,6 @@ html, body, .page {
 .container {
   display: flex;
   flex-direction: column;
-  width: 100%;
 }
 
 .panel-switch {
@@ -301,18 +298,23 @@ html, body, .page {
   order:1;
 }
 
+html, body, 
+.page,
+.container,
+.panel-home,
+.panel-switch,
+.panel-home svg {
+  width:100vw;
+}
+
 .panel-home {
   display:flex;
-  width:100%;
   order: 2;
   align-items: center;
   padding: 2em;
   background: $panel-color;
 }
 
-.panel-home svg {
-  width:100%;
-}
 
 /*
   ##Device = Tablets, Ipads (portrait)
@@ -321,25 +323,39 @@ html, body, .page {
 
 @media (min-width: 600px) {
 
+  .page,
+  .container,
+  .panel-switch,
+  .panel-home {
+    height: 100vh;
+  }
+
+  @media (pointer:coarse) {
+    .page,
+    .container,
+    .panel-switch,
+    .panel-home {
+      height: calc(100vh - 30px)
+    } 
+  }
+
   .container {
     flex-direction: row;
     background: $panel-color;
     align-items: stretch;
-    height: 100vh
   }
 
   .panel-switch {
     max-width: 400px;
     border-right: 2px solid $border-color;
     overflow-y: scroll;
-    height: 100vh;
     &::-webkit-scrollbar { 
       display: none;  // Safari and Chrome
     }
   }
 
-  .panel-home {
-
+  .panel-home svg {
+    width: 100%
   }
 
 }
