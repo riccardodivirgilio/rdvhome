@@ -201,7 +201,12 @@ export default {
       console.log("Attempting to connect to ws number " + this.reconnect)
 
       if (this.reconnect < 4) {
-        this.ws = new WebSocket('ws://'+ window.location.hostname +':8500/websocket');
+
+        if (window.location.protocol == 'file:') {
+          this.ws = new WebSocket('ws://rdvpi.local:8500/websocket');
+        } else {
+          this.ws = new WebSocket('ws://'+ window.location.hostname +':8500/websocket');
+        }
 
         this.ws.onerror = (e) => {
             console.log('Connection Error');
