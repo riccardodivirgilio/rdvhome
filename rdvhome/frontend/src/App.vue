@@ -278,8 +278,13 @@ html, body,
   position:relative;
 
   width:100vw;
-  &::-webkit-scrollbar { 
+  
+  &::-webkit-scrollbar,
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-thumb { 
     display: none;  // Safari and Chrome
+    -webkit-appearance: none;
+    background-color: transparent;
   }
 }
 
