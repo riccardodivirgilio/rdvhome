@@ -135,7 +135,24 @@ app.router.add_static('/dist', module_path('rdvhome', 'frontend', 'dist'))
 @url('/homekit', name = "homekit")
 async def homekit_pair(request):
     from rdvhome.homekit import driver
-    return JsonResponse(api_response(paircode = driver.state.pincode.decode()))
+    return JsonResponse(api_response(paircode = driver.state.pincode.decode(), uri = driver.accessory.xhm_uri()))
+
+@url('/qrcode', name = "homekit-qrcode")
+async def homekit_pair(request):
+
+    from rdvhome.homekit import driver
+    from pyqrcode import QRCode
+    import io
+
+    stream = io.BytesIO()
+    QRCode(driver.accessory.xhm_uri()).svg(stream, scale = 14)
+    stream.seek(0)
+
+    return web.Response(
+        body = stream.read(),
+        status = 200,
+        content_type = 'image/svg+xml'
+    )
 
 @url('/switch', name = "status-list")
 async def view_status_list(request):
