@@ -132,6 +132,11 @@ async def view_home(request):
 
 app.router.add_static('/dist', module_path('rdvhome', 'frontend', 'dist'))
 
+@url('/homekit', name = "homekit")
+async def homekit_pair(request):
+    from rdvhome.homekit import driver
+    return JsonResponse(api_response(paircode = driver.state.pincode.decode()))
+
 @url('/switch', name = "status-list")
 async def view_status_list(request):
     return JsonResponse(await status(**getargs(request)))
