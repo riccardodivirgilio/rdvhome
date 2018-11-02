@@ -269,6 +269,8 @@ class PhilipsPoolControl(PhilipsBase):
         brightness = 1
     )
 
+    homekit_class = None
+
     async def status(self):
         return await self.send()
 
