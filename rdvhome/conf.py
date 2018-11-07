@@ -29,5 +29,6 @@ settings = data(
         'base36':None,
         'pyqrcode':None,
         'hap-python': None,
+        #'websockets': None
     }
 )
