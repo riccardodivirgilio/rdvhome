@@ -12,7 +12,7 @@ from rdvhome.utils import json
 from rpy.functions.functional import iterate
 
 
-async def send_commands(tv_addr, keys, delay = 1):
+async def send_commands(tv_addr, keys):
     try:
         websocket = await websockets.connect('ws://%s:%d/api/v2/channels/samsung.remote.control' % (tv_addr,8001))
         async for message in websocket:
@@ -21,8 +21,6 @@ async def send_commands(tv_addr, keys, delay = 1):
                 for key in iterate(keys):
                     cmd = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"%s","Option":"false","TypeOfRemote":"SendRemoteKey"}}' % key
                     await websocket.send(cmd)
-                    await asyncio.sleep(delay)
-
                 break
                 
     except asyncio.CancelledError:
