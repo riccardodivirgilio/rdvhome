@@ -63,7 +63,7 @@ class SamsungSmartTV(Switch):
             self.on = on
         return await self.send(on = self.on, allow_on = self.on)
 
-    async def watch(self, pool_every = 10, **opts):
+    async def watch(self, pool_every = 15, **opts):
 
         while True:
             on = await self._check_on(**opts)
