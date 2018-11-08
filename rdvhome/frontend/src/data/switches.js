@@ -8,7 +8,7 @@ export default {
     },
     "spotlight_kitchen": {
         "id": "spotlight_kitchen",
-        "name": "Cucina",
+        "name": "Cucina Luce",
         "icon": "\ud83c\udf7d",
         "ordering": 2,
         "allow_visibility": true
@@ -22,7 +22,7 @@ export default {
     },
     "spotlight_living_room": {
         "id": "spotlight_living_room",
-        "name": "Salone",
+        "name": "Salone Luce",
         "icon": "\ud83d\udecb",
         "ordering": 4,
         "allow_visibility": true
@@ -34,109 +34,116 @@ export default {
         "ordering": 5,
         "allow_visibility": true
     },
-    "spotlight_tv": {
-        "id": "spotlight_tv",
+    "tv": {
+        "id": "tv",
         "name": "TV",
         "icon": "\ud83d\udcfa",
         "ordering": 6,
+        "allow_visibility": true
+    },
+    "spotlight_tv": {
+        "id": "spotlight_tv",
+        "name": "TV Luce",
+        "icon": "\ud83d\udcfa",
+        "ordering": 7,
         "allow_visibility": true
     },
     "led_tv": {
         "id": "led_tv",
         "name": "TV Led",
         "icon": "\ud83d\udcfa",
-        "ordering": 7,
+        "ordering": 8,
         "allow_visibility": true
     },
     "spotlight_entrance": {
         "id": "spotlight_entrance",
         "name": "Entrata",
         "icon": "\ud83d\udeaa",
-        "ordering": 8,
+        "ordering": 9,
         "allow_visibility": true
     },
     "led_bathroom_entrance": {
         "id": "led_bathroom_entrance",
         "name": "Entrata Bagno",
         "icon": "\ud83d\udebd",
-        "ordering": 9,
+        "ordering": 10,
         "allow_visibility": true
     },
     "spotlight_bedroom": {
         "id": "spotlight_bedroom",
-        "name": "Letto",
+        "name": "Letto Luce",
         "icon": "\ud83d\udecf",
-        "ordering": 10,
+        "ordering": 11,
         "allow_visibility": true
     },
     "led_bedroom": {
         "id": "led_bedroom",
         "name": "Letto Led",
         "icon": "\ud83d\udecf",
-        "ordering": 11,
+        "ordering": 12,
         "allow_visibility": true
     },
     "led_bathroom_bedroom": {
         "id": "led_bathroom_bedroom",
         "name": "Bagno Letto",
         "icon": "\ud83d\udebd",
-        "ordering": 12,
+        "ordering": 13,
         "allow_visibility": true
     },
     "spotlight_room": {
         "id": "spotlight_room",
-        "name": "Studio",
+        "name": "Studio Luce",
         "icon": "\ud83d\udcda",
-        "ordering": 13,
+        "ordering": 14,
         "allow_visibility": true
     },
     "usa": {
         "id": "usa",
         "name": "USA",
         "icon": "\ud83c\uddfa\ud83c\uddf8",
-        "ordering": 17,
+        "ordering": 18,
         "allow_visibility": true
     },
     "natural": {
         "id": "natural",
         "name": "Naturale",
         "icon": "\ud83c\udf1e",
-        "ordering": 18,
+        "ordering": 19,
         "allow_visibility": true
     },
     "artic": {
         "id": "artic",
         "name": "Artic",
         "icon": "\u26c4",
-        "ordering": 19,
+        "ordering": 20,
         "allow_visibility": true
     },
     "random": {
         "id": "random",
         "name": "Random",
         "icon": "\u2753",
-        "ordering": 20,
+        "ordering": 21,
         "allow_visibility": true
     },
     "loop": {
         "id": "loop",
         "name": "Random Loop",
         "icon": "\u267e\ufe0f",
-        "ordering": 21,
+        "ordering": 22,
         "allow_visibility": true
     },
     "hloop": {
         "id": "hloop",
         "name": "Random Hipster Loop",
         "icon": "\ud83e\udd13",
-        "ordering": 22,
+        "ordering": 23,
         "allow_visibility": true
     },
     "disco": {
         "id": "disco",
         "name": "Disco",
         "icon": "\ud83c\udf10",
-        "ordering": 23,
+        "ordering": 24,
         "allow_visibility": true
     }
 }

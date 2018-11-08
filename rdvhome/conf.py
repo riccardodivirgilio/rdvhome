@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.utils.datastructures import data
-
 import asyncio
+
+from rpy.functions.datastructures import data
 
 loop = asyncio.get_event_loop()
 
@@ -29,6 +29,7 @@ settings = data(
         'base36':None,
         'pyqrcode':None,
         'hap-python': None,
+        'rpy': None,
         #'websockets': None
     }
 )

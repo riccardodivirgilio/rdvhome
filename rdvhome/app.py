@@ -2,26 +2,26 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import asyncio
+import logging
+import sys
+from operator import methodcaller
+
+import aiohttp
 from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPForbidden, HTTPNotFound
 from aiohttp.web_fileresponse import FileResponse
 
-from operator import methodcaller
-
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.switches import switches
-from rdvhome.utils.async import run_all
 from rdvhome.utils.colors import HSB, to_color
-from rdvhome.utils.decorators import to_data
-from rdvhome.utils.importutils import module_path
 from rdvhome.utils.json import dumps
+from rpy.functions.async import run_all
+from rpy.functions.decorators import to_data
+from rpy.functions.importutils import module_path
 
-import aiohttp
-import asyncio
-import logging
-import sys
 
 @web.middleware
 async def server_error(request, handler):

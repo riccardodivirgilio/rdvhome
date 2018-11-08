@@ -2,17 +2,17 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import six
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_SWITCH
 
 from rdvhome.switches.events import EventStream
-from rdvhome.utils.async import run_all, wait_all
 from rdvhome.utils.colors import to_color
-from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import to_data
-from rdvhome.utils.functional import iterate
+from rpy.functions.async import run_all, wait_all
+from rpy.functions.datastructures import data
+from rpy.functions.decorators import to_data
+from rpy.functions.functional import iterate
 
-import six
 
 def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False, visibility = True):
     return data(
@@ -84,9 +84,6 @@ class Switch(EventStream):
     def create_homekit_accessory(self, driver):
         if self.homekit_class:
             return self.homekit_class(driver = driver, switch = self)
-
-    async def watch_switch(self):
-        pass
 
     @to_data
     def serialize(self, on = None, color = None, intensity = None, full = True, **opts):

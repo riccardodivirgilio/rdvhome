@@ -3,7 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.switches import switches
-from rdvhome.utils.datastructures import data
+from rpy.functions.datastructures import data
+
 
 def api_response(status = 200, **opts):
     return data(

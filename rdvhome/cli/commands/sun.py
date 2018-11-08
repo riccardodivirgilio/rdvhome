@@ -1,9 +1,11 @@
 
 
-from astral import Location, Astral, SUN_RISING
+from __future__ import absolute_import, print_function, unicode_literals
+
+import datetime
 
 import pytz
-import datetime
+from astral import SUN_RISING, Astral
 
 #KITCHEN WINDOW ->  2 gradi circa
 #KITCHEN LIVING ->  6 gradi circa

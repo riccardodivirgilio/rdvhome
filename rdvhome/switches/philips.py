@@ -2,20 +2,24 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from pyhap.const import CATEGORY_LIGHTBULB
-
-from rdvhome.switches import switches
-from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
-from rdvhome.utils import json
-from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, HSB, philips_to_color, to_color
-from rdvhome.utils.datastructures import data
-from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.keystore import KeyStore
-
-import aiohttp
 import asyncio
 import time
 import traceback
+
+import aiohttp
+from pyhap.const import CATEGORY_LIGHTBULB
+
+from rdvhome.switches import switches
+from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
+from rdvhome.utils import json
+from rdvhome.utils.colors import (
+    HSB, color_to_homekit, color_to_philips, homekit_to_color,
+    philips_to_color, to_color
+)
+from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.keystore import KeyStore
+from rpy.functions.datastructures import data
+
 
 def remove_none(**d):
     return d.__class__(
@@ -237,6 +241,8 @@ class Light(PhilipsBase):
         return await self.send(**defaults)
 
     async def switch(self, on = None, color = None):
+
+        print('stick', on, color)
 
         if on is not None and self.gpio_relay:
             if not on == await self.is_on():

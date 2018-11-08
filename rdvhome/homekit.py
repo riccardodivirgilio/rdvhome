@@ -2,16 +2,16 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import asyncio
+import logging
+
 from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap.const import CATEGORY_LIGHTBULB
 
 from rdvhome.switches import switches
 from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.importutils import module_path
-
-import asyncio
-import logging
+from rpy.functions.importutils import module_path
 
 """An example of how to setup and start an Accessory.
 This is:

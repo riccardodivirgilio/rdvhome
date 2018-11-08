@@ -2,15 +2,16 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from colour import Color
-
-from rdvhome.utils.colors import HSB, to_color
-from rdvhome.utils.datastructures import data
-
 import datetime
 import decimal
 import json
 import types
+
+from colour import Color
+
+from rdvhome.utils.colors import HSB, to_color
+from rpy.functions.datastructures import data
+
 
 class JSONEncoder(json.JSONEncoder):
 

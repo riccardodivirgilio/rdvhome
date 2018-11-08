@@ -2,11 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.switches.base import capabilities, Switch
-from rdvhome.utils.async import run_all
-from rdvhome.utils.gpio import get_gpio
-
 import asyncio
+
+from rdvhome.switches.base import Switch, capabilities
+from rdvhome.utils.gpio import get_gpio
+from rpy.functions.async import run_all
+
 
 class Window(Switch):
 

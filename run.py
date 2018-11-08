@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import has_gpio
-from rdvhome.utils.decorators import to_data
+from rpy.functions.decorators import to_data
 
 import random
 import uuid
@@ -35,6 +35,11 @@ def run_rdv_command_line():
             yield 'username',  "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
             yield 'ipaddress', "192.168.1.179"
 
+        yield from opts.items()
+
+    @to_data
+    def tv(**opts):
+        yield 'class_path', 'rdvhome.switches.tv.SamsungSmartTV'
         yield from opts.items()
 
     @to_data
@@ -88,7 +93,7 @@ def run_rdv_command_line():
             ),
             light(
                 id = 'spotlight_kitchen', 
-                name = 'Cucina',  
+                name = 'Cucina Luce',  
                 icon = "🍽", 
                 alias = [], 
                 gpio_relay = 24,
@@ -103,7 +108,7 @@ def run_rdv_command_line():
             ),
             light(
                 id = 'spotlight_living_room', 
-                name = 'Salone', 
+                name = 'Salone Luce', 
                 icon = "🛋", 
                 alias = [], 
                 gpio_relay = 23,
@@ -118,9 +123,16 @@ def run_rdv_command_line():
                 gpio_status = 4,
                 alias = ['default']
             ),
+            tv(
+                id = 'tv',
+                name = 'TV',
+                icon = "📺",
+                alias = [],
+                ipaddress = '192.168.1.227'
+            ),
             light(
                 id = 'spotlight_tv', 
-                name = 'TV',     
+                name = 'TV Luce',     
                 icon = "📺", 
                 alias = [], 
                 gpio_relay = 15,
@@ -152,7 +164,7 @@ def run_rdv_command_line():
             ),
             light(
                 id = 'spotlight_bedroom', 
-                name = 'Letto',  
+                name = 'Letto Luce',  
                 icon = "🛏", 
                 alias = [], 
                 gpio_relay = 21,
@@ -176,7 +188,7 @@ def run_rdv_command_line():
             ),
             light(
                 id = 'spotlight_room', 
-                name = 'Studio',  
+                name = 'Studio Luce',  
                 icon = "📚", 
                 alias = [], 
                 gpio_relay = 16,

@@ -2,19 +2,20 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import signal
+
 from aiohttp import web
 
 from rdvhome.app import app
-from rdvhome.cli.utils import SimpleCommand
 from rdvhome.conf import settings
 from rdvhome.homekit import driver
 from rdvhome.switches import switches
-from rdvhome.utils.async import run_all
-from rdvhome.utils.process import system_open
 from rdvhome.utils.json import dumps
-from rdvhome.utils.importutils import module_path
+from rpy.cli.utils import SimpleCommand
+from rpy.functions.async import run_all
+from rpy.functions.importutils import module_path
+from rpy.functions.process import system_open
 
-import signal
 
 async def log(event):
     print(event.id, event.get('on', None) and 'on' or 'off', event.get('color', None) or '')

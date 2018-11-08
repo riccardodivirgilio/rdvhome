@@ -2,14 +2,14 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from colour import Color
-
-from rdvhome.utils.datastructures import data
-from rdvhome.utils.decorators import to_data
-from rdvhome.utils.functional import identity
-
 import math
 import random
+
+from colour import Color
+
+from rpy.functions.datastructures import data
+from rpy.functions.decorators import to_data
+from rpy.functions.functional import identity
 
 PHILIPS_RANGE = data(
     hue        = 65535,
