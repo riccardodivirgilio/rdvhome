@@ -22,6 +22,8 @@ async def send_commands(tv_addr, keys, delay = 1):
                     cmd = '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"%s","Option":"false","TypeOfRemote":"SendRemoteKey"}}' % key
                     await websocket.send(cmd)
                     await asyncio.sleep(delay)
+
+                break
                 
     except asyncio.CancelledError:
         await websocket.close()
