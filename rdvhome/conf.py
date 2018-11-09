@@ -29,7 +29,7 @@ settings = data(
         'base36':None,
         'pyqrcode':None,
         'hap-python': None,
-        'python-rpy': None,
+        'python-rpy': '1.0.6',
         'websockets': None
     }
 )
