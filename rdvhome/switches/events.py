@@ -7,7 +7,6 @@ from aioreactive.core import subscribe as _subscribe
 
 
 class EventStream(AsyncStream):
-
     def subscribe(self, func):
         return subscribe(self, func)
 
@@ -17,6 +16,7 @@ class EventStream(AsyncStream):
     async def send(self, event):
         await self.asend(event)
         return event
+
 
 def subscribe(observable, func):
     return _subscribe(observable, AsyncAnonymousObserver(func))

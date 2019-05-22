@@ -14,7 +14,6 @@ from rpy.functions.datastructures import data
 
 
 class JSONEncoder(json.JSONEncoder):
-
     def default(self, obj):
         if isinstance(obj, Color):
             return to_color(obj).serialize()
@@ -29,14 +28,18 @@ class JSONEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, obj)
 
-def dump(obj, f, indent = 4):
-    return json.dump(obj, f, indent = indent, cls = JSONEncoder)
 
-def load(f, indent = 4):
-    return json.load(f, object_hook = data)
+def dump(obj, f, indent=4):
+    return json.dump(obj, f, indent=indent, cls=JSONEncoder)
 
-def dumps(obj, indent = 4):
-    return json.dumps(obj, indent = indent, cls = JSONEncoder)
+
+def load(f, indent=4):
+    return json.load(f, object_hook=data)
+
+
+def dumps(obj, indent=4):
+    return json.dumps(obj, indent=indent, cls=JSONEncoder)
+
 
 def loads(obj):
-    return json.loads(obj, object_hook = data)
+    return json.loads(obj, object_hook=data)

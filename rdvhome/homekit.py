@@ -22,6 +22,7 @@ This is:
 
 logging.basicConfig(level=logging.INFO)
 
+
 class LightBulb(Accessory):
 
     category = CATEGORY_LIGHTBULB
@@ -36,11 +37,8 @@ class LightBulb(Accessory):
     def __init__(self, *args, pin=11, **kwargs):
         super().__init__(*args, **kwargs)
 
-        serv_light = self.add_preload_service('Lightbulb')
-        self.char_on = serv_light.configure_char(
-            'On',
-            setter_callback = self.set_bulb
-        )
+        serv_light = self.add_preload_service("Lightbulb")
+        self.char_on = serv_light.configure_char("On", setter_callback=self.set_bulb)
 
         self.pin = pin
         self._gpio_setup(pin)
@@ -49,8 +47,8 @@ class LightBulb(Accessory):
         self.__dict__.update(state)
         self._gpio_setup(self.pin)
 
-    #@Accessory.run_at_interval(1)
-    #def run(self):
+    # @Accessory.run_at_interval(1)
+    # def run(self):
     #    self.char_on.set_value(random.randint(0, 1))
 
     def set_bulb(self, value):
@@ -66,27 +64,29 @@ class LightBulb(Accessory):
 
     def stop(self):
         super().stop()
-        #GPIO.cleanup()
+        # GPIO.cleanup()
+
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
-    bridge = Bridge(driver, get_gpio().is_debug and 'RdvTest' or 'RdvHome')
+    bridge = Bridge(driver, get_gpio().is_debug and "RdvTest" or "RdvHome")
 
     for switch in switches:
-        #bridge.add_accessory(LightBulb(driver, switch.name))
+        # bridge.add_accessory(LightBulb(driver, switch.name))
         accessory = switch.create_homekit_accessory(driver)
         if accessory:
             bridge.add_accessory(accessory)
 
     return bridge
 
+
 # Start the accessory on port 51826
 driver = AccessoryDriver(
-    port = 51826,
-    loop = asyncio.get_event_loop(),
-    persist_file = module_path('rdvhome', 'data', 'accessory.state'),
-    #pincode = b"000-00-000"
+    port=51826,
+    loop=asyncio.get_event_loop(),
+    persist_file=module_path("rdvhome", "data", "accessory.state"),
+    # pincode = b"000-00-000"
 )
 
 # Change `get_accessory` to `get_bridge` if you want to run a Bridge.
-driver.add_accessory(accessory = get_bridge(driver))
+driver.add_accessory(accessory=get_bridge(driver))

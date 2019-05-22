@@ -6,9 +6,8 @@ from rpy.cli.utils import SimpleCommand
 
 
 class Command(SimpleCommand):
-
     def add_arguments(self, parser):
-        parser.add_argument('args', nargs='*')
+        parser.add_argument("args", nargs="*")
 
     def handle(self, *args, **options):
 
@@ -31,14 +30,7 @@ class Command(SimpleCommand):
         if not args and default:
             functions = [default.name]
         elif args:
-            functions = tuple(
-                filter(
-                    None, [
-                        to_func(func)
-                        for func in args
-                    ]
-                )
-            )
+            functions = tuple(filter(None, [to_func(func) for func in args]))
 
         if to_execute and functions:
             for func, args in functions:
