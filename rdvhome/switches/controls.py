@@ -5,11 +5,12 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import random
 
+from rpy.functions.asyncio import run_all, wait_all
+from rpy.functions.functional import is_iterable
+
 from rdvhome.switches import switches
 from rdvhome.switches.base import Switch, capabilities
 from rdvhome.utils.colors import random_color, to_color
-from rpy.functions.async import run_all, wait_all
-from rpy.functions.functional import is_iterable
 
 
 class ControlSwitch(Switch):

@@ -5,13 +5,13 @@ from __future__ import absolute_import, print_function, unicode_literals
 import six
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_SWITCH
-
-from rdvhome.switches.events import EventStream
-from rdvhome.utils.colors import to_color
-from rpy.functions.async import run_all, wait_all
+from rpy.functions.asyncio import run_all, wait_all
 from rpy.functions.datastructures import data
 from rpy.functions.decorators import to_data
 from rpy.functions.functional import iterate
+
+from rdvhome.switches.events import EventStream
+from rdvhome.utils.colors import to_color
 
 
 def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False, visibility = True):

@@ -6,10 +6,10 @@ import asyncio
 
 import aiohttp
 import websockets
+from rpy.functions.functional import iterate
 
 from rdvhome.switches.base import Switch, capabilities
 from rdvhome.utils import json
-from rpy.functions.functional import iterate
 
 
 async def send_commands(tv_addr, keys):

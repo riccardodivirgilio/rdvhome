@@ -5,9 +5,9 @@ from __future__ import absolute_import, print_function, unicode_literals
 import os
 
 import aiofiles
+from rpy.functions.importutils import module_path
 
 from rdvhome.utils import json
-from rpy.functions.importutils import module_path
 
 
 class KeyStore(object):

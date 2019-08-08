@@ -2,9 +2,10 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rdvhome.api import switch
 from rpy.cli.utils import SimpleCommand
-from rpy.functions.async import syncronous_wait_all
+from rpy.functions.asyncio import syncronous_wait_all
+
+from rdvhome.api import switch
 
 
 class Command(SimpleCommand):

@@ -8,21 +8,17 @@ import traceback
 
 import aiohttp
 from pyhap.const import CATEGORY_LIGHTBULB
+from rpy.functions.datastructures import data
 
 from rdvhome.switches import switches
 from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
 from rdvhome.utils import json
 from rdvhome.utils.colors import (
-    HSB,
-    color_to_homekit,
-    color_to_philips,
-    homekit_to_color,
-    philips_to_color,
-    to_color,
+    HSB, color_to_homekit, color_to_philips, homekit_to_color,
+    philips_to_color, to_color
 )
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
-from rpy.functions.datastructures import data
 
 
 def remove_none(**d):

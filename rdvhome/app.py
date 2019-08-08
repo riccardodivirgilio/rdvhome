@@ -12,15 +12,15 @@ from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPForbidden, HTTPNotFound
 from aiohttp.web_fileresponse import FileResponse
+from rpy.functions.asyncio import run_all
+from rpy.functions.decorators import to_data
+from rpy.functions.importutils import module_path
 
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.switches import switches
 from rdvhome.utils.colors import HSB, to_color
 from rdvhome.utils.json import dumps
-from rpy.functions.async import run_all
-from rpy.functions.decorators import to_data
-from rpy.functions.importutils import module_path
 
 
 @web.middleware

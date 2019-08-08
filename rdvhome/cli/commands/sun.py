@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import datetime
 
 import pytz
+
 from astral import SUN_RISING, Astral
 
 # KITCHEN WINDOW ->  2 gradi circa

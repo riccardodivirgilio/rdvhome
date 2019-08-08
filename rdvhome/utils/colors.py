@@ -6,7 +6,6 @@ import math
 import random
 
 from colour import Color
-
 from rpy.functions.datastructures import data
 from rpy.functions.decorators import to_data
 from rpy.functions.functional import identity

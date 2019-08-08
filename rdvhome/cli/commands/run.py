@@ -5,16 +5,16 @@ from __future__ import absolute_import, print_function, unicode_literals
 import signal
 
 from aiohttp import web
+from rpy.cli.utils import SimpleCommand
+from rpy.functions.asyncio import run_all
+from rpy.functions.importutils import module_path
+from rpy.functions.process import system_open
 
 from rdvhome.app import app
 from rdvhome.conf import settings
 from rdvhome.homekit import driver
 from rdvhome.switches import switches
 from rdvhome.utils.json import dumps
-from rpy.cli.utils import SimpleCommand
-from rpy.functions.async import run_all
-from rpy.functions.importutils import module_path
-from rpy.functions.process import system_open
 
 
 async def log(event):

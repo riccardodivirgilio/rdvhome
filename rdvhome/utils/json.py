@@ -8,9 +8,9 @@ import json
 import types
 
 from colour import Color
+from rpy.functions.datastructures import data
 
 from rdvhome.utils.colors import HSB, to_color
-from rpy.functions.datastructures import data
 
 
 class JSONEncoder(json.JSONEncoder):
