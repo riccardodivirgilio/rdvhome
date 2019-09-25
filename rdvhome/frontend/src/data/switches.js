@@ -8,28 +8,28 @@ export default {
     },
     "spotlight_kitchen": {
         "id": "spotlight_kitchen",
-        "name": "Cucina Luce",
+        "name": "Kitchen Light",
         "icon": "\ud83c\udf7d",
         "ordering": 2,
         "allow_visibility": true
     },
     "led_kitchen": {
         "id": "led_kitchen",
-        "name": "Cucina Led",
+        "name": "Kitchen Led",
         "icon": "\ud83c\udf7d",
         "ordering": 3,
         "allow_visibility": true
     },
     "spotlight_living_room": {
         "id": "spotlight_living_room",
-        "name": "Salone Luce",
+        "name": "Living Room Light",
         "icon": "\ud83d\udecb",
         "ordering": 4,
         "allow_visibility": true
     },
     "led_living_room": {
         "id": "led_living_room",
-        "name": "Salone Led",
+        "name": "Living Room Led",
         "icon": "\ud83d\udecb",
         "ordering": 5,
         "allow_visibility": true
@@ -43,7 +43,7 @@ export default {
     },
     "spotlight_tv": {
         "id": "spotlight_tv",
-        "name": "TV Luce",
+        "name": "TV Light",
         "icon": "\ud83d\udcfa",
         "ordering": 7,
         "allow_visibility": true
@@ -57,42 +57,42 @@ export default {
     },
     "spotlight_entrance": {
         "id": "spotlight_entrance",
-        "name": "Entrata",
+        "name": "Entrance Light",
         "icon": "\ud83d\udeaa",
         "ordering": 9,
         "allow_visibility": true
     },
     "led_bathroom_entrance": {
         "id": "led_bathroom_entrance",
-        "name": "Entrata Bagno",
+        "name": "Entrance Bathroom",
         "icon": "\ud83d\udebd",
         "ordering": 10,
         "allow_visibility": true
     },
     "spotlight_bedroom": {
         "id": "spotlight_bedroom",
-        "name": "Letto Luce",
+        "name": "Bedroom Light",
         "icon": "\ud83d\udecf",
         "ordering": 11,
         "allow_visibility": true
     },
     "led_bedroom": {
         "id": "led_bedroom",
-        "name": "Letto Led",
+        "name": "Bedroom Led",
         "icon": "\ud83d\udecf",
         "ordering": 12,
         "allow_visibility": true
     },
     "led_bathroom_bedroom": {
         "id": "led_bathroom_bedroom",
-        "name": "Bagno Letto",
+        "name": "Bedroom Bathroom",
         "icon": "\ud83d\udebd",
         "ordering": 13,
         "allow_visibility": true
     },
     "spotlight_room": {
         "id": "spotlight_room",
-        "name": "Studio Luce",
+        "name": "Studio Light",
         "icon": "\ud83d\udcda",
         "ordering": 14,
         "allow_visibility": true
@@ -100,7 +100,7 @@ export default {
     "lamp_room": {
         "id": "lamp_room",
         "name": "Studio Lamp",
-        "icon": "\ud83c\udf7d",
+        "icon": "\ud83d\udca1",
         "ordering": 15,
         "allow_visibility": true
     },
