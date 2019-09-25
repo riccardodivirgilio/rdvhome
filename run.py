@@ -89,7 +89,7 @@ def run_rdv_command_line():
             philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
             light(
                 id="spotlight_kitchen",
-                name="Cucina Luce",
+                name="Kitchen Light",
                 icon="🍽",
                 alias=[],
                 gpio_relay=24,
@@ -97,14 +97,14 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_kitchen",
-                name="Cucina Led",
+                name="Kitchen Led",
                 icon="🍽",
                 philips_id=6,
                 alias=["default"],
             ),
             light(
                 id="spotlight_living_room",
-                name="Salone Luce",
+                name="Living Room Light",
                 icon="🛋",
                 alias=[],
                 gpio_relay=23,
@@ -112,7 +112,7 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_living_room",
-                name="Salone Led",
+                name="Living Room Led",
                 icon="🛋",
                 philips_id=1,
                 gpio_relay=20,
@@ -122,7 +122,7 @@ def run_rdv_command_line():
             tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.227"),
             light(
                 id="spotlight_tv",
-                name="TV Luce",
+                name="TV Light",
                 icon="📺",
                 alias=[],
                 gpio_relay=15,
@@ -139,7 +139,7 @@ def run_rdv_command_line():
             ),
             light(
                 id="spotlight_entrance",
-                name="Entrata",
+                name="Entrance Light",
                 icon="🚪",
                 alias=[],
                 gpio_relay=18,
@@ -147,14 +147,14 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_bathroom_entrance",
-                name="Entrata Bagno",
+                name="Entrance Bathroom",
                 icon="🚽",
                 alias=[],
                 philips_id=5,
             ),
             light(
                 id="spotlight_bedroom",
-                name="Letto Luce",
+                name="Bedroom Light",
                 icon="🛏",
                 alias=[],
                 gpio_relay=21,
@@ -162,7 +162,7 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_bedroom",
-                name="Letto Led",
+                name="Bedroom Led",
                 icon="🛏",
                 philips_id=2,
                 gpio_relay=14,
@@ -171,14 +171,14 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_bathroom_bedroom",
-                name="Bagno Letto",
+                name="Bedroom Bathroom",
                 icon="🚽",
                 philips_id=4,
                 alias=[],
             ),
             light(
                 id="spotlight_room",
-                name="Studio Luce",
+                name="Studio Light",
                 icon="📚",
                 alias=[],
                 gpio_relay=16,
@@ -193,20 +193,20 @@ def run_rdv_command_line():
             ),
             window(
                 id="window_kitchen",
-                name="Finestra Cucina",
+                name="Kitchen Window",
                 gpio_up=6,
                 gpio_down=13,
                 icon="☀️",
             ),
             window(
                 id="window_living_room",
-                name="Finestra Salone",
+                name="Living Room Window",
                 gpio_up=11,
                 gpio_down=5,
                 icon="☀️",
             ),
             window(
-                id="window_tv", name="Finestra Tv", gpio_up=22, gpio_down=27, icon="☀️"
+                id="window_tv", name="TV Window", gpio_up=22, gpio_down=27, icon="☀️"
             ),
             control(
                 id="usa",
