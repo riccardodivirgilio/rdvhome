@@ -97,53 +97,60 @@ export default {
         "ordering": 14,
         "allow_visibility": true
     },
+    "lamp_room": {
+        "id": "lamp_room",
+        "name": "Studio Lamp",
+        "icon": "\ud83c\udf7d",
+        "ordering": 15,
+        "allow_visibility": true
+    },
     "usa": {
         "id": "usa",
         "name": "USA",
         "icon": "\ud83c\uddfa\ud83c\uddf8",
-        "ordering": 18,
+        "ordering": 19,
         "allow_visibility": true
     },
     "natural": {
         "id": "natural",
         "name": "Naturale",
         "icon": "\ud83c\udf1e",
-        "ordering": 19,
+        "ordering": 20,
         "allow_visibility": true
     },
     "artic": {
         "id": "artic",
         "name": "Artic",
         "icon": "\u26c4",
-        "ordering": 20,
+        "ordering": 21,
         "allow_visibility": true
     },
     "random": {
         "id": "random",
         "name": "Random",
         "icon": "\u2753",
-        "ordering": 21,
+        "ordering": 22,
         "allow_visibility": true
     },
     "loop": {
         "id": "loop",
         "name": "Random Loop",
         "icon": "\u267e\ufe0f",
-        "ordering": 22,
+        "ordering": 23,
         "allow_visibility": true
     },
     "hloop": {
         "id": "hloop",
         "name": "Random Hipster Loop",
         "icon": "\ud83e\udd13",
-        "ordering": 23,
+        "ordering": 24,
         "allow_visibility": true
     },
     "disco": {
         "id": "disco",
         "name": "Disco",
         "icon": "\ud83c\udf10",
-        "ordering": 24,
+        "ordering": 25,
         "allow_visibility": true
     }
 }

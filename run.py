@@ -184,6 +184,13 @@ def run_rdv_command_line():
                 gpio_relay=16,
                 gpio_status=12,
             ),
+            light(
+                id="lamp_room",
+                name="Studio Lamp",
+                icon="💡",
+                philips_id=7,
+                alias=["default"],
+            ),
             window(
                 id="window_kitchen",
                 name="Finestra Cucina",
