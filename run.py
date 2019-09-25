@@ -147,7 +147,7 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_bathroom_entrance",
-                name="Entrance Bathroom",
+                name="Bathroom Entrance",
                 icon="🚽",
                 alias=[],
                 philips_id=5,
@@ -171,7 +171,7 @@ def run_rdv_command_line():
             ),
             light(
                 id="led_bathroom_bedroom",
-                name="Bedroom Bathroom",
+                name="Bathroom Bedroom",
                 icon="🚽",
                 philips_id=4,
                 alias=[],
