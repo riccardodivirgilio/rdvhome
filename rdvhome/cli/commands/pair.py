@@ -9,8 +9,7 @@ from rdvhome.homekit import driver
 
 class Command(SimpleCommand):
 
-    help = 'Pair homekit'
-
+    help = "Pair homekit"
 
     def handle(self, **opts):
 

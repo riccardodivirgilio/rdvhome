@@ -14,15 +14,23 @@ from rdvhome.switches.events import EventStream
 from rdvhome.utils.colors import to_color
 
 
-def capabilities(on = False, hue = False, saturation = False, brightness = False, direction = False, visibility = True):
+def capabilities(
+    on=False,
+    hue=False,
+    saturation=False,
+    brightness=False,
+    direction=False,
+    visibility=True,
+):
     return data(
-        allow_on         = on,
-        allow_hue        = hue,
-        allow_saturation = saturation,
-        allow_brightness = brightness,
-        allow_direction  = direction,
-        allow_visibility = visibility
+        allow_on=on,
+        allow_hue=hue,
+        allow_saturation=saturation,
+        allow_brightness=brightness,
+        allow_direction=direction,
+        allow_visibility=visibility,
     )
+
 
 class HomekitSwitch(Accessory):
 
@@ -30,31 +38,26 @@ class HomekitSwitch(Accessory):
 
     def __init__(self, driver, switch):
         super().__init__(
-            driver = driver,
-            display_name = switch.name,
-            #aid = abs(hash(switch.id))
+            driver=driver,
+            display_name=switch.name,
+            # aid = abs(hash(switch.id))
         )
         self.switch = switch
 
-        run_all(
-            self.switch.subscribe(self.on_event),
-            loop = self.driver.loop
-        )
+        run_all(self.switch.subscribe(self.on_event), loop=self.driver.loop)
 
         self.setup_services()
 
     def perform_switch(self, *args, **opts):
-        run_all(self.switch.switch(*args, **opts), loop = self.driver.loop)
+        run_all(self.switch.switch(*args, **opts), loop=self.driver.loop)
 
     def set_on(self, value):
         self.perform_switch(value)
 
     def setup_services(self):
-        service = self.add_preload_service('Switch')
+        service = self.add_preload_service("Switch")
         self.switch_service = service.configure_char(
-            'On',
-            setter_callback = self.set_on,
-            value = None
+            "On", setter_callback=self.set_on, value=None
         )
 
     async def on_event(self, event):
@@ -63,15 +66,16 @@ class HomekitSwitch(Accessory):
         except AttributeError:
             pass
 
+
 class Switch(EventStream):
 
-    kind = 'switch'
-    default_aliases = ['all']
-    default_capabilities = capabilities(on = True)
+    kind = "switch"
+    default_aliases = ["all"]
+    default_capabilities = capabilities(on=True)
 
     homekit_class = HomekitSwitch
 
-    def __init__(self, id, name = None, alias = (), ordering = None, icon = None):
+    def __init__(self, id, name=None, alias=(), ordering=None, icon=None):
         self.id = id
         self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
@@ -83,30 +87,30 @@ class Switch(EventStream):
 
     def create_homekit_accessory(self, driver):
         if self.homekit_class:
-            return self.homekit_class(driver = driver, switch = self)
+            return self.homekit_class(driver=driver, switch=self)
 
     @to_data
-    def serialize(self, on = None, color = None, intensity = None, full = True, **opts):
-        yield 'id',         self.id
+    def serialize(self, on=None, color=None, intensity=None, full=True, **opts):
+        yield "id", self.id
 
         if full:
-            yield 'name',       self.name
-            yield 'kind',       self.kind
-            yield 'icon',       self.icon
-            yield 'alias',      self.alias
-            yield 'ordering',   self.ordering
+            yield "name", self.name
+            yield "kind", self.kind
+            yield "icon", self.icon
+            yield "alias", self.alias
+            yield "ordering", self.ordering
 
             yield from self.capabilities.items()
 
         if on is not None:
-            yield 'on',  bool(on)
-            yield 'off', not bool(on)
+            yield "on", bool(on)
+            yield "off", not bool(on)
 
         if color is not None:
             yield from to_color(color).serialize().items()
 
         if intensity is not None:
-            yield 'intensity', intensity
+            yield "intensity", intensity
 
         yield from opts.items()
 
@@ -120,24 +124,18 @@ class Switch(EventStream):
         raise NotImplementedError
 
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, self.id)
+        return "<%s: %s>" % (self.__class__.__name__, self.id)
+
 
 class SwitchList(object):
-
     def __init__(self, switches):
         self.switches = switches
 
     async def subscribe(self, func):
-        return await wait_all(
-            switch.subscribe(func)
-            for switch in self
-        )
+        return await wait_all(switch.subscribe(func) for switch in self)
 
     async def watch(self):
-        return await wait_all(
-            switch.watch()
-            for switch in self
-        )
+        return await wait_all(switch.watch() for switch in self)
 
     def get_switches(self):
 
@@ -145,10 +143,7 @@ class SwitchList(object):
             self._switches = self._switches()
 
         if not isinstance(self._switches, dict):
-            self._switches = {
-                s.id: s
-                for s in iterate(self._switches)
-            }
+            self._switches = {s.id: s for s in iterate(self._switches)}
 
         return self._switches
 
@@ -175,11 +170,13 @@ class SwitchList(object):
     def copy(self, *args, **opts):
         return self.__class__(*args, **opts)
 
-    def filter(self, func = None):
+    def filter(self, func=None):
         if isinstance(func, six.string_types):
             return self.copy(filter(lambda switch: func in switch.alias, self))
         if isinstance(func, (list, tuple, dict)):
-            return self.copy(filter(lambda switch: any(f in switch.alias for f in func), self))
+            return self.copy(
+                filter(lambda switch: any(f in switch.alias for f in func), self)
+            )
         if isinstance(func, Switch):
             return self.copy([func])
         if func:

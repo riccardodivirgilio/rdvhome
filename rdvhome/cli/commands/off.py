@@ -10,11 +10,11 @@ from rdvhome.api import switch
 
 class Command(SimpleCommand):
 
-    help = 'Switch off the lights'
+    help = "Switch off the lights"
 
     def add_arguments(self, parser):
-        parser.add_argument('args', nargs='*')
+        parser.add_argument("args", nargs="*")
 
     def handle(self, *args):
-        for r in syncronous_wait_all(switch(args or 'all', on = False)):
-            print('off:', *sorted(r.switches.keys()))
+        for r in syncronous_wait_all(switch(args or "all", on=False)):
+            print("off:", *sorted(r.switches.keys()))
