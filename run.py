@@ -191,6 +191,13 @@ def run_rdv_command_line():
                 philips_id=7,
                 alias=["default"],
             ),
+            light(
+                id="led_room",
+                name="Studio Led",
+                icon="💡",
+                philips_id=8,
+                alias=["default"],
+            ),
             window(
                 id="window_kitchen",
                 name="Kitchen Window",
