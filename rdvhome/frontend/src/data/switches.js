@@ -111,6 +111,27 @@ export default {
         "ordering": 16,
         "allow_visibility": true
     },
+    "window_kitchen": {
+        "id": "window_kitchen",
+        "name": "Kitchen Window",
+        "icon": "\u2600\ufe0f",
+        "ordering": 17,
+        "allow_visibility": true
+    },
+    "window_living_room": {
+        "id": "window_living_room",
+        "name": "Living Room Window",
+        "icon": "\u2600\ufe0f",
+        "ordering": 18,
+        "allow_visibility": true
+    },
+    "window_tv": {
+        "id": "window_tv",
+        "name": "TV Window",
+        "icon": "\u2600\ufe0f",
+        "ordering": 19,
+        "allow_visibility": true
+    },
     "usa": {
         "id": "usa",
         "name": "USA",
