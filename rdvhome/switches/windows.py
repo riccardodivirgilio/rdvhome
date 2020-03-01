@@ -16,10 +16,10 @@ class Window(Switch):
 
     default_capabilities = capabilities(direction=True)
 
-    def __init__(self, id, gpio_up, gpio_down, **opts):
+    def __init__(self, id, gpio_power, gpio_direction, **opts):
 
-        self.gpio_up = gpio_up
-        self.gpio_down = gpio_down
+        self.gpio_power = gpio_power
+        self.gpio_direction = gpio_direction
 
         self.up = False
         self.down = False
@@ -36,8 +36,8 @@ class Window(Switch):
 
         self._gpio = get_gpio()
 
-        await self._gpio.setup_output(self.gpio_up)
-        await self._gpio.setup_output(self.gpio_down)
+        await self._gpio.setup_output(self.gpio_power)
+        await self._gpio.setup_output(self.gpio_direction)
 
         return self._gpio
 
@@ -51,8 +51,8 @@ class Window(Switch):
         if not direction:
             self.up = self.down = False
 
-            await gpio.output(self.gpio_up, high=True)
-            await gpio.output(self.gpio_down, high=True)
+            await gpio.output(self.gpio_power, high=True)
+            await gpio.output(self.gpio_direction, high=True)
 
         elif not getattr(self, direction, False):
 
@@ -61,33 +61,26 @@ class Window(Switch):
 
             self.up = self.down = False
 
-            if direction == "up":
-                to_activate = self.gpio_up
-                to_deactivate = self.gpio_down
-            elif direction == "down":
-                to_activate = self.gpio_down
-                to_deactivate = self.gpio_up
-            else:
-                raise ValueError("Wrong direction %s" % direction)
-
             setattr(self, direction, True)
 
             self._current_action = run_all(
-                self.perform_window_action(direction, to_activate, to_deactivate)
+                self.perform_window_action(direction)
             )
 
         return await self.send(up=self.up, down=self.down)
 
-    async def perform_window_action(self, direction, to_activate, to_deactivate):
+    async def perform_window_action(self, direction):
 
         gpio = await self.setup_gpio()
 
-        await gpio.output(to_deactivate, high=True)
-        await gpio.output(to_activate, high=False)
+        await gpio.output(self.gpio_power, high=False)
+        await gpio.output(self.gpio_direction, high=direction == "up")
 
         await asyncio.sleep(direction == "down" and 12 or 13)
 
-        await gpio.output(to_activate, high=True)
+        await gpio.output(self.gpio_power, high=False)
+        await gpio.output(self.gpio_direction, high=False)
+
         setattr(self, direction, False)
 
         await self.send(up=self.up, down=self.down)
