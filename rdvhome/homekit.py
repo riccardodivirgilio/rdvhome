@@ -22,6 +22,7 @@ This is:
 
 logging.basicConfig(level=logging.INFO)
 
+
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
     bridge = Bridge(driver, get_gpio().is_debug and "RdvTest" or "RdvHome")

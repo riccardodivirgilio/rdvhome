@@ -63,9 +63,7 @@ class Window(Switch):
 
             setattr(self, direction, True)
 
-            self._current_action = run_all(
-                self.perform_window_action(direction)
-            )
+            self._current_action = run_all(self.perform_window_action(direction))
 
         return await self.send(up=self.up, down=self.down)
 
