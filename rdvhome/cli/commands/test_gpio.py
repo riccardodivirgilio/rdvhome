@@ -16,28 +16,23 @@ RELAY1 = settings.RASPBERRY_RELAY1
 RELAY2 = settings.RASPBERRY_RELAY2
 INPUT = settings.RASPBERRY_INPUT
 
-
-def shuffle(iterable):
-    l = list(iterate(iterable))
-    random.shuffle(l)
-    return l
-
-
-async def relay(number=[RELAY2[5]], timing=0.1):
+async def relay(number=RELAY1, timing=0.2, timing_between=1):
 
     gpio = get_gpio()
 
-    for n in shuffle(number):
+    for n in iterate(iterable):
         await gpio.setup_output(n)
 
     # TURNING ON
 
-    for n in shuffle(number):
+    for n in iterate(iterable):
         print("RELAY %.2i on" % n)
         await gpio.output(n, high=False)
         await asyncio.sleep(timing)
 
-    for n in shuffle(number):
+    await asyncio.sleep(timing_between)
+
+    for n in iterate(iterable):
         print("RELAY %.2i off" % n)
         await gpio.output(n, high=True)
         await asyncio.sleep(timing)
