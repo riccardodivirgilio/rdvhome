@@ -22,51 +22,6 @@ This is:
 
 logging.basicConfig(level=logging.INFO)
 
-
-class LightBulb(Accessory):
-
-    category = CATEGORY_LIGHTBULB
-
-    @classmethod
-    def _gpio_setup(_cls, pin):
-        return
-        if GPIO.getmode() is None:
-            GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(pin, GPIO.OUT)
-
-    def __init__(self, *args, pin=11, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        serv_light = self.add_preload_service("Lightbulb")
-        self.char_on = serv_light.configure_char("On", setter_callback=self.set_bulb)
-
-        self.pin = pin
-        self._gpio_setup(pin)
-
-    def __setstate__(self, state):
-        self.__dict__.update(state)
-        self._gpio_setup(self.pin)
-
-    # @Accessory.run_at_interval(1)
-    # def run(self):
-    #    self.char_on.set_value(random.randint(0, 1))
-
-    def set_bulb(self, value):
-
-        print(value)
-
-        return
-
-        if value:
-            GPIO.output(self.pin, GPIO.HIGH)
-        else:
-            GPIO.output(self.pin, GPIO.LOW)
-
-    def stop(self):
-        super().stop()
-        # GPIO.cleanup()
-
-
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
     bridge = Bridge(driver, get_gpio().is_debug and "RdvTest" or "RdvHome")
