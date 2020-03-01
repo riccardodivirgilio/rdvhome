@@ -20,19 +20,19 @@ async def relay(number=RELAY1, timing=0.2, timing_between=1):
 
     gpio = get_gpio()
 
-    for n in iterate(iterable):
+    for n in iterate(number):
         await gpio.setup_output(n)
 
     # TURNING ON
 
-    for n in iterate(iterable):
+    for n in iterate(number):
         print("RELAY %.2i on" % n)
         await gpio.output(n, high=False)
         await asyncio.sleep(timing)
 
     await asyncio.sleep(timing_between)
 
-    for n in iterate(iterable):
+    for n in iterate(number):
         print("RELAY %.2i off" % n)
         await gpio.output(n, high=True)
         await asyncio.sleep(timing)
