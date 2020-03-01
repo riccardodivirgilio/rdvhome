@@ -73,8 +73,8 @@ class Window(Switch):
 
         gpio = await self.setup_gpio()
 
-        await gpio.output(self.gpio_power, high=False)
         await gpio.output(self.gpio_direction, high=direction == "up")
+        await gpio.output(self.gpio_power, high=False)
 
         await asyncio.sleep(direction == "down" and 12 or 13)
 
