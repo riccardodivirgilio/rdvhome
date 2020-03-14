@@ -15,15 +15,11 @@ from rdvhome.conf import settings
 
 class HomekitWindow(HomekitSwitch):
 
-    def __init__(self, direction, *args, **opts):
-        self.direction = direction
-        super().__init__(*args, **opts)
-
-    def display_name(self):
-        return '%s %s' % (self.switch.name, self.direction.title())
+    def switch_name(self):
+        return '%s %s' % (self.switch.name, self.event_name.title())
 
     def set_on(self, value):
-        return super().set_on(value and self.direction or 'stop')
+        return super().set_on(value and self.event_name or 'stop')
 
 class Window(Switch):
 
@@ -48,14 +44,16 @@ class Window(Switch):
         super().__init__(id, **opts)
 
     def create_homekit_accessory(self, driver):
-        yield self.homekit_class(driver=driver, switch=self, direction = 'up')
-        yield self.homekit_class(driver=driver, switch=self, direction = 'down')
+        yield self.homekit_class(driver=driver, switch=self, event_name = 'up')
+        yield self.homekit_class(driver=driver, switch=self, event_name = 'down')
 
     async def start(self):
         #on start we make sure gpio is all off
         await self.stop()
 
-    async def watch(self, interval=1, counters = {'up': 0, 'down': 0}):
+    async def watch(self, interval=1):
+
+        counters = {'up': 0, 'down': 0}
 
         while True:
 

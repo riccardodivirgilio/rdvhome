@@ -13,7 +13,6 @@ from rpy.functions.functional import iterate
 from rdvhome.switches.events import EventStream
 from rdvhome.utils.colors import to_color
 
-
 def capabilities(
     on=False,
     hue=False,
@@ -36,18 +35,20 @@ class HomekitSwitch(Accessory):
 
     category = CATEGORY_SWITCH
 
-    def __init__(self, driver, switch):
+    def __init__(self, driver, switch, event_name = 'on'):
 
         self.switch = switch
+        self.event_name = event_name
 
         super().__init__(
             driver=driver,
-            display_name=self.display_name(),
+            display_name=self.switch_name(),
+            #aid=random_aid(self.switch_id())
         )
         run_all(self.switch.subscribe(self.on_event), loop=self.driver.loop)
         self.setup_services()
 
-    def display_name(self):
+    def switch_name(self):
         return self.switch.name
 
     def perform_switch(self, *args, **opts):
@@ -64,8 +65,8 @@ class HomekitSwitch(Accessory):
 
     async def on_event(self, event):
         try:
-            self.switch_service.set_value(event.on)
-        except AttributeError:
+            self.switch_service.set_value(event[self.event_name])
+        except KeyError:
             pass
 
 
