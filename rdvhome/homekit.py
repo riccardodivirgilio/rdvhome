@@ -9,7 +9,7 @@ from pyhap.accessory import Accessory, Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from pyhap.const import CATEGORY_LIGHTBULB
 from rpy.functions.importutils import module_path
-
+from rpy.functions.functional import iterate
 from rdvhome.switches import switches
 from rdvhome.utils.gpio import get_gpio
 
@@ -29,8 +29,7 @@ def get_bridge(driver):
 
     for switch in switches:
         # bridge.add_accessory(LightBulb(driver, switch.name))
-        accessory = switch.create_homekit_accessory(driver)
-        if accessory:
+        for accessory in iterate(switch.create_homekit_accessory(driver) or ()):
             bridge.add_accessory(accessory)
 
     return bridge
