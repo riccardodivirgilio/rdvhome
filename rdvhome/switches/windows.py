@@ -20,8 +20,10 @@ class Window(Switch):
 
     default_capabilities = capabilities(direction=True)
 
-    timing_up = settings.DEBUG and 3 or 13
-    timing_down = settings.DEBUG and 3 or 12
+    timings = {
+        'up': settings.DEBUG and 4 or 13,
+        'down': settings.DEBUG and 4 or 12
+    }
 
     def __init__(self, id, gpio_power, gpio_direction, **opts):
 
@@ -30,13 +32,28 @@ class Window(Switch):
 
         self._gpio = None
 
-        self.store = KeyStore(prefix = 'window')
-
         super().__init__(id, **opts)
 
     async def start(self):
         #on start we make sure gpio is all off
-        await self.switch()
+        await self.stop()
+
+    async def watch(self, interval=1, counters = {'up': 0, 'down': 0}):
+
+        while True:
+
+            await asyncio.sleep(interval)
+
+            for direction, moving in (await self.direction()).items():
+
+                if moving:
+                    counters[direction] += interval
+                else:
+                    counters[direction] = 0
+
+                if counters[direction] >= self.timings[direction]:
+                    await self.stop()
+                    counters[direction] = 0
 
     async def setup_gpio(self):
 
@@ -65,42 +82,29 @@ class Window(Switch):
     async def status(self):
         return await self.send(** await self.direction())
 
+    async def stop(self):
+
+        gpio = await self.setup_gpio()
+
+        await gpio.output(self.gpio_power, high=True)
+        await gpio.output(self.gpio_direction, high=True)
+
+        return await self.status()
+
     async def switch(self, direction=None):
 
         gpio = await self.setup_gpio()
 
         if not direction:
-
-            await gpio.output(self.gpio_power, high=True)
-            await gpio.output(self.gpio_direction, high=True)
-
-            return await self.status()
+            return await self.stop()
 
         status = await self.direction()
 
         if not status[direction]:
-
-            id = str(uuid.uuid4())
-
-            await self.store.set(self.id, id)
 
             gpio = await self.setup_gpio()
 
             await gpio.output(self.gpio_direction, high=direction == "up")
             await gpio.output(self.gpio_power, high=False)
 
-            run_all(self.stop_window(direction, id))
-
         return await self.status()
-
-    async def stop_window(self, direction, id):
-
-        await asyncio.sleep(direction == "up" and self.timing_up or self.timing_down)
-
-        if id == await self.store.get(self.id, id):
-            gpio = await self.setup_gpio()
-
-            await gpio.output(self.gpio_power, high=True)
-            await gpio.output(self.gpio_direction, high=True)
-
-            return await self.status()
