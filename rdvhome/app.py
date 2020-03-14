@@ -185,7 +185,7 @@ async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
 
-@url("/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}", name="on")
+@url("/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off|up|down|stop)}", name="on")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 

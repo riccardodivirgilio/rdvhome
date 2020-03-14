@@ -8,6 +8,10 @@ from rpy.functions.asyncio import run_all
 
 from rdvhome.switches.base import Switch, capabilities
 from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.keystore import KeyStore
+import uuid
+
+from rdvhome.conf import settings
 
 
 class Window(Switch):
@@ -16,18 +20,23 @@ class Window(Switch):
 
     default_capabilities = capabilities(direction=True)
 
+    timing_up = settings.DEBUG and 3 or 13
+    timing_down = settings.DEBUG and 3 or 12
+
     def __init__(self, id, gpio_power, gpio_direction, **opts):
 
         self.gpio_power = gpio_power
         self.gpio_direction = gpio_direction
 
-        self.up = False
-        self.down = False
-
         self._gpio = None
-        self._current_action = None
+
+        self.store = KeyStore(prefix = 'window')
 
         super().__init__(id, **opts)
+
+    async def start(self):
+        #on start we make sure gpio is all off
+        await self.switch()
 
     async def setup_gpio(self):
 
@@ -41,44 +50,57 @@ class Window(Switch):
 
         return self._gpio
 
+    async def direction(self):
+
+        gpio = await self.setup_gpio()
+
+        power_off = await gpio.input(self.gpio_power)
+        going_up = await gpio.input(self.gpio_direction)
+
+        return {
+            'up': bool(not power_off and going_up),
+            'down': bool(not power_off and not going_up),
+        }
+
     async def status(self):
-        return await self.send(up=self.up, down=self.down)
+        return await self.send(** await self.direction())
 
     async def switch(self, direction=None):
 
         gpio = await self.setup_gpio()
 
         if not direction:
-            self.up = self.down = False
 
             await gpio.output(self.gpio_power, high=True)
             await gpio.output(self.gpio_direction, high=True)
 
-        elif not getattr(self, direction, False):
+            return await self.status()
 
-            if self._current_action:
-                self._current_action.cancel()
+        status = await self.direction()
 
-            self.up = self.down = False
+        if not status[direction]:
 
-            setattr(self, direction, True)
+            id = str(uuid.uuid4())
 
-            self._current_action = run_all(self.perform_window_action(direction))
+            await self.store.set(self.id, id)
 
-        return await self.send(up=self.up, down=self.down)
+            gpio = await self.setup_gpio()
 
-    async def perform_window_action(self, direction):
+            await gpio.output(self.gpio_direction, high=direction == "up")
+            await gpio.output(self.gpio_power, high=False)
 
-        gpio = await self.setup_gpio()
+            run_all(self.stop_window(direction, id))
 
-        await gpio.output(self.gpio_direction, high=direction == "up")
-        await gpio.output(self.gpio_power, high=False)
+        return await self.status()
 
-        await asyncio.sleep(direction == "up" and 13 or 12)
+    async def stop_window(self, direction, id):
 
-        await gpio.output(self.gpio_power, high=True)
-        await gpio.output(self.gpio_direction, high=True)
+        await asyncio.sleep(direction == "up" and self.timing_up or self.timing_down)
 
-        setattr(self, direction, False)
+        if id == await self.store.get(self.id, id):
+            gpio = await self.setup_gpio()
 
-        await self.send(up=self.up, down=self.down)
+            await gpio.output(self.gpio_power, high=True)
+            await gpio.output(self.gpio_direction, high=True)
+
+            return await self.status()

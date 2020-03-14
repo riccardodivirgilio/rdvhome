@@ -68,7 +68,7 @@ class Command(SimpleCommand):
 
         run_all(
             # switches.subscribe(log),
-            switches.watch()
+            (switches.watch(), switches.start())
         )
 
         if auto_open:

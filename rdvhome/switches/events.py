@@ -10,6 +10,9 @@ class EventStream(AsyncStream):
     def subscribe(self, func):
         return subscribe(self, func)
 
+    async def start(self):
+        pass
+
     async def watch(self):
         pass
 

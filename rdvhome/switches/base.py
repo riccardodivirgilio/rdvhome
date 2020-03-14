@@ -137,6 +137,9 @@ class SwitchList(object):
     async def watch(self):
         return await wait_all(switch.watch() for switch in self)
 
+    async def start(self):
+        return await wait_all(switch.start() for switch in self)
+
     def get_switches(self):
 
         if callable(self._switches):
