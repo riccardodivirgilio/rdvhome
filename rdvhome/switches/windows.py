@@ -19,6 +19,9 @@ class HomekitWindow(HomekitSwitch):
         self.direction = direction
         super().__init__(*args, **opts)
 
+    def display_name(self):
+        return '%s %s' % (self.switch.name, self.direction.title())
+
     def set_on(self, value):
         return super().set_on(value and self.direction or 'stop')
 

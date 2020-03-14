@@ -37,16 +37,18 @@ class HomekitSwitch(Accessory):
     category = CATEGORY_SWITCH
 
     def __init__(self, driver, switch):
-        super().__init__(
-            driver=driver,
-            display_name=switch.name,
-            # aid = abs(hash(switch.id))
-        )
+
         self.switch = switch
 
+        super().__init__(
+            driver=driver,
+            display_name=self.display_name(),
+        )
         run_all(self.switch.subscribe(self.on_event), loop=self.driver.loop)
-
         self.setup_services()
+
+    def display_name(self):
+        return self.switch.name
 
     def perform_switch(self, *args, **opts):
         run_all(self.switch.switch(*args, **opts), loop=self.driver.loop)
