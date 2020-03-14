@@ -6,13 +6,21 @@ import asyncio
 
 from rpy.functions.asyncio import run_all
 
-from rdvhome.switches.base import Switch, capabilities
+from rdvhome.switches.base import Switch, capabilities, HomekitSwitch
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.keystore import KeyStore
 import uuid
 
 from rdvhome.conf import settings
 
+class HomekitWindow(HomekitSwitch):
+
+    def __init__(self, direction, *args, **opts):
+        self.direction = direction
+        super().__init__(*args, **opts)
+
+    def set_on(self, value):
+        return super().set_on(value and self.direction or 'stop')
 
 class Window(Switch):
 
@@ -25,6 +33,8 @@ class Window(Switch):
         'down': settings.DEBUG and 4 or 12
     }
 
+    homekit_class = HomekitWindow
+
     def __init__(self, id, gpio_power, gpio_direction, **opts):
 
         self.gpio_power = gpio_power
@@ -33,6 +43,10 @@ class Window(Switch):
         self._gpio = None
 
         super().__init__(id, **opts)
+
+    def create_homekit_accessory(self, driver):
+        yield self.homekit_class(driver=driver, switch=self, direction = 'up')
+        yield self.homekit_class(driver=driver, switch=self, direction = 'down')
 
     async def start(self):
         #on start we make sure gpio is all off
@@ -95,7 +109,7 @@ class Window(Switch):
 
         gpio = await self.setup_gpio()
 
-        if not direction:
+        if not direction or direction == 'stop':
             return await self.stop()
 
         status = await self.direction()
