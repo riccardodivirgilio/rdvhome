@@ -5,11 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 import asyncio
 import logging
 
-from pyhap.accessory import Accessory, Bridge
+from pyhap.accessory import Bridge
 from pyhap.accessory_driver import AccessoryDriver
-from pyhap.const import CATEGORY_LIGHTBULB
-from rpy.functions.importutils import module_path
 from rpy.functions.functional import iterate
+from rpy.functions.importutils import module_path
+
 from rdvhome.switches import switches
 from rdvhome.utils.gpio import get_gpio
 

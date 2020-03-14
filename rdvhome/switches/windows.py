@@ -4,14 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import asyncio
 
-from rpy.functions.asyncio import run_all
-
-from rdvhome.switches.base import Switch, capabilities, HomekitSwitch
-from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.keystore import KeyStore
-import uuid
-
 from rdvhome.conf import settings
+from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
+from rdvhome.utils.gpio import get_gpio
+
 
 class HomekitWindow(HomekitSwitch):
 

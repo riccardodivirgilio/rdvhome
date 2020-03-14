@@ -13,6 +13,7 @@ from rpy.functions.functional import iterate
 from rdvhome.switches.events import EventStream
 from rdvhome.utils.colors import to_color
 
+
 def capabilities(
     on=False,
     hue=False,
