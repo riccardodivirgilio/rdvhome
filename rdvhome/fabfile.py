@@ -13,6 +13,26 @@ from fabric.main import main
 from fabtools import require
 from fabtools.supervisor import restart_process
 
+SERVICE_TEMPLATE = """
+[Unit]
+Description=My service
+After=network.target
+
+[Service]
+ExecStart=%(command)s
+WorkingDirectory=%(directory)s
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+"""
+
+def service(command, directory):
+    return SERVICE_TEMPLATE % {'command': command, 'directory': directory}
+
 
 class Device(object):
     def __init__(
@@ -31,12 +51,14 @@ RASPBERRY = Device(
     id="rasp",
     name="rdvpi.local",
     user="pi",
+    default_password="death4normals!"
 )
 
 DOORBELL = Device(
     id="doorbell",
     name="rdvdoorbell.local",
     user="pi",
+    default_password="death4normals!"
 )
 
 # env.passwords = {'pi@rdvpi.local:22': 'raspberry'}
@@ -94,17 +116,6 @@ def setup():
 
 @task
 @roles("lights")
-def supervisor():
-    require.supervisor.process(
-        "server",
-        command="python3.6 /home/pi/rdvhome/run.py run",
-        directory="/home/pi/rdvhome/",
-        user=env.user,
-    )
-
-
-@task
-@roles("lights")
 def run_command(cmd="test_gpio"):
     execute(deploy, restart=False)
     run("python3.6 /home/pi/rdvhome/run.py %s" % cmd)
@@ -112,7 +123,14 @@ def run_command(cmd="test_gpio"):
 
 @task
 @roles("lights")
-def deploy(restart=True, branch="master"):
+def deploy(restart=True):
+
+    require.file(
+        '/etc/systemd/system/lights.service', 
+        contents=service('python3.6 /home/pi/rdvhome/run.py run', '/home/pi/rdvhome/'), 
+        use_sudo=True,
+        mode = '700'
+    )
 
     rsync_project(
         local_dir=os.path.normpath(module_path('rdvhome', os.path.pardir)),
@@ -121,7 +139,8 @@ def deploy(restart=True, branch="master"):
     )
 
     if restart:
-        restart_process("server")
+        sudo("sudo systemctl restart lights.service")
+        #sudo("sudo systemctl start lights.service")
 
 
 if __name__ == "__main__":
