@@ -11,7 +11,6 @@ from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main
 from fabtools import require
-from fabtools.supervisor import restart_process
 
 SERVICE_TEMPLATE = """
 [Unit]
@@ -78,29 +77,9 @@ env.passwords = {
 @roles("doorbell")
 def setup():
 
-    #require.user(
-    #    env.user,
-    #    password="!w9Ij56LaoRKnP5fpV0LGH2GEHkY=",
-    #    ssh_public_keys=[os.path.expanduser("~/.ssh/id_rsa.pub")],
-    #)
-
-    require.deb.uptodate_index()
-    require.deb.packages(
-        [
-            "ntpdate",
-            "rsync",
-            "python3",
-            "python3-dev",
-            "python3-rpi.gpio",
-            "avahi-daemon",
-            "avahi-discover",
-            "libnss-mdns",
-        ]
-    )
-
-    # sudo("ntpdate -s time.nist.gov")
-    sudo("timedatectl set-timezone Europe/Rome")
-    require.system.default_locale("en_US.UTF-8")
+    sudo('apt-get update')
+    sudo('apt-get install ntpdate rsync python3 python3-rpi.gpio avahi-daemon avahi-discover libnss-mdns -y')
+    sudo("timedatectl set-timezone Europe/Rome")    
 
     if not exists("/swapfile"):
         sudo("fallocate -l 4G /swapfile")
@@ -110,24 +89,13 @@ def setup():
     if not "/swapfile" in sudo("cat /etc/fstab"):
         sudo('echo "/swapfile   none    swap    sw    0   0" >> /etc/fstab')
 
-    require.python.pip(python_cmd="python")
-    require.python.pip(python_cmd="python3")
-
-
-@task
-@roles("lights")
-def run_command(cmd="test_gpio"):
-    execute(deploy, restart=False)
-    run("python3.6 /home/pi/rdvhome/run.py %s" % cmd)
-
-
 @task
 @roles("lights")
 def deploy(restart=True):
 
     require.file(
         '/etc/systemd/system/lights.service', 
-        contents=service('python3.6 /home/pi/rdvhome/run.py run', '/home/pi/rdvhome/'), 
+        contents=service('python3 /home/pi/rdvhome/run.py run', '/home/pi/rdvhome/'), 
         use_sudo=True,
         mode = '700'
     )
