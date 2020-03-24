@@ -9,7 +9,7 @@ from pyhap.accessory import Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from rpy.functions.functional import iterate
 from rpy.functions.importutils import module_path
-
+from rdvhome.utils.persistence import data_path
 from rdvhome.switches import switches
 from rdvhome.utils.gpio import get_gpio
 
@@ -39,7 +39,7 @@ def get_bridge(driver):
 driver = AccessoryDriver(
     port=51826,
     loop=asyncio.get_event_loop(),
-    persist_file=module_path("rdvhome", "data", "accessory.state"),
+    persist_file=data_path("accessory.state"),
     # pincode = b"000-00-000"
 )
 

@@ -6,6 +6,7 @@ import os
 
 import aiofiles
 from rpy.functions.importutils import module_path
+from rdvhome.utils.persistence import data_path
 
 from rdvhome.utils import json
 
@@ -17,7 +18,7 @@ class KeyStore(object):
 
     def __init__(self, path=None, prefix=None, version=None, create=True):
 
-        self.path = path or module_path("rdvhome", "data")
+        self.path = path or data_path()
         self.prefix = prefix
         self.version = version
 
