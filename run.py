@@ -127,7 +127,7 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
             ),
-            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.227"),
+            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.235"),
             light(
                 id="spotlight_tv",
                 name="TV Light",
