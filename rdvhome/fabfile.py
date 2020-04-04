@@ -103,7 +103,7 @@ def deploy(restart=True):
     rsync_project(
         local_dir=os.path.normpath(module_path('rdvhome', os.path.pardir)),
         remote_dir="/home/pi/",
-        extra_opts=" --exclude=node_modules/* --size-only",
+        extra_opts=" --exclude=node_modules/* --exclude=.git/* --size-only --delete",
     )
 
     if restart:
