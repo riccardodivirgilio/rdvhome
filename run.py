@@ -209,8 +209,8 @@ def run_rdv_command_line():
             window(
                 id="window_kitchen",
                 name="Kitchen Window",
-                gpio_power=6,
-                gpio_direction=5,
+                gpio_power=5,
+                gpio_direction=6,
                 icon="☀️",
             ),
             window(
