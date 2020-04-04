@@ -16,7 +16,7 @@ RELAY2 = settings.RASPBERRY_RELAY2
 INPUT = settings.RASPBERRY_INPUT
 
 
-async def relay(number=RELAY1, timing=0.2, timing_between=1):
+async def relay(number=RELAY2, timing=0.2, timing_between=1):
 
     gpio = get_gpio()
 
