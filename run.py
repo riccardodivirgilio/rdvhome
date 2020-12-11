@@ -200,6 +200,14 @@ def run_rdv_command_line():
                 alias=["default"],
             ),
             light(
+                id="lamp_hipster_room",
+                name="Studio Hipster Lamp",
+                icon="💡",
+                philips_id=9,
+                alias=["default"],
+                supports_hue=False
+            ),
+            light(
                 id="led_room",
                 name="Studio Led",
                 icon="💡",

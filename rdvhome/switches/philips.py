@@ -130,22 +130,23 @@ class Light(PhilipsBase):
     def default_capabilities(self):
         return capabilities(
             on=True,
-            hue=bool(self.philips_id),
-            saturation=bool(self.philips_id),
-            brightness=bool(self.philips_id),
+            hue=bool(self.philips_id and self.supports_hue),
+            saturation=bool(self.philips_id and self.supports_hue),
+            brightness=bool(self.philips_id and self.supports_hue),
         )
 
     philips_default_settings = data(
         on=False, allow_on=True, hue=0.5, brightness=1, saturation=1
     )
 
-    def __init__(self, id, philips_id=None, gpio_relay=None, gpio_status=None, **opts):
+    def __init__(self, id, philips_id=None, gpio_relay=None, gpio_status=None, supports_hue = True, **opts):
 
         self._gpio = None
 
         self.philips_id = philips_id
         self.gpio_relay = gpio_relay
         self.gpio_status = gpio_status
+        self.supports_hue = supports_hue
 
         super().__init__(id, **opts)
 
