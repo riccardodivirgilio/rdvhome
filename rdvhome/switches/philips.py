@@ -307,11 +307,15 @@ class PhilipsPoolControl(PhilipsBase):
 
                 current_on = response.state.reachable and response.state.on or False
                 current_allow_on = response.state.reachable or bool(light.gpio_relay)
-                current_color = philips_to_color(
-                    hue=float(response.state.hue),
-                    saturation=float(response.state.sat),
-                    brightness=float(response.state.bri),
-                )
+
+                if 'hue' in response.state:
+                    current_color = philips_to_color(
+                        hue=float(response.state.hue),
+                        saturation=float(response.state.sat),
+                        brightness=float(response.state.bri),
+                    )
+                else:
+                    current_color = None
 
                 saved = await light.saved_status()
 
@@ -340,17 +344,19 @@ class PhilipsPoolControl(PhilipsBase):
 
                     print("DIFFERENT ON", light)
 
-                if not current_color == saved_color:
-                    is_changed = True
+                if current_color:
 
-                    print("DIFFERENT COLOR", light)
+                    if not current_color == saved_color:
+                        is_changed = True
 
-                if is_changed:
+                        print("DIFFERENT COLOR", light)
 
-                    # if something changed, then we need to update the status and trigger notifications
-                    await light.update_status(
-                        on=current_on,
-                        allow_on=current_allow_on,
-                        **current_color.serialize()
-                    )
-                    await light.status()
+                    if is_changed:
+
+                        # if something changed, then we need to update the status and trigger notifications
+                        await light.update_status(
+                            on=current_on,
+                            allow_on=current_allow_on,
+                            **current_color.serialize()
+                        )
+                        await light.status()
