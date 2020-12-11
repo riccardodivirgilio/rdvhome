@@ -31,10 +31,10 @@ def service(command, directory):
     return SERVICE_TEMPLATE % {'command': command, 'directory': directory, **server}
 
 server = {
-    'username': 'ubuntu',
+    'username': 'pi',
     'host': 'rdvhome.local',
-    'home': "/home/ubuntu/",
-    'project': '/home/ubuntu/rdvhome/'
+    'home': "/home/pi/",
+    'project': '/home/pi/rdvhome/'
 }
 
 class Command(SimpleCommand):
@@ -57,11 +57,13 @@ class Command(SimpleCommand):
 
 
 
-    def handle(self, *args):  
+    def handle(self, *args): 
+
+     
 
         context = {
             'local': os.path.normpath(module_path('rdvhome', os.path.pardir)) + '/',
-            'remote': "/home/ubuntu/rdvhome/",
+            'remote': "/home/pi/rdvhome/",
             **server
         }
 
