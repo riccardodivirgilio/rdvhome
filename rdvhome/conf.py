@@ -16,7 +16,7 @@ settings = data(
     INSTALL_DEPENDENCIES=False,
     DEPENDENCIES={
         "aiohttp": "2.3.5",
-        #'aiofiles': '0.3.2',
+        'aiofiles': '0.3.2',
         # "fabric3": "1.13.1.post1",
         #'hap-python': None,
         "aiohttp-autoreload": None,
@@ -28,8 +28,9 @@ settings = data(
         "yarl": "0.18.0",
         "base36": None,
         "pyqrcode": None,
-        "hap-python": None,
+        "hap-python": "2.8.4",
         "python-rpy": "1.0.17",
         "websockets": None,
+        "zeroconf": '0.26.3'
     },
 )
