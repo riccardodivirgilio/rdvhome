@@ -89,7 +89,7 @@ class ControlSwitch(Switch):
     async def when_switch_on(self, switch, i):
         if switch.capabilities.allow_hue:
             if await switch.is_on():
-                await switch.switch(color=self.assign_color(switch, i))
+                await switch.switch(color=self.assign_color(switch, i, repetitions = switch.capabilities.max_colors))
             t = 0
             if self.timeout:
                 while self.on:
@@ -99,7 +99,7 @@ class ControlSwitch(Switch):
 
                     if await switch.is_on():
                         await switch.switch(
-                            color=to_color(self.assign_color(switch, i + t))
+                            color=to_color(self.assign_color(switch, i + t, repetitions = switch.capabilities.max_colors))
                         )
 
     async def delay_off(self, timeout=0.5):
@@ -115,7 +115,12 @@ class ControlSwitch(Switch):
         else:
             return self.timeout
 
-    def assign_color(self, switch, i):
+    def assign_color(self, switch, i, repetitions = 1):
+        if repetitions > 1:
+            return tuple(
+                self.assign_color(switch, i + j)
+                for j in range(repetitions)
+            )
         if callable(self.colors):
             return to_color(self.colors(switch, i))
         elif is_iterable(self.colors):

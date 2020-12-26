@@ -7,7 +7,7 @@ from rpy.functions.datastructures import data
 from rdvhome.switches.base import capabilities
 from rdvhome.switches.philips import RemoteBase, debounce, remove_none
 from rdvhome.utils.colors import (
-    HSB, color_to_homekit, color_to_nanoleaf, color_to_philips,
+    HSB, color_to_homekit, color_to_nanoleaf, color_to_philips, color_to_homekit,
     homekit_to_color, philips_to_color, to_color
 )
 
@@ -21,6 +21,7 @@ class NanoleafControl(RemoteBase):
             hue=True,
             saturation=True,
             brightness=True,
+            max_colors=3
         )
 
     def get_api_url(self, path="/"):
@@ -46,6 +47,35 @@ class NanoleafControl(RemoteBase):
                 yield key, {"value": value}
 
     async def switch(self, on=None, color=None):
+
+        print(on, color)
+
+        if isinstance(color, (tuple, list)):
+
+
+            await self.api_request('/effects', payload = {'write': {
+                "command": "display",
+                "animName": "New animation",
+                "animType": "highlight",
+                "colorType": "HSB",
+                "animData": None,
+                "palette": tuple(dict(color_to_homekit(c), brightness = (c.brightness or 1) * 100) for c in color),
+                "brightnessRange": {
+                    "minValue": 50,
+                    "maxValue": 100
+                },
+                "transTime": {
+                    "minValue": 5,
+                    "maxValue": 10
+                },
+                "delayTime": {
+                    "minValue": 5,
+                    "maxValue": 10
+                },
+                "loop": True
+            }})
+
+            return await self.send(color = color[0])
 
         defaults = dict(self._get_state_changes(on, color))
 
