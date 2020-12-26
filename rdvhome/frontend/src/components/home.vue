@@ -373,24 +373,39 @@
                 <g class="led_tv" @click="area_click(switches.led_tv)" :style="area_color(switches.led_tv)">
                     <rect x="961.7" y="635.1" width="344.1" height="338.7" />
                 </g>
+
+                <g class="nanoleaf_tv" @click="area_click(switches.nanoleaf_tv)" :style="area_color(switches.nanoleaf_tv)">
+                    <rect x="1253" y="635.1" width="52.8" height="338.7" />
+                </g>
+
+
+               <g class="spotlight_living_room" @click="area_click(switches.spotlight_living_room)" :style="area_color(switches.spotlight_living_room)">
+                    <rect x="630.1" y="628.1" width="331.8" height="345.8" />
+                </g>
+
                 <g class="led_living_room" @click="area_click(switches.led_living_room)" :style="area_color(switches.led_living_room)">
                     <rect x="629.8" y="628.1" width="332.1" height="60" />
                 </g>
+
                 <g class="led_bedroom" @click="area_click(switches.led_bedroom)" :style="area_color(switches.led_bedroom)">
                     <rect x="553.6" y="82.7" width="281.3" height="312.8" />
                 </g>
+
                 <g class="spotlight_room" @click="area_click(switches.spotlight_room)" :style="area_color(switches.spotlight_room)">
                     <rect x="968.9" y="82.7" width="337.5" height="391.2" />
                 </g>
+                <g class="led_room" @click="area_click(switches.led_room)" :style="area_color(switches.led_room)">
+                    <rect x="968.9" y="82.7" width="337.5" height="60" />
+                </g>
+
+
                 <g class="spotlight_kitchen" @click="area_click(switches.spotlight_kitchen)" :style="area_color(switches.spotlight_kitchen)">
                     <polygon points="336.9,881.9 273.3,881.9 273.3,973.8 619.5,973.8 621.3,717 337.9,717 " />
                 </g>
                 <g class="spotlight_kitchen" @click="area_click(switches.led_kitchen)" :style="area_color(switches.led_kitchen)">
                     <polygon points="337.9,717 621.3,717 621.3,665 337.9,665" />
                 </g>
-                <g class="spotlight_living_room" @click="area_click(switches.spotlight_living_room)" :style="area_color(switches.spotlight_living_room)">
-                    <rect x="630.1" y="688" width="331.8" height="285.8" />
-                </g>
+
                 <g class="spotlight_tv" @click="area_click(switches.spotlight_tv)" :style="area_color(switches.spotlight_tv)">
                     <rect x="1012.4" y="694" width="242.6" height="245" />
                 </g>
