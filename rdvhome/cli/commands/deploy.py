@@ -52,7 +52,7 @@ class Command(SimpleCommand):
 
         )
 
-        #yield "sudo systemctl restart lights.service"
+        yield "sudo systemctl restart lights.service"
 
 
 
