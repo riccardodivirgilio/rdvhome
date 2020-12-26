@@ -287,7 +287,7 @@ def run_rdv_command_line():
                 colors=lambda switch, i, color = None: color and dict(
                     saturation=(color.saturation + random.random() * 0.1) % 1, hue=(color.hue + random.random() * 0.1) % 1
                 ) or dict(
-                    saturation=random.random() * 0.25 + 0.15, hue=random.random()
+                    hue=random.random(), saturation=0.5 + random.random() * 0.5
                 ),
             ),
             control(
