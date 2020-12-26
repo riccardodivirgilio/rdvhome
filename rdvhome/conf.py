@@ -14,7 +14,7 @@ settings = data(
     SERVER_ADDRESS="0.0.0.0",
     SWITCHES={},
     DEPENDENCIES={
-        "aiohttp": "2.3.5",
+        "aiohttp": "3.7.3",
         'aiofiles': '0.3.2',
         # "fabric3": "1.13.1.post1",
         #'hap-python': None,
@@ -24,7 +24,7 @@ settings = data(
         "colour": "0.1.5",
         "django": None,
         "six": None,
-        "yarl": "0.18.0",
+        "yarl": "1.6.3",
         "base36": "0.1.1",
         "pyqrcode": None,
         "hap-python": "2.8.4",
