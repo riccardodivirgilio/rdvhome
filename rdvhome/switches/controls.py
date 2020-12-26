@@ -89,7 +89,7 @@ class ControlSwitch(Switch):
     async def when_switch_on(self, switch, i):
         if switch.capabilities.allow_hue:
 
-            color_gen = self.create_color_generator(switch, i, repetitions = switch.capabilities.max_colors)
+            color_gen = self.create_color_generator(switch, i)
 
             if await switch.is_on():
                 await switch.switch(color=next(color_gen))

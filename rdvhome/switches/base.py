@@ -21,7 +21,6 @@ def capabilities(
     brightness=False,
     direction=False,
     visibility=True,
-    max_colors=1
 ):
     return data(
         allow_on=on,
@@ -30,7 +29,6 @@ def capabilities(
         allow_brightness=brightness,
         allow_direction=direction,
         allow_visibility=visibility,
-        max_colors=max_colors
     )
 
 

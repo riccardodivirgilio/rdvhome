@@ -285,7 +285,7 @@ def run_rdv_command_line():
                 icon="🤓",
                 timeout=timeout(5, 10),
                 colors=lambda switch, i, color = None: color and dict(
-                    saturation=(color.saturation + random.random() * 0.07) % 1, hue=(color.hue + random.random() * 0.07) % 1
+                    saturation=min(max((color.saturation + random.random() * 0.07), 0.5), 1.0), hue=(color.hue + random.random() * 0.07) % 1
                 ) or dict(
                     hue=random.random(), saturation=0.5 + random.random() * 0.5
                 ),

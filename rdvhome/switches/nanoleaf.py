@@ -21,7 +21,6 @@ class NanoleafControl(RemoteBase):
             hue=True,
             saturation=True,
             brightness=True,
-            max_colors=3
         )
 
     def get_api_url(self, path="/"):
@@ -48,16 +47,15 @@ class NanoleafControl(RemoteBase):
 
     async def switch(self, on=None, color=None):
 
-        print('nanoleaf', on, color)
-
-        if isinstance(color, (tuple, list)):
+        if color and color.hue and color.saturation:
+            
             await self.api_request('/effects', payload = {'write': {
                 "command": "display",
                 "animName": "New animation",
                 "animType": "highlight",
                 "colorType": "HSB",
                 "animData": None,
-                "palette": tuple(dict(color_to_homekit(c), brightness = (c.brightness or 1) * 100) for c in color),
+                "palette": tuple(color_to_homekit(dict(brightness = 1, hue = color.hue, saturation = color.saturation / (i+1))) for i in range(3)),
                 "brightnessRange": {
                     "minValue": 50,
                     "maxValue": 100
@@ -73,7 +71,7 @@ class NanoleafControl(RemoteBase):
                 "loop": True
             }})
 
-            return await self.send(color = color[0])
+            return await self.send(color = color)
 
         defaults = dict(self._get_state_changes(on, color))
 

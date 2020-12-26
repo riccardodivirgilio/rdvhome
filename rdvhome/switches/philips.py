@@ -247,9 +247,6 @@ class Light(RemoteBase):
 
             request = data()
 
-            if on is not None:
-                request.on = bool(on)
-
             if color is not None:
                 request.update(color_to_philips(color))
 
