@@ -6,16 +6,16 @@ export default {
         "ordering": 1,
         "allow_visibility": false
     },
-    "spotlight_kitchen": {
-        "id": "spotlight_kitchen",
-        "name": "Kitchen Light",
+    "led_kitchen": {
+        "id": "led_kitchen",
+        "name": "Kitchen Led",
         "icon": "\ud83c\udf7d",
         "ordering": 2,
         "allow_visibility": true
     },
-    "led_kitchen": {
-        "id": "led_kitchen",
-        "name": "Kitchen Led",
+    "spotlight_kitchen": {
+        "id": "spotlight_kitchen",
+        "name": "Kitchen Light",
         "icon": "\ud83c\udf7d",
         "ordering": 3,
         "allow_visibility": true
@@ -41,16 +41,16 @@ export default {
         "ordering": 6,
         "allow_visibility": true
     },
-    "spotlight_tv": {
-        "id": "spotlight_tv",
-        "name": "TV Light",
+    "led_tv": {
+        "id": "led_tv",
+        "name": "TV Led",
         "icon": "\ud83d\udcfa",
         "ordering": 7,
         "allow_visibility": true
     },
-    "led_tv": {
-        "id": "led_tv",
-        "name": "TV Led",
+    "spotlight_tv": {
+        "id": "spotlight_tv",
+        "name": "TV Light",
         "icon": "\ud83d\udcfa",
         "ordering": 8,
         "allow_visibility": true
@@ -76,16 +76,16 @@ export default {
         "ordering": 11,
         "allow_visibility": true
     },
-    "spotlight_bedroom": {
-        "id": "spotlight_bedroom",
-        "name": "Bedroom Light",
+    "led_bedroom": {
+        "id": "led_bedroom",
+        "name": "Bedroom Led",
         "icon": "\ud83d\udecf",
         "ordering": 12,
         "allow_visibility": true
     },
-    "led_bedroom": {
-        "id": "led_bedroom",
-        "name": "Bedroom Led",
+    "spotlight_bedroom": {
+        "id": "spotlight_bedroom",
+        "name": "Bedroom Light",
         "icon": "\ud83d\udecf",
         "ordering": 13,
         "allow_visibility": true
@@ -104,23 +104,23 @@ export default {
         "ordering": 15,
         "allow_visibility": true
     },
+    "led_room": {
+        "id": "led_room",
+        "name": "Studio Led",
+        "icon": "\ud83d\udca1",
+        "ordering": 16,
+        "allow_visibility": true
+    },
     "lamp_room": {
         "id": "lamp_room",
         "name": "Studio Lamp",
         "icon": "\ud83d\udca1",
-        "ordering": 16,
+        "ordering": 17,
         "allow_visibility": true
     },
     "lamp_hipster_room": {
         "id": "lamp_hipster_room",
         "name": "Studio Hipster Lamp",
-        "icon": "\ud83d\udca1",
-        "ordering": 17,
-        "allow_visibility": true
-    },
-    "led_room": {
-        "id": "led_room",
-        "name": "Studio Led",
         "icon": "\ud83d\udca1",
         "ordering": 18,
         "allow_visibility": true
@@ -174,25 +174,18 @@ export default {
         "ordering": 25,
         "allow_visibility": true
     },
-    "loop": {
-        "id": "loop",
-        "name": "Random Loop",
-        "icon": "\u267e\ufe0f",
-        "ordering": 26,
-        "allow_visibility": true
-    },
     "hloop": {
         "id": "hloop",
-        "name": "Random Hipster Loop",
+        "name": "Random Loop",
         "icon": "\ud83e\udd13",
-        "ordering": 27,
+        "ordering": 26,
         "allow_visibility": true
     },
     "disco": {
         "id": "disco",
         "name": "Disco",
         "icon": "\ud83c\udf10",
-        "ordering": 28,
+        "ordering": 27,
         "allow_visibility": true
     }
 }

@@ -104,6 +104,14 @@ def run_rdv_command_line():
         DEBUG=not has_gpio(),  # raspberry is production.
         SWITCHES=[
             philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
+
+            light(
+                id="led_kitchen",
+                name="Kitchen Led",
+                icon="🍽",
+                philips_id=6,
+                alias=["default"],
+            ),
             light(
                 id="spotlight_kitchen",
                 name="Kitchen Light",
@@ -111,13 +119,6 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=24,
                 gpio_status=17,
-            ),
-            light(
-                id="led_kitchen",
-                name="Kitchen Led",
-                icon="🍽",
-                philips_id=6,
-                alias=["default"],
             ),
             light(
                 id="spotlight_living_room",
@@ -137,14 +138,7 @@ def run_rdv_command_line():
                 alias=["default"],
             ),
             tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.235"),
-            light(
-                id="spotlight_tv",
-                name="TV Light",
-                icon="📺",
-                alias=[],
-                gpio_relay=15,
-                gpio_status=25,
-            ),
+
             light(
                 id="led_tv",
                 name="TV Led",
@@ -154,7 +148,14 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
             ),
-
+            light(
+                id="spotlight_tv",
+                name="TV Light",
+                icon="📺",
+                alias=[],
+                gpio_relay=15,
+                gpio_status=25,
+            ),
             nanoleaf(
                 id="nanoleaf_tv",
                 name="TV Light Panel",
@@ -178,14 +179,6 @@ def run_rdv_command_line():
                 philips_id=5,
             ),
             light(
-                id="spotlight_bedroom",
-                name="Bedroom Light",
-                icon="🛏",
-                alias=[],
-                gpio_relay=21,
-                gpio_status=3,
-            ),
-            light(
                 id="led_bedroom",
                 name="Bedroom Led",
                 icon="🛏",
@@ -193,6 +186,14 @@ def run_rdv_command_line():
                 gpio_relay=14,
                 gpio_status=8,
                 alias=[],
+            ),
+            light(
+                id="spotlight_bedroom",
+                name="Bedroom Light",
+                icon="🛏",
+                alias=[],
+                gpio_relay=21,
+                gpio_status=3,
             ),
             light(
                 id="led_bathroom_bedroom",
@@ -210,6 +211,13 @@ def run_rdv_command_line():
                 gpio_status=12,
             ),
             light(
+                id="led_room",
+                name="Studio Led",
+                icon="💡",
+                philips_id=8,
+                alias=["default"],
+            ),
+            light(
                 id="lamp_room",
                 name="Studio Lamp",
                 icon="💡",
@@ -223,13 +231,6 @@ def run_rdv_command_line():
                 philips_id=9,
                 alias=["default"],
                 supports_hue=False
-            ),
-            light(
-                id="led_room",
-                name="Studio Led",
-                icon="💡",
-                philips_id=8,
-                alias=["default"],
             ),
             window(
                 id="window_kitchen",
@@ -278,13 +279,14 @@ def run_rdv_command_line():
                 colors=["#bcf5ff", "#b2ffc5", "#87ffc7"],
             ),
             control(id="random", name="Random", icon="❓"),
-            control(id="loop", name="Random Loop", icon="♾️", timeout=timeout(30, 60)),
             control(
                 id="hloop",
-                name="Random Hipster Loop",
+                name="Random Loop",
                 icon="🤓",
-                timeout=timeout(30, 60),
-                colors=lambda switch, i: dict(
+                timeout=timeout(3, 6),
+                colors=lambda switch, i, color = None: color and dict(
+                    saturation=(color.saturation + random.random() * 0.1) % 1, hue=(color.hue + random.random() * 0.1) % 1
+                ) or dict(
                     saturation=random.random() * 0.25 + 0.15, hue=random.random()
                 ),
             ),

@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import asyncio
 import random
-
+import itertools
 from rpy.functions.asyncio import run_all, wait_all
 from rpy.functions.functional import is_iterable
 
@@ -88,8 +88,11 @@ class ControlSwitch(Switch):
 
     async def when_switch_on(self, switch, i):
         if switch.capabilities.allow_hue:
+
+            color_gen = self.create_color_generator(switch, i, repetitions = switch.capabilities.max_colors)
+
             if await switch.is_on():
-                await switch.switch(color=self.assign_color(switch, i, repetitions = switch.capabilities.max_colors))
+                await switch.switch(color=next(color_gen))
             t = 0
             if self.timeout:
                 while self.on:
@@ -98,9 +101,7 @@ class ControlSwitch(Switch):
                     t += 1
 
                     if await switch.is_on():
-                        await switch.switch(
-                            color=to_color(self.assign_color(switch, i + t, repetitions = switch.capabilities.max_colors))
-                        )
+                        await switch.switch(color=next(color_gen))
 
     async def delay_off(self, timeout=0.5):
         await asyncio.sleep(timeout)
@@ -115,15 +116,24 @@ class ControlSwitch(Switch):
         else:
             return self.timeout
 
-    def assign_color(self, switch, i, repetitions = 1):
+    def create_color_generator(self, switch, i, repetitions = 1):
+
         if repetitions > 1:
-            return tuple(
-                self.assign_color(switch, i + j)
+            yield from zip(*(
+                self.create_color_generator(switch, i + j)
                 for j in range(repetitions)
-            )
-        if callable(self.colors):
-            return to_color(self.colors(switch, i))
+            ))
+        elif callable(self.colors):
+            c = to_color(self.colors(switch, i))
+            yield c
+            for j in itertools.count():
+                c = to_color(self.colors(switch, i + j + 1, c))
+                yield c
         elif is_iterable(self.colors):
-            return self.colors[(i + 1) % len(self.colors)]
+            for j in itertools.count():
+                return self.colors[(i + j) % len(self.colors)]
         else:
-            return self.colors
+            for j in itertools.count():
+                yield self.colors
+
+

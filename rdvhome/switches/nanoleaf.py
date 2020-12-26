@@ -48,11 +48,9 @@ class NanoleafControl(RemoteBase):
 
     async def switch(self, on=None, color=None):
 
-        print(on, color)
+        print('nanoleaf', on, color)
 
         if isinstance(color, (tuple, list)):
-
-
             await self.api_request('/effects', payload = {'write': {
                 "command": "display",
                 "animName": "New animation",
