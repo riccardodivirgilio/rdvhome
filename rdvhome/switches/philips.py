@@ -344,19 +344,17 @@ class PhilipsPoolControl(PhilipsBase):
 
                     print("DIFFERENT ON", light)
 
-                if current_color:
+                if current_color and not current_color == saved_color:
+                    is_changed = True
 
-                    if not current_color == saved_color:
-                        is_changed = True
+                    print("DIFFERENT COLOR", light)
 
-                        print("DIFFERENT COLOR", light)
+                if is_changed:
 
-                    if is_changed:
-
-                        # if something changed, then we need to update the status and trigger notifications
-                        await light.update_status(
-                            on=current_on,
-                            allow_on=current_allow_on,
-                            **current_color.serialize()
-                        )
-                        await light.status()
+                    # if something changed, then we need to update the status and trigger notifications
+                    await light.update_status(
+                        on=current_on,
+                        allow_on=current_allow_on,
+                        **(current_color and current_color.serialize() or {})
+                    )
+                    await light.status()
