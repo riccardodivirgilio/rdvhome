@@ -40,11 +40,20 @@ def run_rdv_command_line():
     def philips_control(**opts):
         yield "class_path", "rdvhome.switches.philips.PhilipsPoolControl"
 
-        if has_gpio():
-            yield "username", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-            yield "ipaddress", "192.168.1.179"
+        yield "access_token", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
+        yield "ipaddress", "192.168.1.179"
 
         yield from opts.items()
+
+    @to_data
+    def nanoleaf(**opts):
+        yield "class_path", "rdvhome.switches.nanoleaf.NanoleafControl"
+
+        yield "access_token", "lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1"
+        yield "ipaddress", "192.168.1.115"
+
+        yield from opts.items()
+
 
     @to_data
     def tv(**opts):
@@ -145,6 +154,14 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
             ),
+
+            nanoleaf(
+                id="nanoleaf_tv",
+                name="TV Light Panel",
+                icon="📺",
+                alias=["default"],
+            ),
+
             light(
                 id="spotlight_entrance",
                 name="Entrance Light",

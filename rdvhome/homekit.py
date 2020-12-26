@@ -8,10 +8,10 @@ import logging
 from pyhap.accessory import Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from rpy.functions.functional import iterate
-from rpy.functions.importutils import module_path
-from rdvhome.utils.persistence import data_path
+
 from rdvhome.switches import switches
 from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.persistence import data_path
 
 """An example of how to setup and start an Accessory.
 This is:

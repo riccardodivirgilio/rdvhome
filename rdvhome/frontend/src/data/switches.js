@@ -55,137 +55,144 @@ export default {
         "ordering": 8,
         "allow_visibility": true
     },
+    "nanoleaf_tv": {
+        "id": "nanoleaf_tv",
+        "name": "TV Light Panel",
+        "icon": "\ud83d\udcfa",
+        "ordering": 9,
+        "allow_visibility": true
+    },
     "spotlight_entrance": {
         "id": "spotlight_entrance",
         "name": "Entrance Light",
         "icon": "\ud83d\udeaa",
-        "ordering": 9,
+        "ordering": 10,
         "allow_visibility": true
     },
     "led_bathroom_entrance": {
         "id": "led_bathroom_entrance",
         "name": "Bathroom Entrance",
         "icon": "\ud83d\udebd",
-        "ordering": 10,
+        "ordering": 11,
         "allow_visibility": true
     },
     "spotlight_bedroom": {
         "id": "spotlight_bedroom",
         "name": "Bedroom Light",
         "icon": "\ud83d\udecf",
-        "ordering": 11,
+        "ordering": 12,
         "allow_visibility": true
     },
     "led_bedroom": {
         "id": "led_bedroom",
         "name": "Bedroom Led",
         "icon": "\ud83d\udecf",
-        "ordering": 12,
+        "ordering": 13,
         "allow_visibility": true
     },
     "led_bathroom_bedroom": {
         "id": "led_bathroom_bedroom",
         "name": "Bathroom Bedroom",
         "icon": "\ud83d\udebd",
-        "ordering": 13,
+        "ordering": 14,
         "allow_visibility": true
     },
     "spotlight_room": {
         "id": "spotlight_room",
         "name": "Studio Light",
         "icon": "\ud83d\udcda",
-        "ordering": 14,
+        "ordering": 15,
         "allow_visibility": true
     },
     "lamp_room": {
         "id": "lamp_room",
         "name": "Studio Lamp",
         "icon": "\ud83d\udca1",
-        "ordering": 15,
+        "ordering": 16,
         "allow_visibility": true
     },
     "lamp_hipster_room": {
         "id": "lamp_hipster_room",
         "name": "Studio Hipster Lamp",
         "icon": "\ud83d\udca1",
-        "ordering": 16,
+        "ordering": 17,
         "allow_visibility": true
     },
     "led_room": {
         "id": "led_room",
         "name": "Studio Led",
         "icon": "\ud83d\udca1",
-        "ordering": 17,
+        "ordering": 18,
         "allow_visibility": true
     },
     "window_kitchen": {
         "id": "window_kitchen",
         "name": "Kitchen Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 18,
+        "ordering": 19,
         "allow_visibility": true
     },
     "window_living_room": {
         "id": "window_living_room",
         "name": "Living Room Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 19,
+        "ordering": 20,
         "allow_visibility": true
     },
     "window_tv": {
         "id": "window_tv",
         "name": "TV Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 20,
+        "ordering": 21,
         "allow_visibility": true
     },
     "usa": {
         "id": "usa",
         "name": "USA",
         "icon": "\ud83c\uddfa\ud83c\uddf8",
-        "ordering": 21,
+        "ordering": 22,
         "allow_visibility": true
     },
     "natural": {
         "id": "natural",
         "name": "Naturale",
         "icon": "\ud83c\udf1e",
-        "ordering": 22,
+        "ordering": 23,
         "allow_visibility": true
     },
     "artic": {
         "id": "artic",
         "name": "Artic",
         "icon": "\u26c4",
-        "ordering": 23,
+        "ordering": 24,
         "allow_visibility": true
     },
     "random": {
         "id": "random",
         "name": "Random",
         "icon": "\u2753",
-        "ordering": 24,
+        "ordering": 25,
         "allow_visibility": true
     },
     "loop": {
         "id": "loop",
         "name": "Random Loop",
         "icon": "\u267e\ufe0f",
-        "ordering": 25,
+        "ordering": 26,
         "allow_visibility": true
     },
     "hloop": {
         "id": "hloop",
         "name": "Random Hipster Loop",
         "icon": "\ud83e\udd13",
-        "ordering": 26,
+        "ordering": 27,
         "allow_visibility": true
     },
     "disco": {
         "id": "disco",
         "name": "Disco",
         "icon": "\ud83c\udf10",
-        "ordering": 27,
+        "ordering": 28,
         "allow_visibility": true
     }
 }

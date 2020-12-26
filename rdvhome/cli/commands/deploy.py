@@ -2,13 +2,12 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from rpy.cli.utils import SimpleCommand
-from rpy.functions.asyncio import syncronous_wait_all
-from rpy.functions.importutils import module_path
-from rdvhome.api import switch
-from rdvhome.conf import settings
 import os
-import tempfile
+
+from rpy.cli.utils import SimpleCommand
+from rpy.functions.importutils import module_path
+
+from rdvhome.conf import settings
 
 SERVICE_TEMPLATE = """
 [Unit]

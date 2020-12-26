@@ -4,9 +4,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import sys
-from operator import attrgetter
+
 from rpy.functions.importutils import module_path
-from fabric.api import env, execute, local, roles, run, sudo, task
+
+from fabric.api import env, roles, sudo, task
 from fabric.contrib.files import exists
 from fabric.contrib.project import rsync_project
 from fabric.main import main

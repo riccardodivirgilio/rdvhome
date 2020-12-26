@@ -65,6 +65,9 @@ def color_to_philips(
 def homekit_to_color(color_range=HOMEKIT_RANGE, **opts):
     return philips_to_color(**opts, color_range=color_range)
 
+def color_to_nanoleaf(color, color_range=HOMEKIT_RANGE):
+    return color_to_philips(color, color_range=color_range, key_function=lambda key: key == 'saturation' and 'sat' or key)
+
 
 def color_to_homekit(color, color_range=HOMEKIT_RANGE):
     return color_to_philips(color, color_range=color_range, key_function=identity)

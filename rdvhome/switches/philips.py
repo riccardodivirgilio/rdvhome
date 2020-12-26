@@ -98,31 +98,34 @@ class HomekitLight(HomekitSwitch):
                 pass
 
 
-class PhilipsBase(Switch):
+class RemoteBase(Switch):
 
-    store = KeyStore(prefix="philips")
+    store = KeyStore(prefix="remote")
 
-    def __init__(self, id, ipaddress=None, username=None, **opts):
+    def __init__(self, id, ipaddress=None, access_token=None, **opts):
 
         self.ipaddress = ipaddress
-        self.username = username
+        self.access_token = access_token
 
         super().__init__(id, **opts)
 
+    def get_api_url(self, path):
+        return "http://%s/api/%s/lights/%s" % (self.ipaddress, self.access_token, path)
+
     async def api_request(self, path="", payload=None):
 
-        path = "http://%s/api/%s/lights/%s" % (self.ipaddress, self.username, path)
+        path = self.get_api_url(path)
 
         async with aiohttp.ClientSession() as session:
             if payload:
                 async with session.put(path, json=payload) as response:
-                    return await response.json(loads=json.loads)
+                    return await response.json(loads=json.loads, content_type=None)
             else:
                 async with session.get(path) as response:
-                    return await response.json(loads=json.loads)
+                    return await response.json(loads=json.loads, content_type=None)
 
 
-class Light(PhilipsBase):
+class Light(RemoteBase):
 
     homekit_class = HomekitLight
 
@@ -240,7 +243,7 @@ class Light(PhilipsBase):
             if not on == await self.is_on():
                 await self.raspberry_switch(on)
 
-        if self.philips_id and self.username:
+        if self.philips_id and self.access_token:
 
             request = data()
 
@@ -258,7 +261,7 @@ class Light(PhilipsBase):
         return await self.send(on=on, color=color, full=False)
 
 
-class PhilipsPoolControl(PhilipsBase):
+class PhilipsPoolControl(RemoteBase):
 
     default_capabilities = capabilities(visibility=False)
 
@@ -273,7 +276,7 @@ class PhilipsPoolControl(PhilipsBase):
 
     async def watch(self, interval=3):
 
-        if not self.username:
+        if not self.access_token:
             return
 
         lights = {
