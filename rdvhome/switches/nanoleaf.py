@@ -30,7 +30,7 @@ class NanoleafControl(RemoteBase):
     async def get_nanoleaf_status(self):
         state = await self.api_request('/state')
 
-        return data(on= state.on.value,allow_on= True, hue= state.hue.value / state.hue.max, brightnes= state.brightness.value / state.brightness.max, saturation= state.sat.value / state.sat.max)
+        return data(on= state.on.value,allow_on= True, hue= state.hue.value / state.hue.max, brightness= state.brightness.value / state.brightness.max, saturation= state.sat.value / state.sat.max)
 
     async def status(self):
         defaults = await self.get_nanoleaf_status()
