@@ -283,9 +283,9 @@ def run_rdv_command_line():
                 id="hloop",
                 name="Random Loop",
                 icon="🤓",
-                timeout=timeout(3, 6),
+                timeout=timeout(5, 10),
                 colors=lambda switch, i, color = None: color and dict(
-                    saturation=(color.saturation + random.random() * 0.1) % 1, hue=(color.hue + random.random() * 0.1) % 1
+                    saturation=(color.saturation + random.random() * 0.07) % 1, hue=(color.hue + random.random() * 0.07) % 1
                 ) or dict(
                     hue=random.random(), saturation=0.5 + random.random() * 0.5
                 ),
