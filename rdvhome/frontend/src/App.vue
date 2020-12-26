@@ -273,7 +273,6 @@ html, body,
   display: flex;
   flex-direction: column;
   background: $background-color;
-  justify-content: space-around;
   color: $primary-color;
   position:relative;
 
