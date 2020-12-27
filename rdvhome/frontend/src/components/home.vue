@@ -784,13 +784,11 @@ export default {
 </script>
 
 <!-- Add"scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
-
-@import "../variables";
+<style lang="css">
 
 #lights > g {
     fill: #ddd;
-    stroke: rgba($primary-color, 0.5);
+    stroke: rgba(var(--primary-color), 0.5);
     stroke-width:0.36;
     transition: .4s;
 }
@@ -818,10 +816,10 @@ export default {
     fill: none;
 }
 #stairs {
-    stroke: rgba($primary-color, 0.4);
+    stroke: rgba(var(--primary-color), 0.4);
 }
 #house {
-    stroke: rgba($primary-color, 1);
+    stroke: rgba(var(--primary-color), 1);
 }
 
 </style>

@@ -19,9 +19,9 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style lang="css">
 
-@import "../variables";
+
 
 .toggle {
   position: relative;
@@ -36,7 +36,7 @@ export default {
 .arrow {
   position: absolute;
   left: 14px;
-  border: solid $border-color;
+  border: solid var(--border-color);
   border-width: 0 1px 1px 0;
   display: inline-block;
   padding: 4px;
@@ -51,7 +51,7 @@ export default {
   bottom: 0;
   -webkit-transition: .4s;
   transition: .4s;
-  border:1px solid $border-color;
+  border:1px solid var(--border-color);
 }
 
 .toggle .toggle-arrow .arrow {
@@ -61,12 +61,12 @@ export default {
 
 .toggle input:checked + .toggle-arrow .arrow,
 .toggle input:checked + .toggle-arrow {
-  border-color: $primary-color;
+  border-color: rgb(var(--primary-color));
 }
 
 .one {
   top: 4px;
-  border-color: rgba($primary-color, 0);
+  border-color: rgba(var(--primary-color), 0);
   &.down {
     top: -1px
   }
@@ -79,7 +79,7 @@ export default {
 }
 .three {
   top: 10px;
-  border-color: rgba($primary-color, 0);
+  border-color: rgba(var(--primary-color), 0);
   &.down {
     top: 5px
   }

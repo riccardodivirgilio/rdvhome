@@ -246,9 +246,19 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 
-@import "./variables.scss";
+
+:root {
+
+    --item-size: 50px;
+    --item-padding: 15px;
+    --btn-width: 70px;
+    --primary-color: 255, 255, 255;
+    --background-color: 0, 0, 0;
+    --border-color: rgba(var(--primary-color), 0.3);
+
+}
 
 *, *:before, *:after {
   box-sizing: border-box;
@@ -274,8 +284,8 @@ html, body,
   padding: 0px;
   display: flex;
   flex-direction: column;
-  background: $background-color;
-  color: $primary-color;
+  background: rgb(var(--background-color));
+  color: rgb(var(--primary-color));
   position:relative;
 
   width:100vw;
@@ -322,11 +332,11 @@ html, body,
 }
 
 .list-item {
-  border-bottom:1px solid $border-color;
+  border-bottom:1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  min-height: $item-size;
-  color: $primary-color;
+  min-height: var(--item-size);
+  color: rgb(var(--primary-color));
   flex-shrink: 0;
 }
 
@@ -334,16 +344,18 @@ html, body,
   display: flex;
   flex-direction: row;
   position: relative;
-  min-height: $item-size;
+  min-height: var(--item-size);
   transition: background-color 300ms linear;
 }
 .list-item > .line > .btn {
-  width: $btn-width;
+  width: var(--btn-width);
   height: auto;
 }
 .list-item > .line > .slider {
-  width: calc(100% - #{$btn-width} - #{$toggle-width} - 2 * #{$item-padding});
-  height: $item-size;
+  width: calc(100% - var(--btn-width) * 2);
+
+
+  height: var(--item-size);
   display:flex;
   flex-direction: column;
 }
@@ -353,20 +365,20 @@ html, body,
   width: 100%
 }
 .list-item > .line:not(:last-child) {
-  border-bottom:1px solid $border-color
+  border-bottom:1px solid var(--border-color)
 }
 
 .list-item > .line > .controls {
   position: absolute;
-  right:  $item-padding;
-  top:    $item-padding;
+  right:  var(--item-padding);
+  top:    var(--item-padding);
 }
 
 .list-item > .line > .title {
   pointer-events: none;
   position:absolute;
-  left: $btn-width + $item-padding;
-  top:  $item-size / 2 - 9px;
+  left: calc(var(--btn-width) + var(--item-padding));
+  top:  calc(var(--item-size) / 2 - 9px);
 }
 .list-item > .line.slider-hue {
    background: linear-gradient(
@@ -385,7 +397,7 @@ html, body,
   position: absolute;
   width: 100%;
   height: 100%;
-  background: rgba($background-color, 0.5);
+  background: rgba(var(--background-color), 0.5);
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -414,7 +426,7 @@ html, body,
 
   .panel-switch {
     max-width: 400px;
-    border-right: 2px solid $border-color;
+    border-right: 2px solid var(--border-color);
     overflow-y: scroll;
   }
 
