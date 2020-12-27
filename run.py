@@ -5,10 +5,11 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import has_gpio
 from rpy.functions.decorators import to_data
-
+from rdvhome.utils.colors import HSB, to_color, random_color
 import random
 import uuid
 import subprocess
+from functools import partial
 
 RELAY1 = [6, 5, 9, 13, 11, 27, 22, 10]
 
@@ -25,6 +26,18 @@ INPUT = [2, 3, 4, 17, 25, 8, 7, 12]
 # F3_POWER:     11
 # F3_DIRECTION: 27
 
+
+
+def perturbation(switch = None, i = None, color = None, factor = 0.07):
+
+    if not color:
+        return random_color()
+
+    color = to_color(color)
+
+    return dict(
+        saturation=min(max((color.saturation + random.random() * factor), 0.5), 1.0), hue=(color.hue + random.random() * factor) % 1
+    )
 
 def timeout(min, max):
     return lambda switch, i: random.random() * (max - min) + min
@@ -160,7 +173,7 @@ def run_rdv_command_line():
                 id="nanoleaf_tv",
                 name="TV Light Panel",
                 icon="📺",
-                alias=["default"],
+                alias=["default", 'nanoleaf'],
             ),
 
             light(
@@ -253,49 +266,57 @@ def run_rdv_command_line():
                 gpio_direction=27,
                 icon="☀️",
             ),
-            control(
-                id="usa",
-                name="USA",
-                icon="🇺🇸",
-                colors=[
-                    dict(hue=1, saturation=1, brightness=1),
-                    dict(hue=1, saturation=0, brightness=1),
-                    dict(hue=0.66, saturation=1, brightness=1),
-                ],
-                timeout=3,
-                automatic_on="default",
-            ),
-            control(
-                id="natural",
-                name="Naturale",
-                icon="🌞",
-                colors=[{"hue": 0.13, "saturation": 0.6, "brightness": 1.0}],
-                automatic_on="default",
-            ),
-            control(
-                id="artic",
-                name="Artic",
-                icon="⛄",
-                colors=["#bcf5ff", "#b2ffc5", "#87ffc7"],
-            ),
-            control(id="random", name="Random", icon="❓"),
+
+
+            control(id="random", name="Random", icon="❓", effect = 'Color Burst'),
             control(
                 id="hloop",
                 name="Random Loop",
                 icon="🤓",
                 timeout=timeout(5, 10),
-                colors=lambda switch, i, color = None: color and dict(
-                    saturation=min(max((color.saturation + random.random() * 0.07), 0.5), 1.0), hue=(color.hue + random.random() * 0.07) % 1
-                ) or dict(
-                    hue=random.random(), saturation=0.5 + random.random() * 0.5
-                ),
+                colors=perturbation,
+            ),
+
+            control(
+                id="natural",
+                name="Naturale",
+                icon="🌞",
+                colors=to_color({"hue": 0.13, "saturation": 0.6}),
+                automatic_on="default",
+                effect = 'Flames'
             ),
             control(
                 id="disco",
                 name="Disco",
                 icon="🌐",
                 timeout=timeout(0.3, 1.2),
-                automatic_on="default",
+                automatic_on=["default", "nanoleaf"],
+                effect = 'Fireworks'
+            ),
+            *(
+                control(
+                    id = 'nanoleaf_%s' % (effect.lower().replace(' ', '_')),
+                    name = effect,
+                    icon = i,
+                    automatic_on = ['nanoleaf'],
+                    effect = effect,
+                    colors = color
+                )
+                for i, effect, color in (
+                    ('🌲', 'Forest', partial(perturbation, color = {'hue': 0.297, 'saturation': 0.6}, factor = 0.15)),
+                    ('🎉', 'Inner Peace', None),
+                    ('🎉', 'Meteor Shower', None),
+                    ('🐟', 'Nemo', partial(perturbation, color = {'hue': 0.080, 'saturation': 0.90})),
+                    ('🎉', 'Northern Lights', None),
+                    ('🎉', 'Paint Splatter', None),
+                    ('🎉', 'Pulse Pop Beats', None),
+                    ('🎉', 'Rhythmic Northern Lights', None),
+                    ('🎉', 'Ripple', None),
+                    ('❤️', 'Romantic', partial(perturbation, color = {'hue': 0.8446, 'saturation': 1}, factor = 0.15)),
+                    ('⛄', 'Snowfall', partial(perturbation, color = {'hue': 0.5952, 'saturation': 0.50})),
+                    ('🎉', 'Sound Bar', None),
+                    ('🎉', 'Streaking Notes', None),
+                )
             ),
         ],
     )

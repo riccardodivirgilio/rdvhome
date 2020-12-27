@@ -11,7 +11,6 @@ from rpy.functions.decorators import to_data
 from rpy.functions.functional import identity
 
 PHILIPS_RANGE = data(hue=65535, saturation=254, brightness=254)
-
 HOMEKIT_RANGE = data(hue=360, saturation=100, brightness=100)
 
 

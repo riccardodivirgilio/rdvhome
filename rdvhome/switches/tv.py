@@ -64,7 +64,7 @@ class SamsungSmartTV(Switch):
         except Exception as e:
             print(e)
 
-    async def switch(self, on=None):
+    async def switch(self, on=None, **opts):
         if not on == self.on:
             if not on and await self._check_on():
                 await send_commands(self.ipaddress, "KEY_POWER")
