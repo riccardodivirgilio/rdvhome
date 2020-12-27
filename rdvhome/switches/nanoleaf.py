@@ -45,33 +45,38 @@ class NanoleafControl(RemoteBase):
             for key, value in color_to_nanoleaf(color).items():
                 yield key, {"value": value}
 
-    async def switch(self, on=None, color=None):
+    async def switch(self, on=None, color=None, effect = None, **opts):
 
-        if color and color.hue and color.saturation:
-            
-            await self.api_request('/effects', payload = {'write': {
-                "command": "display",
-                "animName": "New animation",
-                "animType": "highlight",
-                "colorType": "HSB",
-                "animData": None,
-                "palette": tuple(color_to_homekit(dict(brightness = 1, hue = color.hue, saturation = color.saturation / (i+1))) for i in range(3)),
-                "brightnessRange": {
-                    "minValue": 50,
-                    "maxValue": 100
-                },
-                "transTime": {
-                    "minValue": 5,
-                    "maxValue": 10
-                },
-                "delayTime": {
-                    "minValue": 5,
-                    "maxValue": 10
-                },
-                "loop": True
-            }})
 
-            return await self.send(color = color)
+        if effect:
+
+            if isinstance(effect, str):
+                await self.api_request('/effects', payload = {'select': effect})
+                return await self.send(color = color)
+
+            else:
+                await self.api_request('/effects', payload = {'write': {
+                    "command": "display",
+                    "animName": "New animation",
+                    "animType": "highlight",
+                    "colorType": "HSB",
+                    "animData": None,
+                    "palette": tuple(color_to_homekit(dict(brightness = 1, hue = effect.hue, saturation = effect.saturation / (i+1))) for i in range(3)),
+                    "brightnessRange": {
+                        "minValue": 50,
+                        "maxValue": 100
+                    },
+                    "transTime": {
+                        "minValue": 5,
+                        "maxValue": 10
+                    },
+                    "delayTime": {
+                        "minValue": 5,
+                        "maxValue": 10
+                    },
+                    "loop": True
+                }})
+                return await self.send(color = effect)
 
         defaults = dict(self._get_state_changes(on, color))
 

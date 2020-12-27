@@ -26,17 +26,19 @@ class ControlSwitch(Switch):
         automatic_on=False,
         automatic_off=True,
         filter=Switch.kind,
-        colors=lambda switch, i: random_color(),
+        colors=None,
         timeout=None,
+        effect=None,
         **opts
     ):
-
         self.on = on
         self.filter = filter
         self.colors = colors
         self.timeout = timeout
         self.automatic_on = automatic_on
         self.automatic_off = automatic_off
+        self.effect=effect
+
 
         self._future_when_on = None
         self._future_when_off = None
@@ -92,7 +94,7 @@ class ControlSwitch(Switch):
             color_gen = self.create_color_generator(switch, i)
 
             if await switch.is_on():
-                await switch.switch(color=next(color_gen))
+                await switch.switch(**next(color_gen))
             t = 0
             if self.timeout:
                 while self.on:
@@ -101,7 +103,7 @@ class ControlSwitch(Switch):
                     t += 1
 
                     if await switch.is_on():
-                        await switch.switch(color=next(color_gen))
+                        await switch.switch(**next(color_gen))
 
     async def delay_off(self, timeout=0.5):
         await asyncio.sleep(timeout)
@@ -124,16 +126,17 @@ class ControlSwitch(Switch):
                 for j in range(repetitions)
             ))
         elif callable(self.colors):
-            c = to_color(self.colors(switch, i))
-            yield c
+            c = to_color(self.colors(switch = switch, i = i))
+            yield {'color': c, 'effect': self.effect or c}
             for j in itertools.count():
-                c = to_color(self.colors(switch, i + j + 1, c))
-                yield c
+                c = to_color(self.colors(switch = switch, i = i + j + 1, color = c))
+                yield {'color': c, 'effect': self.effect or c}
         elif is_iterable(self.colors):
             for j in itertools.count():
-                return self.colors[(i + j) % len(self.colors)]
+                c = self.colors[(i + j) % len(self.colors)] 
+                yield {'color': c, 'effect': self.effect or c}
         else:
             for j in itertools.count():
-                yield self.colors
+                yield {'color': self.colors or random_color(), 'effect': self.effect or self.colors or random_color()}
 
 

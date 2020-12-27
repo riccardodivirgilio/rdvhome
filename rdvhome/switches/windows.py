@@ -102,7 +102,7 @@ class Window(Switch):
 
         return await self.status()
 
-    async def switch(self, direction=None):
+    async def switch(self, direction=None, **opts):
 
         gpio = await self.setup_gpio()
 

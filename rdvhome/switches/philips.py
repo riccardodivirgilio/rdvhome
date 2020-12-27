@@ -235,7 +235,7 @@ class Light(RemoteBase):
 
         return await self.send(**defaults)
 
-    async def switch(self, on=None, color=None):
+    async def switch(self, on=None, color=None, **opts):
 
         print("stick", on, color)
 
