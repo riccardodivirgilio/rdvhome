@@ -2,6 +2,7 @@
   <div class="page">
     <div class="container">
       <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
+      <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
           <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
@@ -265,6 +266,7 @@ html, body,
 .page,
 .container,
 .panel-home,
+.panel-debug,
 .panel-switch,
 .panel-home svg {
 
@@ -293,6 +295,12 @@ html, body,
 }
 
 // LAYOUT MOBILE FIRST
+
+.panel-debug {
+  order:3;
+  overflow-y: scroll
+}
+
 
 .panel-switch {
   width:100%;
