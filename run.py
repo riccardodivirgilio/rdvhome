@@ -26,9 +26,10 @@ INPUT = [2, 3, 4, 17, 25, 8, 7, 12]
 # F3_POWER:     11
 # F3_DIRECTION: 27
 
+def random_factor(factor):
+    return (random.random() * 2 -1) * factor
 
-
-def perturbation(switch = None, i = None, color = None, factor = 0.07):
+def perturbation(switch = None, i = None, color = None, factor = 0.04):
 
     if not color:
         return random_color()
@@ -36,7 +37,7 @@ def perturbation(switch = None, i = None, color = None, factor = 0.07):
     color = to_color(color)
 
     return dict(
-        saturation=min(max((color.saturation + random.random() * factor), 0.5), 1.0), hue=(color.hue + random.random() * factor) % 1
+        saturation=min(max((color.saturation + random_factor(factor)), 0.5), 1.0), hue=(color.hue + random_factor(factor)) % 1
     )
 
 def timeout(min, max):
