@@ -67,22 +67,24 @@ export default {
 .one {
   top: 4px;
   border-color: rgba(var(--primary-color), 0);
-  &.down {
-    top: -1px
-  }
 }
+.one.down {
+  top: -1px
+}
+
+
 .two {
   top: 7px;
-  &.down {
-    top: 2px
-  }
+}
+.two.down {
+  top: 2px
 }
 .three {
   top: 10px;
   border-color: rgba(var(--primary-color), 0);
-  &.down {
-    top: 5px
-  }
+}
+.three.down {
+  top: 5px
 }
 
 .up {

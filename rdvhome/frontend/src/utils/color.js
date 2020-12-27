@@ -1,3 +1,5 @@
+import is_string     from 'rfuncs/functions/is_string'
+
 export function hsb_to_hsl(data) {
     var s = data.saturation;
     var v = data.brightness;
@@ -37,11 +39,18 @@ export function hsl_to_hsb(h) {
     };
 }
 
+function round_with_postfix(v, molt, postfix) {
+    if (is_string(v)) {
+        return v 
+    }
+    return Math.round(v*molt) + (postfix || '')
+}
+
 export function hsl_to_css(data) {
     var s = data.saturation;
     var l = data.lightness;
     var h = data.hue;
-    return 'hsl('+ Math.round(h*360) +', '+ Math.round(s*100) +'%, '+ Math.round(l*100)+'%)'
+    return 'hsl('+ round_with_postfix(h, 360) +', '+ round_with_postfix(s, 100, '%') +', '+ round_with_postfix(l, 100, '%')+')'
 }
 
 export function hsb_to_css(data) {

@@ -6,7 +6,7 @@
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
           <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
-            <div class="line" :style="{backgroundColor: to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0}, item.allow_hue ? 0.1 * item.on : 0.2 * item.on)}">
+            <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
               <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
                 <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
                 <div v-else>{{ item.icon }}</div>
@@ -23,7 +23,7 @@
               <slider :item="item" name='hue' :onchange="toggle_hsb"/>
             </div>
             <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
-              'linear-gradient(to right, white 0%, '+to_css({hue: item.hue, saturation: 1})+' 100%)'}">
+              'linear-gradient(to right, white 0%, '+hsl_to_css({hue: item.hue, saturation: 1, lightness:1})+' 100%)'}">
               <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
             </div>
           </a>
@@ -61,7 +61,7 @@ import merge     from 'rfuncs/functions/merge'
 import scan      from 'rfuncs/functions/scan'
 import map       from 'rfuncs/functions/map'
 
-import {hsb_to_css_with_lightness, hsb_to_hsl} from './utils/color';
+import {hsb_to_css_with_lightness, hsb_to_hsl, hsl_to_css} from './utils/color';
 
 export default {
   name: 'app',
@@ -116,7 +116,7 @@ export default {
     },
   },
   methods: {
-    to_css: hsb_to_css_with_lightness,
+    hsl_to_css: hsl_to_css,
     updateSwitch: function (data) {
       Vue.set(
         this.switches,
@@ -250,14 +250,25 @@ export default {
 
 
 :root {
+  --item-size: 50px;
+  --item-padding: 15px;
+  --btn-width: 70px;
+  --primary-color: 0, 0, 0;
+  --background-color: 255, 255, 255;
+  --text-color: 0, 0, 0;
+  --border-color: rgba(var(--primary-color), 0.3);
+  --lightness: 100%;
+  --lightness-high: 90%;
+}
 
-    --item-size: 50px;
-    --item-padding: 15px;
-    --btn-width: 70px;
+@media (prefers-color-scheme: dark) {
+  :root {
     --primary-color: 255, 255, 255;
     --background-color: 0, 0, 0;
     --border-color: rgba(var(--primary-color), 0.3);
-
+    --lightness: 0%;
+    --lightness-high: 10%;
+  }
 }
 
 *, *:before, *:after {
@@ -285,7 +296,7 @@ html, body,
   display: flex;
   flex-direction: column;
   background: rgb(var(--background-color));
-  color: rgb(var(--primary-color));
+  color: rgb(var(--text-color));
   position:relative;
 
   width:100vw;
