@@ -30,6 +30,7 @@ settings = data(
         "hap-python": "2.8.4",
         "python-rpy": "1.0.17",
         "websockets": "8.1",
-        "zeroconf": '0.26.3'
+        "zeroconf": '0.26.3',
+        "restgpio": None,
     },
 )
