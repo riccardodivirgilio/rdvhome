@@ -41,27 +41,6 @@ server = {
     'local': os.path.normpath(module_path('rdvhome', os.path.pardir)) + '/',
 }
 
-def generate_restpio_arguments():
-
-    inp = set()
-    out = set()
-
-    for switch in switches:
-        for attr, cont in (
-            ('gpio_power', out),
-            ('gpio_direction', out),
-            ('gpio_relay', out),
-            ('gpio_status', inp),
-            ):
-
-            pin = getattr(switch, attr, None)
-
-            if pin:
-                cont.add(pin)
-
-    yield '--output-high=%s' % ",".join(map(str, sorted(out)))
-    yield '--input-pull-up=%s' % ",".join(map(str, sorted(inp)))
-
 class Command(SimpleCommand):
 
     def commands(self, **context):
@@ -72,7 +51,7 @@ class Command(SimpleCommand):
             yield ('ssh %(username)s@%(host)s ' + cmd) % context
 
     def local_files(self, **context):
-        yield '/etc/systemd/system/gpioserver.service', service('python3 -m gpioserver %s' % " ".join(generate_restpio_arguments()), **context)
+        yield '/etc/systemd/system/gpioserver.service', service('python3 -m gpioserver --output-high=5,6,9,11,13,14,15,16,18,20,21,23,24,27 --input-pull-up=2,3,4,7,8,12,17,25', **context)
         yield '/etc/systemd/system/lights.service', service('python3 /home/pi/rdvhome/run.py run', **context)
 
     def local_commands(self,  **context):
