@@ -92,7 +92,7 @@ def run_rdv_command_line():
         yield from opts.items()
 
     @to_data
-    def device(philips_id=None, gpio_relay=None, gpio_status=None, **opts):
+    def device(philips_id=None, gpio_relay=None, gpio_status=None, is_nanoleaf = False, **opts):
 
         if gpio_relay:
             assert gpio_relay in RELAY1 or gpio_relay in RELAY2, "%s not in %s" % (
@@ -103,11 +103,16 @@ def run_rdv_command_line():
         if gpio_status:
             assert gpio_status in INPUT
 
-        if gpio_status or gpio_relay:
-            yield "gpioserver", dict(gpio_relay = gpio_relay, gpio_status = gpio_status)
+        if is_nanoleaf:
+            yield "color", dict(id = "nanoleaf")
+            yield "on", dict(id = "nanoleaf")
 
         if philips_id:
-            yield "philips", dict(philips_id = philips_id)
+            yield "color", dict(id = "philips", philips_id = philips_id)
+            yield "on", dict(id = "philips", philips_id = philips_id)
+
+        if gpio_status or gpio_relay:
+            yield "on", dict(id = "gpioserver", gpio_relay = gpio_relay, gpio_status = gpio_status)
 
         yield "class_path", "rdvhome.switches.devices.Device"
 
@@ -122,7 +127,7 @@ def run_rdv_command_line():
             )
 
         yield "class_path", "rdvhome.switches.devices.Device"
-        yield "gpioserver", dict(gpio_power = gpio_power, gpio_direction = gpio_direction)
+        yield "direction", dict(id = "gpioserver", gpio_power = gpio_power, gpio_direction = gpio_direction)
 
         yield from opts.items()
 
@@ -193,6 +198,7 @@ def run_rdv_command_line():
                 name="TV Light Panel",
                 icon="📺",
                 alias=["default", 'nanoleaf'],
+                is_nanoleaf = True
             ),
 
             device(

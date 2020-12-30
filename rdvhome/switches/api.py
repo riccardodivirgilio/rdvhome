@@ -55,7 +55,7 @@ class RemoteControl(Switch):
     async def switch_direction(self, switch, direction, **credentials):
         pass
 
-    async def switch_power(self, switch, on, **credentials):
+    async def switch_on(self, switch, on, **credentials):
         pass
 
     async def switch_color(self, switch, color, **credentials):
@@ -85,7 +85,7 @@ class PhilipsControl(RemoteControl):
     def get_api_url(self, path):
         return "http://%s/api/%s/lights/%s" % (self.ipaddress, self.access_token, path)
 
-    async def switch_power(self, switch, on, **credentials):
+    async def switch_on(self, switch, on, **credentials):
         await switch.assign_state(on = on)
 
     async def switch_color(self, switch, color, **credentials):
@@ -119,7 +119,7 @@ class GPIOControl(RemoteControl):
     async def switch_direction(self, switch, direction, gpio_power, gpio_direction, **credentials):
         pass
 
-    async def switch_power(self, switch, on, gpio_status, gpio_relay, **credentials):
+    async def switch_on(self, switch, on, gpio_status, gpio_relay, **credentials):
         await switch.assign_state(on = on)
 
     async def status(self):

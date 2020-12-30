@@ -15,32 +15,61 @@ from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
 from rpy.functions.asyncio import syncronous_wait_all, wait_all
 from rpy.functions.datastructures import data
 
+class Provider(object):
+
+    def __init__(self, id = None, **credentials):
+        self.id = id
+        self.credentials = credentials
+
+    @property
+    def control(self):
+        return switches.get(self.id)
+
+    async def switch_on(self, switch, **opts):
+        if self.control:
+            return await self.control.switch_on(switch = switch, **opts, **self.credentials)
+
+    async def switch_color(self, switch, **opts):
+        if self.control:
+            return await self.control.switch_color(switch = switch, **opts, **self.credentials)
+
+    async def switch_direction(self, switch, **opts):
+        if self.control:
+            return await self.control.switch_direction(switch = switch, **opts, **self.credentials)
+
+
 class Device(Switch):
 
-    def __init__(self, id, gpioserver = None, nanoleaf = None, philips = None, **opts):
+    @property
+    def default_capabilities(self):
+        return capabilities(
+            on=bool(self.providers.on),
+            hue=bool(self.providers.color),
+            saturation=bool(self.providers.color),
+            brightness=bool(self.providers.color),
+            direction=bool(self.providers.direction),
+        )
 
-        self.credentials = data(gpioserver = gpioserver, nanoleaf = nanoleaf, philips = philips)
+    def __init__(self, id, color = {}, on = {}, direction = {}, **opts):
+
+        self.providers = data(
+            color = Provider(**color),
+            on = Provider(**on),
+            direction = Provider(**direction),
+        )
 
         super().__init__(id, **opts)
 
-    def collect_api_call(self, on = None, color = None, direction = None):
-        for target, credentials in self.credentials.items():
-            if credentials is not None:
-                for controller in switches.filter(target):
-                    if direction is not None:
-                        yield controller.switch_direction(self, direction, **credentials)
+    async def switch(self, on = None, color = None, direction = None):
 
-                    if color is not None:
-                        yield controller.switch_color(self, color, **credentials)
+        await self.providers.on.switch_on(self, on = on)
+        await self.providers.color.switch_color(self, color = color)
+        await self.providers.direction.switch_direction(self, direction = direction)
 
-                    if on is not None:
-                        yield controller.switch_power(self, on, **credentials)
 
-    async def switch(self, **opts):
-
-        coros = self.collect_api_call(**opts)
-
-        return await wait_all(coros)
+    def get_control_with_credentials(self, name):
+        opts = self.providers[name]
+        return switches.get(opts.id), opts
 
 
 
