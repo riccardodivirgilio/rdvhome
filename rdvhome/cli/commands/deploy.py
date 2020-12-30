@@ -6,8 +6,9 @@ import os
 
 from rpy.cli.utils import SimpleCommand
 from rpy.functions.importutils import module_path
-
+from rdvhome.switches import switches
 from rdvhome.conf import settings
+from itertools import groupby
 import base64
 SERVICE_TEMPLATE = """
 [Unit]
@@ -40,6 +41,27 @@ server = {
     'local': os.path.normpath(module_path('rdvhome', os.path.pardir)) + '/',
 }
 
+def generate_restpio_arguments():
+
+    inp = set()
+    out = set()
+
+    for switch in switches:
+        for attr, cont in (
+            ('gpio_power', out),
+            ('gpio_direction', out),
+            ('gpio_relay', out),
+            ('gpio_status', inp),
+            ):
+
+            pin = getattr(switch, attr, None)
+
+            if pin:
+                cont.add(pin)
+
+    yield '--output-high=%s' % ",".join(map(str, sorted(out)))
+    yield '--input-pull-up=%s' % ",".join(map(str, sorted(inp)))
+
 class Command(SimpleCommand):
 
     def commands(self, **context):
@@ -50,6 +72,7 @@ class Command(SimpleCommand):
             yield ('ssh %(username)s@%(host)s ' + cmd) % context
 
     def local_files(self, **context):
+        yield '/etc/systemd/system/gpioserver.service', service('python3 -m gpioserver %s' % " ".join(generate_restpio_arguments()), **context)
         yield '/etc/systemd/system/lights.service', service('python3 /home/pi/rdvhome/run.py run', **context)
 
     def local_commands(self,  **context):
@@ -58,7 +81,6 @@ class Command(SimpleCommand):
             yield "'echo %s | base64 --decode > /tmp/tempfile'" % (b64encode(content))
             yield 'sudo cp /tmp/tempfile %s' % path
 
-
         yield 'python3 -m pip install %s --user' % " ".join(
             v and '%s==%s' % (n, v) or n
             for n, v in settings.DEPENDENCIES.items()
@@ -66,6 +88,7 @@ class Command(SimpleCommand):
         )
         yield "sudo systemctl daemon-reload"
         yield "sudo systemctl stop lights.service"
+        yield "sudo systemctl stop gpioserver.service"
 
     def handle(self, *args): 
         for cmd in tuple(self.commands(**server)):

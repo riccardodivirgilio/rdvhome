@@ -31,6 +31,6 @@ settings = data(
         "python-rpy": "1.0.17",
         "websockets": "8.1",
         "zeroconf": '0.26.3',
-        "restgpio": None,
+        "gpioserver": '1.0.3',
     },
 )
