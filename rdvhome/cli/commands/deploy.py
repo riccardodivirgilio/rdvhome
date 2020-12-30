@@ -78,7 +78,7 @@ class Command(SimpleCommand):
     def local_commands(self,  **context):
 
         for path, content in self.local_files(**context):
-            yield "'echo %s | base64 --decode > /tmp/tempfile'" % (b64encode(content))
+            yield "'echo %s | base64 --decode > /tmp/tempfile'" % b64encode(content)
             yield 'sudo cp /tmp/tempfile %s' % path
 
         yield 'python3 -m pip install %s --user' % " ".join(
@@ -88,7 +88,7 @@ class Command(SimpleCommand):
         )
         yield "sudo systemctl daemon-reload"
         yield "sudo systemctl stop lights.service"
-        yield "sudo systemctl stop gpioserver.service"
+        yield "sudo systemctl start gpioserver.service"
 
     def handle(self, *args): 
         for cmd in tuple(self.commands(**server)):

@@ -45,8 +45,8 @@ class ControlSwitch(Switch):
 
         super().__init__(id=id, **opts)
 
-    async def status(self):
-        return await self.send(on=self.on)
+    #async def status(self):
+    #    return await self.send(on=self.on)
 
     async def switch(self, on=None, **opts):
 
@@ -89,7 +89,7 @@ class ControlSwitch(Switch):
         )
 
     async def when_switch_on(self, switch, i):
-        if switch.capabilities.allow_hue:
+        if switch.state.allow_hue:
 
             color_gen = self.create_color_generator(switch, i)
 

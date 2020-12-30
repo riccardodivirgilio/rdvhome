@@ -20,7 +20,7 @@ def capabilities(
     saturation=False,
     brightness=False,
     direction=False,
-    visibility=True,
+    visible=True,
 ):
     return data(
         allow_on=on,
@@ -28,7 +28,12 @@ def capabilities(
         allow_saturation=saturation,
         allow_brightness=brightness,
         allow_direction=direction,
-        allow_visibility=visibility,
+        visible=visible,
+        on=False,
+        hue=1,
+        saturation=1,
+        brightness=1,
+        direction=None
     )
 
 
@@ -85,7 +90,7 @@ class Switch(EventStream):
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
-        self.capabilities = data(self.default_capabilities)
+        self.state = data(self.default_capabilities)
 
         super().__init__()
 
@@ -94,38 +99,35 @@ class Switch(EventStream):
             return self.homekit_class(driver=driver, switch=self)
 
     @to_data
-    def serialize(self, on=None, color=None, intensity=None, full=True, **opts):
+    def serialize(self):
         yield "id", self.id
 
-        if full:
-            yield "name", self.name
-            yield "kind", self.kind
-            yield "icon", self.icon
-            yield "alias", self.alias
-            yield "ordering", self.ordering
+        yield "name", self.name
+        yield "kind", self.kind
+        yield "icon", self.icon
+        yield "alias", self.alias
+        yield "ordering", self.ordering
+        yield from self.state.items()
 
-            yield from self.capabilities.items()
+    async def assign_state(self, **opts):
 
-        if on is not None:
-            yield "on", bool(on)
-            yield "off", not bool(on)
+        diff = {}
 
-        if color is not None:
-            yield from to_color(color).serialize().items()
+        for key, value in opts.items():
+            try:
+                if not self.state[key] == value:
+                    diff[key] = self.state[key] = value
+            except KeyError:
+                diff[key] = self.state[key] = value
 
-        if intensity is not None:
-            yield "intensity", intensity
-
-        yield from opts.items()
-
-    async def send(self, **opts):
-        return await super(Switch, self).send(self.serialize(**opts))
+        if diff:
+            return await super(Switch, self).send({'switches': {self.id: diff}})
 
     async def switch(self, *args, **opts):
-        raise NotImplementedError
+        pass
 
     async def status(self, *args, **opts):
-        raise NotImplementedError
+        pass
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.id)
@@ -160,15 +162,22 @@ class SwitchList(object):
     switches = property(get_switches, set_switches)
 
     async def status(self, *args, **opts):
+
+        await wait_all(obj.status(*args, **opts) for obj in self)
+
         return {
-            serialized.id: serialized
-            for serialized in await wait_all(obj.status(*args, **opts) for obj in self)
+            obj.id: obj.serialize()
+            for obj in self
         }
+        
 
     async def switch(self, *args, **opts):
+
+        await wait_all(obj.switch(*args, **opts) for obj in self)
+
         return {
-            serialized.id: serialized
-            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self)
+            obj.id: obj.serialize()
+            for obj in self
         }
 
     def get(self, pk):

@@ -57,7 +57,7 @@ class Command(SimpleCommand):
                             name=s.name,
                             icon=s.icon,
                             ordering=s.ordering,
-                            allow_visibility=s.capabilities.allow_visibility,
+                            visible=s.state.visible,
                         )
                         for s in switches
                     },

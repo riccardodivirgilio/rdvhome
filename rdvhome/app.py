@@ -214,11 +214,14 @@ async def websocket(request):
 
     try:
         async for msg in ws:
+
             if msg.type == aiohttp.WSMsgType.TEXT:
                 if msg.data == "/close":
                     await ws.close()
                 else:
-                    await app._handle(make_mocked_request("WS", msg.data))
+                    response = await app._handle(make_mocked_request("WS", msg.data))
+
+                    await ws.send_str(response.text)
 
             elif msg.type == aiohttp.WSMsgType.ERROR:
                 print("ws connection closed with exception %s" % ws.exception())

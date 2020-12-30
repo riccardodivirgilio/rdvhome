@@ -72,7 +72,7 @@ def color_to_homekit(color, color_range=HOMEKIT_RANGE):
     return color_to_philips(color, color_range=color_range, key_function=identity)
 
 
-def to_color(spec):
+def to_color(spec = None):
     if isinstance(spec, HSB):
         return spec
     if isinstance(spec, dict):

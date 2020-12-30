@@ -100,8 +100,6 @@ class HomekitLight(HomekitSwitch):
 
 class RemoteBase(Switch):
 
-    store = KeyStore(prefix="remote")
-
     def __init__(self, id, ipaddress=None, access_token=None, **opts):
 
         self.ipaddress = ipaddress
@@ -263,7 +261,7 @@ class Light(RemoteBase):
 
 class PhilipsPoolControl(RemoteBase):
 
-    default_capabilities = capabilities(visibility=False)
+    default_capabilities = capabilities(visible=False)
 
     philips_initial_color = HSB(
         hue=0.12845044632639047, saturation=0.5511811023622047, brightness=1

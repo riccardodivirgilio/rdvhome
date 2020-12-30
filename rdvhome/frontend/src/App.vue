@@ -5,7 +5,7 @@
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
-          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
+          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.visible">
             <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
               <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
                 <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
@@ -118,15 +118,18 @@ export default {
   methods: {
     hsl_to_css: hsl_to_css,
     updateSwitch: function (data) {
-      Vue.set(
-        this.switches,
-        data.id,
-        merge(
-          {advanced_options: false},
-          this.switches[data.id] || {},
-          data
-        )
-      );
+      scan(
+        (v, k) => Vue.set(
+          this.switches,
+          k,
+          merge(
+            {advanced_options: false},
+            this.switches[k] || {},
+            v
+          )
+        ),
+        data
+      )
     },
     toggle: function (item) {
       this.send_action(item.id, {
@@ -231,9 +234,8 @@ export default {
         this.ws.onmessage = (e) => {
             if (typeof e.data === 'string') {
               const data = JSON.parse(e.data)
-              console.log('Incoming:')
-              console.log(data)
-              this.updateSwitch(data)
+
+              this.updateSwitch(data.switches)
             }
         };
       }
