@@ -118,7 +118,6 @@ def run_rdv_command_line():
         DEBUG=not has_gpio(),  # raspberry is production.
         SWITCHES=[
             philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
-
             light(
                 id="led_kitchen",
                 name="Kitchen Led",
@@ -152,7 +151,6 @@ def run_rdv_command_line():
                 alias=["default"],
             ),
             tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.235"),
-
             light(
                 id="led_tv",
                 name="TV Led",
@@ -267,8 +265,6 @@ def run_rdv_command_line():
                 gpio_direction=27,
                 icon="☀️",
             ),
-
-
             control(id="random", name="Random", icon="❓", effect = 'Color Burst'),
             control(
                 id="hloop",
@@ -277,7 +273,6 @@ def run_rdv_command_line():
                 timeout=timeout(5, 10),
                 colors=perturbation,
             ),
-
             control(
                 id="natural",
                 name="Naturale",
