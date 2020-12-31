@@ -31,7 +31,7 @@ def capabilities(
         visible=visible,
         on=False,
         hue=1,
-        saturation=1,
+        saturation=0,
         brightness=1,
         direction=None
     )

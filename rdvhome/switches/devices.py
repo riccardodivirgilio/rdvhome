@@ -21,6 +21,9 @@ class Provider(object):
         self.id = id
         self.credentials = credentials
 
+    def __bool__(self):
+        return bool(self.id)
+
     @property
     def control(self):
         return switches.get(self.id)
