@@ -5,7 +5,7 @@ use actix_web::{get, web::Data, web::Payload, Error, HttpResponse, HttpRequest};
 use actix_web_actors::ws;
 
 #[get("/websocket")]
-pub async fn start_connection(
+pub async fn websocket_view(
     req: HttpRequest,
     stream: Payload,
     srv: Data<Addr<Lobby>>,

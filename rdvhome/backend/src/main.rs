@@ -2,8 +2,8 @@ mod ws;
 mod lobby;
 use lobby::Lobby;
 mod messages;
-mod start_connection;
-use start_connection::start_connection as start_connection_route;
+mod websocket;
+use websocket::websocket_view;
 use actix::Actor;
 
 use actix_web::{App, HttpServer};
@@ -18,7 +18,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .service(start_connection_route) //register our route. rename with "as" import or naming conflict
+            .service(websocket_view) //register our route. rename with "as" import or naming conflict
             .data(chat_server.clone()) //register the lobby
     })
     .bind(ADDRESS)?
