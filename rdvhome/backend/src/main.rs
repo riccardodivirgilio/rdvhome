@@ -8,17 +8,20 @@ use actix::Actor;
 
 use actix_web::{App, HttpServer};
 
+const ADDRESS: &str = "0.0.0.0:8500";
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let chat_server = Lobby::default().start(); //create and spin up a lobby
+
+    println!("Starting server on {}.", ADDRESS);
 
     HttpServer::new(move || {
         App::new()
             .service(start_connection_route) //register our route. rename with "as" import or naming conflict
             .data(chat_server.clone()) //register the lobby
     })
-    .bind("0.0.0.0:8500")?
+    .bind(ADDRESS)?
     .run()
     .await
 }
