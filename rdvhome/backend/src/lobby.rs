@@ -1,19 +1,26 @@
 use crate::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
-use actix::prelude::{Actor, Context, Handler, Recipient};
+use crate::home::generate_switches;
+use crate::switches::Switch;
+
+
+use actix::prelude::{Actor, Addr, Context, Handler, Recipient};
 use std::collections::{HashMap};
 use uuid::Uuid;
+
 
 
 type Socket = Recipient<WsMessage>;
 
 pub struct Lobby {
     sessions: HashMap<Uuid, Socket>, //self id to self
+    switches: Vec<Addr<Switch>>,
 }
 
 impl Default for Lobby {
     fn default() -> Lobby {
         Lobby {
             sessions: HashMap::new(),
+            switches: Vec::new()
         }
     }
 }
@@ -31,6 +38,17 @@ impl Lobby {
 
 impl Actor for Lobby {
     type Context = Context<Self>;
+
+    fn started(&mut self, _ctx: &mut Context<Self>) {
+       for switch in generate_switches() {
+            self.switches.push(switch.start());
+       }
+    }
+
+    fn stopped(&mut self, _ctx: &mut Context<Self>) {
+       println!("Lobby is stopped");
+    }
+
 }
 
 impl Handler<Disconnect> for Lobby {

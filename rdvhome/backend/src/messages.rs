@@ -24,3 +24,10 @@ pub struct ClientActorMessage {
     pub id: Uuid,
     pub msg: String,
 }
+
+
+#[derive(Message)]
+#[rtype(result = "()")]
+pub struct Status {
+    pub id: Uuid,
+}
