@@ -1,5 +1,5 @@
 use actix::{fut, ActorContext, WrapFuture, ContextFutureSpawner, ActorFuture};
-use crate::messages::{Disconnect, Connect, WsMessage, ClientActorMessage};
+use crate::messages::{Disconnect, Connect, WsMessage, Status, ClientActorMessage};
 use crate::lobby::Lobby; 
 use actix::{Actor, Addr, Running, StreamHandler};
 use actix::{AsyncContext, Handler};
@@ -91,10 +91,26 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WsConn {
                 ctx.stop();
             }
             Ok(ws::Message::Nop) => (),
-            Ok(Text(s)) => self.lobby_addr.do_send(ClientActorMessage {
-                id: self.id,
-                msg: s,
-            }),
+            Ok(Text(s)) => {
+
+                if s == "/switch" {
+
+                    self.lobby_addr.do_send(Status {
+                        id: self.id
+                    })
+
+                } else {
+
+                    self.lobby_addr.do_send(ClientActorMessage {
+                        id: self.id,
+                        msg: s,
+                    })
+
+                }
+
+
+
+            },
             
             Err(e) => panic!(e),
         }

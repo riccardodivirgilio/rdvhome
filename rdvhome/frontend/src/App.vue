@@ -201,7 +201,7 @@ export default {
       if (this.reconnect < 4) {
 
         if (window.location.protocol == 'file:') {
-          this.ws = new WebSocket('ws://rdvpi.local:8500/websocket');
+          this.ws = new WebSocket('ws://localhost:8500/websocket');
         } else {
           this.ws = new WebSocket('ws://'+ window.location.hostname +':8500/websocket');
         }
@@ -230,10 +230,8 @@ export default {
 
         this.ws.onmessage = (e) => {
             if (typeof e.data === 'string') {
-              const data = JSON.parse(e.data)
-              console.log('Incoming:')
-              console.log(data)
-              this.updateSwitch(data)
+              console.log('new message:')
+              console.log(e.data)
             }
         };
       }

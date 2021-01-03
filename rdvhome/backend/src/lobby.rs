@@ -1,9 +1,9 @@
-use crate::messages::{ClientActorMessage, Connect, Disconnect, WsMessage};
+use crate::messages::{ClientActorMessage, Status, Connect, Disconnect, WsMessage};
 use crate::home::generate_switches;
 use crate::switches::Switch;
 
 
-use actix::prelude::{Actor, Addr, Context, Handler, Recipient};
+use actix::prelude::{Actor, Context, Handler, Recipient};
 use std::collections::{HashMap};
 use uuid::Uuid;
 
@@ -13,14 +13,14 @@ type Socket = Recipient<WsMessage>;
 
 pub struct Lobby {
     sessions: HashMap<Uuid, Socket>, //self id to self
-    switches: Vec<Addr<Switch>>,
+    switches: Vec<Switch>,
 }
 
 impl Default for Lobby {
     fn default() -> Lobby {
         Lobby {
             sessions: HashMap::new(),
-            switches: Vec::new()
+            switches: generate_switches()
         }
     }
 }
@@ -34,15 +34,21 @@ impl Lobby {
             println!("attempting to send message but couldn't find user id.");
         }
     }
+
+    fn as_string(&mut self) -> String {
+
+
+        return serde_json::to_string(&self.switches).unwrap();
+
+    }
 }
 
 impl Actor for Lobby {
     type Context = Context<Self>;
 
     fn started(&mut self, _ctx: &mut Context<Self>) {
-       for switch in generate_switches() {
-            self.switches.push(switch.start());
-       }
+
+       println!("Lobby is started");
     }
 
     fn stopped(&mut self, _ctx: &mut Context<Self>) {
@@ -80,5 +86,17 @@ impl Handler<ClientActorMessage> for Lobby {
 
     fn handle(&mut self, msg: ClientActorMessage, _ctx: &mut Context<Self>) -> Self::Result {
         self.sessions.iter().for_each(|(id, _)| self.send_message(&msg.msg, id));
+    }
+}
+
+impl Handler<Status> for Lobby {
+    type Result = ();
+
+    fn handle(&mut self, msg: Status, _ctx: &mut Context<Self>) -> Self::Result {
+        println!("Received status in lobby");
+
+        let serialized = self.as_string();
+
+        self.sessions.iter().for_each(|(id, _)| self.send_message(&serialized, id));
     }
 }

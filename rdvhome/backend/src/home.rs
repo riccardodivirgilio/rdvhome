@@ -1,7 +1,7 @@
 use crate::switches::Switch;
 
 pub fn generate_switches() -> Vec<Switch> {
-    return [
+    return vec![
         Switch {
             id: "bedroom_light",
             name: "Bedroom light",
@@ -12,5 +12,5 @@ pub fn generate_switches() -> Vec<Switch> {
             name: "Bedroom led",
             power: true,
         }
-    ].to_vec()
+    ]
 }
