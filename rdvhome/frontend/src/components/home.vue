@@ -745,7 +745,6 @@
 
 <script>
 
-import Vue from 'vue'
 
 import {hsb_to_css_with_lightness} from '../utils/color';
 
@@ -775,7 +774,9 @@ export default {
       },
       area_click: function(item) {
         if (item && item.allow_on) {
-            Vue.set(item, 'on', ! item.on)
+
+            item.on = ! item.on
+
             this.$emit('toggle', item);
         }
       }
