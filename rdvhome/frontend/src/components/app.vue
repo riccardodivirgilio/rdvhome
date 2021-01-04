@@ -102,41 +102,42 @@ export default {
           this.ws = this.websocket('ws://'+ window.location.hostname +':8500/websocket');
         }
 
-        this.ws.onerror = (e) => {
+        this.ws.addEventListener('error', e => {
             console.log('Connection Error');
             console.log(e)
             this.connected = false;
             setTimeout(() => {this.connect()}, 1000);
-        };
+        });
 
-        this.ws.onopen = (e) => {
+        this.ws.addEventListener('open', e => {
             console.log('WebSocket Client Connected');
             console.log(e)
             this.reconnect = 0;
             this.connected = true;
             this.ws.send('/switch');
-        };
+        });
 
-        this.ws.onclose = (e) => {
+        this.ws.addEventListener('close',  e => {
             console.log('WebSocket Client Disconnected');
             console.log(e)
             this.connected = false;
             setTimeout(() => {this.connect()}, 1000);
-        };
+        });
 
-        this.ws.onmessage = (e) => {
+        this.ws.addEventListener('message', e => {
             if (typeof e.data === 'string') {
               const data = JSON.parse(e.data)
               console.log('Incoming:')
               console.log(data)
               this.updateSwitch(data)
             }
-        };
+        });
       }
-    }
-  },
-  websocket: function(arg) {
-    return new WebSocket(arg);
+    },
+    websocket: function(arg) {
+      return new WebSocket(arg);
+    },
+
   },
   created: function() {
 
