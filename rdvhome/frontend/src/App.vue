@@ -5,7 +5,7 @@
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
-          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-if="item.allow_visibility">
+          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-show="item.allow_visibility">
             <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
               <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
                 <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
@@ -44,7 +44,6 @@
 
 <script>
 
-import Vue from 'vue'
 
 import loading   from './components/loading';
 import toggle    from './components/toggle';
@@ -61,7 +60,7 @@ import merge     from 'rfuncs/functions/merge'
 import scan      from 'rfuncs/functions/scan'
 import map       from 'rfuncs/functions/map'
 
-import {hsb_to_css_with_lightness, hsb_to_hsl, hsl_to_css} from './utils/color';
+import {hsb_to_css_with_lightness, hsl_to_css} from './utils/color';
 
 export default {
   name: 'app',
@@ -93,10 +92,13 @@ export default {
       var initial  = 0;
 
       scan(item => {
+
+          var color = null;
+
           if (item.on) {
-            var color = hsb_to_css_with_lightness(item, 0.15);
+            color = hsb_to_css_with_lightness(item, 0.15);
           } else {
-            var color = 'transparent';
+            color = 'transparent';
           }
 
           value   += ', ' + color + ' ' + initial + '%'
@@ -118,15 +120,14 @@ export default {
   methods: {
     hsl_to_css: hsl_to_css,
     updateSwitch: function (data) {
-      Vue.set(
-        this.switches,
-        data.id,
-        merge(
+
+      this.switches[data.id] = merge(
           {advanced_options: false},
           this.switches[data.id] || {},
           data
         )
-      );
+
+
     },
     toggle: function (item) {
       this.send_action(item.id, {
@@ -304,7 +305,7 @@ html, body,
   &::-webkit-scrollbar,
   &::-webkit-scrollbar-track,
   &::-webkit-scrollbar-thumb { 
-    display: none;  // Safari and Chrome
+    display: none;
     -webkit-appearance: none;
     background-color: transparent;
   }

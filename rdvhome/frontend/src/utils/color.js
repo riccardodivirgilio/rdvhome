@@ -18,27 +18,6 @@ export function hsb_to_hsl(data) {
     };
 }
 
-export function hsl_to_hsb(h) {
-    var s = data.saturation
-    var l = data.lightness
-    var h = data.hue;
-
-    var _h = h,
-        _s,
-        _v;
-
-    l *= 2;
-    s *= (l <= 1) ? l : 2 - l;
-    _v = (l + s) / 2;
-    _s = (2 * s) / (l + s);
-
-    return {
-        hue: _h,
-        saturation: _s,
-        brightness: _v
-    };
-}
-
 function round_with_postfix(v, molt, postfix) {
     if (is_string(v)) {
         return v 
@@ -59,7 +38,6 @@ export function hsb_to_css(data) {
 
 export function hsb_to_css_with_lightness(data, lightness = 0.5) {
 
-    var hsl = hsb_to_hsl(data)
     data.lightness = lightness
 
     return hsl_to_css(data)

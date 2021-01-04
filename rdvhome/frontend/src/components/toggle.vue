@@ -1,5 +1,5 @@
 <template>
-
+  <!-- eslint-disable vue/no-mutating-props -->
   <label class="toggle" :style="{backgroundColor: to_css(item)}">
     <input type="checkbox" @change="toggle" v-model="item[name]">
     <span class="toggle-button"></span>
@@ -16,7 +16,7 @@ export default {
   props: ['name', 'item', 'onchange'],
   methods: {
       to_css: hsb_to_css_with_lightness,
-      toggle (e) {
+      toggle () {
         if (this.onchange) {
           this.onchange(this.item, this.name)
         }
