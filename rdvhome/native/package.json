@@ -6,12 +6,13 @@
   "author": "Riccardo Di Virgilio <riccardod@wolfram.com>",
   "license": "MIT",
   "dependencies": {
+    "@nativescript/core": "^7.0.3",
     "@vue/devtools": "^5.3.3",
     "nativescript-socketio": "^3.3.1",
-    "nativescript-vue-devtools": "^1.4.0",
     "nativescript-toasty": "^3.0.0-alpha.2",
     "nativescript-vue": "^2.8.1",
-    "@nativescript/core": "^7.0.3",
+    "nativescript-vue-devtools": "^1.4.0",
+    "nativescript-websockets": "^1.5.6",
     "rfuncs": "^1.2.10"
   },
   "devDependencies": {
