@@ -6,7 +6,7 @@
             <!-- Shows the list item label in the default color and style. -->
             <DockLayout class="line" stretchLastChild="true" >
               <Label class="icon" :text="item.icon" dock="left" />
-              <Switch class="toggle" v-model="item.on" dock="right" @checkedChange="e => toggle_event(e, item)" />
+              <Switch class="toggle" :checked="item.on" dock="right" @checkedChange="e => toggle_event(e, item.id)" v-if="item.allow_on"/>
               <Label class="name" :text="item.name" dock="bottom" />            
             </DockLayout>
           </v-template>
@@ -19,45 +19,36 @@
 import abstract from 'frontend/components/app'
 import switches from 'frontend/data/switches'
 import values   from 'rfuncs/functions/values'
+import filter   from 'rfuncs/functions/filter'
+import sort_by  from 'rfuncs/functions/sort_by'
 
 require('nativescript-websockets');
 
 export default {
     extends: abstract,
-watch: {
-    switches: {
-    handler:function(newVal) {
-      console.log("new Value is " + newVal)
-    },
-     deep:true
-    },
-
-  },
     computed: {
         connected_switches: function() {
             if (this.connected) {
-                return values(this.switches)
+                return sort_by(
+                    filter(
+                        s => s.allow_visibility,
+                        values(this.switches)
+                    ),
+                    s => s.ordering
+                )
             }
             return []
         }
     },
     methods: {
         values,
-        toggle_event: function(e, item) {
-
-            console.log(e)
-
+        toggle_event: function(e, id) {
             const checked = e.object.checked;
-
-            console.log(`Switch new value ${checked}: ${item.on}`);
-
-            if ((checked == true || checked == false)) {
-                
-
-                // this.toggle(item)
+            const on = this.switches[id].on
+            if ((checked == true || checked == false) && checked != on) {
+                this.switches[id].on = checked
+                this.toggle(this.switches[id])
             }
-
-
         },
         websocket: function(arg) {
             return new WebSocket(arg);
