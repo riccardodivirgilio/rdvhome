@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="container">
-      <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
+      <home class="panel-home" @toggle="toggle($event)" :switches="switches"/>
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
@@ -44,26 +44,22 @@
 
 <script>
 
-
+import abstract  from './components/app';
 import loading   from './components/loading';
 import toggle    from './components/toggle';
 import btn       from './components/btn';
 import slider    from './components/slider';
 import updown    from './components/updown';
 import home      from './components/home';
-import switches  from './data/switches';
-
-import debounce  from './utils/debounce';
 
 import values    from 'rfuncs/functions/values'
-import merge     from 'rfuncs/functions/merge'
 import scan      from 'rfuncs/functions/scan'
-import map       from 'rfuncs/functions/map'
 
 import {hsb_to_css_with_lightness, hsl_to_css} from './utils/color';
 
 export default {
   name: 'app',
+  extends: abstract,
   components: {
     loading,
     toggle,
@@ -71,14 +67,6 @@ export default {
     updown,
     home,
     btn
-  },
-  data: function() {
-    return {
-      switches: switches,
-      reconnect: 0,
-      connected: false,
-      reconnect_limit: 4
-    }
   },
   computed: {
     colored_switches: function() {
@@ -119,130 +107,6 @@ export default {
   },
   methods: {
     hsl_to_css: hsl_to_css,
-    updateSwitch: function (data) {
-
-      this.switches[data.id] = merge(
-          {advanced_options: false},
-          this.switches[data.id] || {},
-          data
-        )
-
-
-    },
-    toggle: function (item) {
-      this.send_action(item.id, {
-        mode:       this.format_on_value(item.on),
-        hue:        this.format_hsb_value(item.hue),
-        brightness: this.format_hsb_value(item.brightness),
-        saturation: this.format_hsb_value(item.saturation),
-      })
-    },
-    toggle_hsb: debounce(
-      function(item, name) {
-        this.send_action(item.id, {[name]: this.format_hsb_value(item[name])})
-      },
-      200
-    ),
-    toggle_direction: function (item, direction) {
-      this.send_action(item.id, {
-        mode: this.format_direction_value(item[direction], direction),
-      })
-    },
-    home_toggle: function (item) {
-      this.toggle(item)
-    },
-    format_hsb_value: function(value) {
-      if (value || value == 0) {
-        return Math.round(value * 100)
-      }
-      return '-'
-    },
-    format_on_value: function(value) {
-      if (value == true) {
-        return 'on'
-      }
-      if (value == false) {
-        return 'off'
-      }
-      return '-'
-    },
-    format_direction_value: function(value, direction) {
-      if (value == true) {
-        return direction
-      }
-      if (value == false) {
-        return 'stop'
-      }
-      return '-'
-    },
-    send_action: function(id, data) {
-      const url = '/switch/' + id + '/set?' + values(
-          map(
-          (v, k) => k + '=' + encodeURIComponent(v),
-          data
-        )
-      ).join('&')
-
-      //+ this.format_on_value(on) + '/' + this.format_hsb_value(h) + '/' + this.format_hsb_value(s) + '/' + this.format_hsb_value(b);
-      this.ws.send(url)
-    },
-    connect: function(force) {
-
-      if (force) {
-        this.reconnect  = 1;
-      } else {
-        this.reconnect += 1;
-      }
-
-      this.connected = false;
-      this.ws        = null;
-
-      console.log("Attempting to connect to ws number " + this.reconnect)
-
-      if (this.reconnect < 4) {
-
-        if (window.location.protocol == 'file:') {
-          this.ws = new WebSocket('ws://rdvpi.local:8500/websocket');
-        } else {
-          this.ws = new WebSocket('ws://'+ window.location.hostname +':8500/websocket');
-        }
-
-        this.ws.onerror = (e) => {
-            console.log('Connection Error');
-            console.log(e)
-            this.connected = false;
-            setTimeout(() => {this.connect()}, 1000);
-        };
-
-        this.ws.onopen = (e) => {
-            console.log('WebSocket Client Connected');
-            console.log(e)
-            this.reconnect = 0;
-            this.connected = true;
-            this.ws.send('/switch');
-        };
-
-        this.ws.onclose = (e) => {
-            console.log('WebSocket Client Disconnected');
-            console.log(e)
-            this.connected = false;
-            setTimeout(() => {this.connect()}, 1000);
-        };
-
-        this.ws.onmessage = (e) => {
-            if (typeof e.data === 'string') {
-              const data = JSON.parse(e.data)
-              console.log('Incoming:')
-              console.log(data)
-              this.updateSwitch(data)
-            }
-        };
-      }
-    }
-  },
-
-  created: function() {
-    this.connect()
   }
 }
 </script>
