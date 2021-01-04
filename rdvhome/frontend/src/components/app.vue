@@ -97,7 +97,7 @@ export default {
       if (this.reconnect < 4) {
 
         if (typeof window == 'undefined' || window.location.protocol == 'file:') {
-          this.ws = this.websocket('ws://rdvpi.local:8500/websocket');
+          this.ws = this.websocket('ws://rdvhome.local:8500/websocket');
         } else {
           this.ws = this.websocket('ws://'+ window.location.hostname +':8500/websocket');
         }
@@ -139,6 +139,8 @@ export default {
     return new WebSocket(arg);
   },
   created: function() {
+
+    console.log('app loaded, start connect')
     this.connect()
   }
 }
