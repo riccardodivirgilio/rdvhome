@@ -1,13 +1,13 @@
 <template>
     <Page>
         <ActionBar title="Welcome to rdv home"/>
-        <ListView for="item in listOfItems" @itemTap="onItemTap">
+        <ListView for="item in values(switches)">
           <v-template>
             <!-- Shows the list item label in the default color and style. -->
             <DockLayout class="line" stretchLastChild="true" >
               <Label class="icon" :text="item.icon" dock="left" />
               <Switch class="toggle" checked="true" dock="right"  />
-              <Label class="name" :text="item.name" dock="bottom" />
+              <Label class="name" :text="item.name" dock="bottom" />            
             </DockLayout>
           </v-template>
         </ListView>
@@ -16,25 +16,20 @@
 
 <script >
 
-    import abstract from 'frontend/components/app'
+import abstract from 'frontend/components/app'
+import switches from 'frontend/data/switches'
+import values   from 'rfuncs/functions/values'
+import ws from 'nativescript-websockets'
 
-    import switches from 'frontend/data/switches'
-    import values   from 'rfuncs/functions/values'
-
-    export default {
-        extends: abstract,
-        data: () => {
-            return {
-                msg: 'Welcome to RdvHome!',
-                    listOfItems: values(switches)
-            }
-        },
-        methods: {
+export default {
+    extends: abstract,
+    methods: {
+        values,
           websocket: function(arg) {
-            return {}
+            return new ws(arg, {protocols: ['chat', 'video'], timeout: 100, allowCellular: true});
           }
-        }
     }
+}
 </script>
 
 <style scoped>
