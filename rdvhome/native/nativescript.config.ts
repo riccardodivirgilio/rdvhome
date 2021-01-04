@@ -1,7 +1,7 @@
 import { NativeScriptConfig } from '@nativescript/core'
 
 export default {
-  id: 'org.nativescript.application',
+  id: 'RdV.home',
   appPath: 'src',
   appResourcesPath: 'App_Resources',
   android: {
