@@ -300,6 +300,9 @@ class PhilipsPoolControl(RemoteBase):
 
         payload = await self.api_request()
 
+        if not payload:
+            return
+
         for philips_id, response in payload.items():
 
             light = lights.get(philips_id)
