@@ -8,6 +8,7 @@ import debounce  from '../utils/debounce';
 import values    from 'rfuncs/functions/values'
 import merge     from 'rfuncs/functions/merge'
 import map       from 'rfuncs/functions/map'
+import scan      from 'rfuncs/functions/scan'
 
 export default {
   name: 'app',
@@ -27,14 +28,16 @@ export default {
           data
         )
     },
-    toggle: function (item) {
-      this.send_action(item.id, {
-        mode:       this.format_on_value(item.on),
-        hue:        this.format_hsb_value(item.hue),
-        brightness: this.format_hsb_value(item.brightness),
-        saturation: this.format_hsb_value(item.saturation),
-      })
-    },
+    toggle: debounce(
+      function (item) {
+        this.send_action(item.id, {
+          mode:       this.format_on_value(item.on),
+          hue:        this.format_hsb_value(item.hue),
+          brightness: this.format_hsb_value(item.brightness),
+          saturation: this.format_hsb_value(item.saturation),
+        })
+      }
+    ),
     toggle_hsb: debounce(
       function(item, name) {
         this.send_action(item.id, {[name]: this.format_hsb_value(item[name])})
@@ -71,6 +74,11 @@ export default {
       return '-'
     },
     send_action: function(id, data) {
+
+      console.log('SENDING ITEM')
+      console.log(id)
+      console.log(data)
+
       const url = '/switch/' + id + '/set?' + values(
           map(
           (v, k) => k + '=' + encodeURIComponent(v),
@@ -132,6 +140,10 @@ export default {
               this.updateSwitch(data)
             }
         });
+
+        console.log('OPENIng')
+        console.log(this.ws.readyState)
+        console.log(this.ws.readyState)
       }
     },
     websocket: function(arg) {
