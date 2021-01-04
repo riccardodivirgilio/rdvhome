@@ -16,15 +16,23 @@
 
 <script >
 
+    import abstract from 'frontend/components/app'
+
     import switches from 'frontend/data/switches'
     import values   from 'rfuncs/functions/values'
 
     export default {
-    data() {
-        return {
-            msg: 'Welcome to RdvHome!',
-                listOfItems: values(switches)
+        extends: abstract,
+        data: () => {
+            return {
+                msg: 'Welcome to RdvHome!',
+                    listOfItems: values(switches)
             }
+        },
+        methods: {
+          websocket: function(arg) {
+            return {}
+          }
         }
     }
 </script>

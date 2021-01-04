@@ -92,14 +92,14 @@ export default {
       this.connected = false;
       this.ws        = null;
 
-      console.log("Attempting to connect to ws number " + this.reconnect)
+      console.log("Attempting to connect to WS number " + this.reconnect)
 
       if (this.reconnect < 4) {
 
-        if (window.location.protocol == 'file:') {
-          this.ws = new WebSocket('ws://rdvpi.local:8500/websocket');
+        if (typeof window == 'undefined' || window.location.protocol == 'file:') {
+          this.ws = this.websocket('ws://rdvpi.local:8500/websocket');
         } else {
-          this.ws = new WebSocket('ws://'+ window.location.hostname +':8500/websocket');
+          this.ws = this.websocket('ws://'+ window.location.hostname +':8500/websocket');
         }
 
         this.ws.onerror = (e) => {
@@ -135,7 +135,9 @@ export default {
       }
     }
   },
-
+  websocket: function(arg) {
+    return new WebSocket(arg);
+  },
   created: function() {
     this.connect()
   }
