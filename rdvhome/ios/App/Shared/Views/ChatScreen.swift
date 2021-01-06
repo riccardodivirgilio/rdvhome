@@ -10,9 +10,24 @@ import Foundation
 import SwiftUI
 
 
+
+struct Control: Hashable, Identifiable {
+    var id: String
+    var name: String
+    var allow_on: Bool
+    var on: Bool
+}
+
+
 struct ChatScreen: View {
 
 	@StateObject private var model = ChatScreenModel()
+    @State var controls: [Control] = [
+        Control(id: "living_1", name: "Living Room", allow_on: true, on: false),
+        Control(id: "living_2", name: "Living Room 1", allow_on: true, on: false),
+        Control(id: "living_3", name: "Living Room 2", allow_on: true, on: false),
+        Control(id: "living_4", name: "Living Room 3", allow_on: true, on: false)
+    ]
 	
 	// MARK: - Events
 	private func onAppear() {
@@ -28,32 +43,21 @@ struct ChatScreen: View {
     // MARK: -
     var body: some View {
            NavigationView {
-               List(controls) { control in
-                   ControlRow(control: control)
+            List(controls.indices) { i in
+                    HStack {
+                        Text("⚠️")
+                        Text(self.$controls[i].wrappedValue.name)
+                        Toggle("", isOn: self.$controls[i].on)
+                    }
                }
            }
+           .navigationTitle("RdvHome")
+           .onAppear(perform: onAppear)
+           .onDisappear(perform: onDisappear)
        }
 }
 
 
-struct ControlRow: View {
-    var control: Control
-
-    var body: some View {
-        HStack {
-
-            Text(control.name)
-
-            Spacer()
-        }
-    }
-}
-
-struct ControlRow_Previews: PreviewProvider {
-    static var previews: some View {
-        ControlRow(control: controls[1])
-    }
-}
 
 
 // MARK: - Chat Screen model
@@ -77,10 +81,6 @@ private final class ChatScreenModel: ObservableObject {
 		guard webSocketTask == nil else {
 			return
 		}
-        
-
-        
-        
         
 		webSocketTask = URLSession.shared.webSocketTask(with: url)
 		webSocketTask?.receive(completionHandler: onReceive)

@@ -20,11 +20,3 @@ struct ReceivingChatMessage: Decodable, Identifiable {
 	let message: String
 }
 
-
-
-struct Control: Hashable, Codable, Identifiable {
-    var id: String
-    var name: String
-    var allow_on: Bool
-    var on: Bool
-}
