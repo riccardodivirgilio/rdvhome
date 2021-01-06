@@ -8,13 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-	@StateObject private var userInfo = UserInfo()
 	
     var body: some View {
 		NavigationView {
-			SettingsScreen()
+			ChatScreen()
 		}
-		.environmentObject(userInfo)
 		.navigationViewStyle(StackNavigationViewStyle())
     }
 }

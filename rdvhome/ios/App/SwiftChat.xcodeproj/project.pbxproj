@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C01B945C24E92CDE003F0EF6 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01B945B24E92CDE003F0EF6 /* SettingsScreen.swift */; };
-		C01B945D24E92CDE003F0EF6 /* SettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01B945B24E92CDE003F0EF6 /* SettingsScreen.swift */; };
-		C01B946224E9D7D5003F0EF6 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01B946124E9D7D5003F0EF6 /* UserInfo.swift */; };
-		C01B946324E9D7D5003F0EF6 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C01B946124E9D7D5003F0EF6 /* UserInfo.swift */; };
+		25A6DAB125A5E35900C4523D /* Switches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A6DAB025A5E35900C4523D /* Switches.swift */; };
+		25A6DAB225A5E35900C4523D /* Switches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A6DAB025A5E35900C4523D /* Switches.swift */; };
 		C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E19024E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
@@ -24,8 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		C01B945B24E92CDE003F0EF6 /* SettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreen.swift; sourceTree = "<group>"; };
-		C01B946124E9D7D5003F0EF6 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		25A6DAB025A5E35900C4523D /* Switches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switches.swift; sourceTree = "<group>"; };
 		C037E17B24E80B09005466C9 /* SwiftChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftChatApp.swift; sourceTree = "<group>"; };
 		C037E17C24E80B09005466C9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C037E17D24E80B0B005466C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -107,7 +104,6 @@
 		C037E1A224E81C86005466C9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C01B945B24E92CDE003F0EF6 /* SettingsScreen.swift */,
 				C037E19F24E80C07005466C9 /* ChatScreen.swift */,
 			);
 			path = Views;
@@ -117,7 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				C037E1A424E81C9C005466C9 /* ChatMessage.swift */,
-				C01B946124E9D7D5003F0EF6 /* UserInfo.swift */,
+				25A6DAB025A5E35900C4523D /* Switches.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -219,11 +215,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25A6DAB125A5E35900C4523D /* Switches.swift in Sources */,
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				C037E1A524E81C9C005466C9 /* ChatMessage.swift in Sources */,
-				C01B945C24E92CDE003F0EF6 /* SettingsScreen.swift in Sources */,
-				C01B946224E9D7D5003F0EF6 /* UserInfo.swift in Sources */,
 				C037E1A024E80C07005466C9 /* ChatScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -232,11 +227,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25A6DAB225A5E35900C4523D /* Switches.swift in Sources */,
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				C037E1A624E81C9C005466C9 /* ChatMessage.swift in Sources */,
-				C01B945D24E92CDE003F0EF6 /* SettingsScreen.swift in Sources */,
-				C01B946324E9D7D5003F0EF6 /* UserInfo.swift in Sources */,
 				C037E1A124E80C07005466C9 /* ChatScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

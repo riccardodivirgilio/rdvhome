@@ -6,17 +6,25 @@
 //
 
 import Foundation
+import Foundation
+import SwiftUI
+import CoreLocation
 
 struct SubmittedChatMessage: Encodable {
 	let message: String
-	let user: String
-	let userID: UUID
 }
 
 struct ReceivingChatMessage: Decodable, Identifiable {
 	let date: Date
 	let id: UUID
 	let message: String
-	let user: String
-	let userID: UUID
+}
+
+
+
+struct Control: Hashable, Codable, Identifiable {
+    var id: String
+    var name: String
+    var allow_on: Bool
+    var on: Bool
 }
