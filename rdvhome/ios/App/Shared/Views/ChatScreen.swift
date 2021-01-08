@@ -11,7 +11,7 @@ import SwiftUI
 
 
 
-struct Control: Hashable, Identifiable {
+struct Control: Decodable, Hashable, Identifiable {
     var id: String
     var name: String
     var allow_on: Bool
@@ -28,18 +28,6 @@ struct ChatScreen: View {
         Control(id: "living_3", name: "Living Room 2", allow_on: true, on: false),
         Control(id: "living_4", name: "Living Room 3", allow_on: true, on: false)
     ]
-	
-	// MARK: - Events
-	private func onAppear() {
-        
-        print("appear")
-		model.connect()
-	}
-	
-	private func onDisappear() {
-		model.disconnect()
-	}
-
     // MARK: -
     var body: some View {
            NavigationView {
@@ -47,13 +35,20 @@ struct ChatScreen: View {
                     HStack {
                         Text("⚠️")
                         Text(self.$controls[i].wrappedValue.name)
-                        Toggle("", isOn: self.$controls[i].on)
+                        Toggle("", isOn:
+                            Binding(
+                                get: {self.$controls[i].wrappedValue.on},
+                                set: {
+                                    (v) in self.$controls[i].wrappedValue.on = v
+                                    print(v)
+                                })
+                        )
                     }
                }
            }
            .navigationTitle("RdvHome")
-           .onAppear(perform: onAppear)
-           .onDisappear(perform: onDisappear)
+           .onAppear(perform: {model.connect()})
+           .onDisappear(perform: {model.disconnect()})
        }
 }
 
@@ -73,10 +68,10 @@ private final class ChatScreenModel: ObservableObject {
 
 	// MARK: - Connection
 	func connect() {
-        
-        let url = URL(string: "ws://127.0.0.1:8500/websocket")!
+                
+        let url = URL(string: "ws://rdvhome.local:8500/websocket")!
 
-        print("Connect", url)
+        print("Connecting", url)
         
 		guard webSocketTask == nil else {
 			return
@@ -85,6 +80,8 @@ private final class ChatScreenModel: ObservableObject {
 		webSocketTask = URLSession.shared.webSocketTask(with: url)
 		webSocketTask?.receive(completionHandler: onReceive)
 		webSocketTask?.resume()
+        
+        self.send(text:"/switch")
 	}
 	
 	func disconnect() {
@@ -94,7 +91,7 @@ private final class ChatScreenModel: ObservableObject {
 	// MARK: - Sending / recieving
 	private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
 		webSocketTask?.receive(completionHandler: onReceive)
-
+        
 		if case .success(let message) = incoming {
 			onMessage(message: message)
 		}
@@ -105,30 +102,23 @@ private final class ChatScreenModel: ObservableObject {
 	
 	private func onMessage(message: URLSessionWebSocketTask.Message) {
 		if case .string(let text) = message {
+            
+            print("i got", text)
+            
 			guard let data = text.data(using: .utf8),
-				  let chatMessage = try? JSONDecoder().decode(ReceivingChatMessage.self, from: data)
+				  let control = try? JSONDecoder().decode(Control.self, from: data)
 			else {
 				return
 			}
-
-			DispatchQueue.main.async {
-				withAnimation(.spring()) {
-					self.messages.append(chatMessage)
-				}
-			}
+            
+            print(control)
 		}
 	}
 	
 	func send(text: String) {
 
-		let message = SubmittedChatMessage(message: text)
-		guard let json = try? JSONEncoder().encode(message),
-			  let jsonString = String(data: json, encoding: .utf8)
-		else {
-			return
-		}
-		
-		webSocketTask?.send(.string(jsonString)) { error in
+
+		webSocketTask?.send(.string(text)) { error in
 			if let error = error {
 				print("Error sending message", error)
 			}
