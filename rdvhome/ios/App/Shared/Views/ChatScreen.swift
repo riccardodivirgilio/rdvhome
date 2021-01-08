@@ -28,6 +28,7 @@ struct ChatScreen: View {
         Control(id: "living_3", name: "Living Room 2", allow_on: true, on: false),
         Control(id: "living_4", name: "Living Room 3", allow_on: true, on: false)
     ]
+    
     // MARK: -
     var body: some View {
            NavigationView {
@@ -61,14 +62,11 @@ struct ChatScreen: View {
  */
 private final class ChatScreenModel: ObservableObject {
 
-	
 	private var webSocketTask: URLSessionWebSocketTask?
-	
-	@Published private(set) var messages: [ReceivingChatMessage] = []
-
+    
 	// MARK: - Connection
-	func connect() {
-                
+    func connect() {
+                        
         let url = URL(string: "ws://rdvhome.local:8500/websocket")!
 
         print("Connecting", url)
@@ -93,31 +91,28 @@ private final class ChatScreenModel: ObservableObject {
 		webSocketTask?.receive(completionHandler: onReceive)
         
 		if case .success(let message) = incoming {
-			onMessage(message: message)
+            if case .string(let text) = message {
+                
+                print("i got", text)
+                
+                guard let data = text.data(using: .utf8),
+                      let control = try? JSONDecoder().decode(Control.self, from: data)
+                else {
+                    return
+                }
+                
+                print(control)
+                
+            }
 		}
 		else if case .failure(let error) = incoming {
 			print("Error", error)
 		}
 	}
 	
-	private func onMessage(message: URLSessionWebSocketTask.Message) {
-		if case .string(let text) = message {
-            
-            print("i got", text)
-            
-			guard let data = text.data(using: .utf8),
-				  let control = try? JSONDecoder().decode(Control.self, from: data)
-			else {
-				return
-			}
-            
-            print(control)
-		}
-	}
+
 	
 	func send(text: String) {
-
-
 		webSocketTask?.send(.string(text)) { error in
 			if let error = error {
 				print("Error sending message", error)
