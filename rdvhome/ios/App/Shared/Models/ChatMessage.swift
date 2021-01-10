@@ -18,10 +18,9 @@ struct Control: Decodable, Hashable, Identifiable {
     var on: Bool
     var ordering: Int
     
-    var hue: Double
-    var brightness: Double
-    var saturation: Double
-    
+    //var hue: Double
+    //var brightness: Double
+    //var saturation: Double
     
     var allow_on: Bool
     var allow_hue: Bool
