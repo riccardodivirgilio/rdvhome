@@ -16,41 +16,43 @@ struct Control: Decodable, Hashable, Identifiable {
     var name: String
     var allow_on: Bool
     var on: Bool
+    var ordering: Int
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
 }
 
 
 struct ChatScreen: View {
 
-	@StateObject private var model = ChatScreenModel()
-    @State var controls: [Control] = [
-        Control(id: "living_1", name: "Living Room", allow_on: true, on: false),
-        Control(id: "living_2", name: "Living Room 1", allow_on: true, on: false),
-        Control(id: "living_3", name: "Living Room 2", allow_on: true, on: false),
-        Control(id: "living_4", name: "Living Room 3", allow_on: true, on: false)
-    ]
+    @StateObject private var model = ChatScreenModel()
     
     // MARK: -
     var body: some View {
-           NavigationView {
-            List(controls.indices) { i in
-                    HStack {
-                        Text("⚠️")
-                        Text(self.$controls[i].wrappedValue.name)
-                        Toggle("", isOn:
-                            Binding(
-                                get: {self.$controls[i].wrappedValue.on},
-                                set: {
-                                    (v) in self.$controls[i].wrappedValue.on = v
-                                    print(v)
-                                })
-                        )
-                    }
-               }
-           }
-           .navigationTitle("RdvHome")
-           .onAppear(perform: {model.connect()})
-           .onDisappear(perform: {model.disconnect()})
-       }
+    
+         NavigationView {
+            
+            List(model.controls.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
+                  HStack {
+                      Text("⚠️")
+                      Text(c.name)
+                      /*Toggle("", isOn:
+                         Binding(
+                            get: {self.$controls[i].wrappedValue.on},
+                            set: {
+                                (v) in self.$controls[i].wrappedValue.on = v
+                                print(v)
+                            })*/
+                  }
+             }
+         }
+        .navigationTitle("RdvHome")
+        .onAppear(perform: {model.connect()})
+        .onDisappear(perform: {model.disconnect()})
+    }
+       
 }
 
 
@@ -62,35 +64,42 @@ struct ChatScreen: View {
  */
 private final class ChatScreenModel: ObservableObject {
 
-	private var webSocketTask: URLSessionWebSocketTask?
+    private var webSocketTask: URLSessionWebSocketTask?
     
-	// MARK: - Connection
+    @Published private(set) var controls: Set<Control> = [
+    ]
+
+    
+    // MARK: - Connection
     func connect() {
                         
         let url = URL(string: "ws://rdvhome.local:8500/websocket")!
 
         print("Connecting", url)
         
-		guard webSocketTask == nil else {
-			return
-		}
+        guard webSocketTask == nil else {
+            return
+        }
         
-		webSocketTask = URLSession.shared.webSocketTask(with: url)
-		webSocketTask?.receive(completionHandler: onReceive)
-		webSocketTask?.resume()
+        webSocketTask = URLSession.shared.webSocketTask(with: url)
+        webSocketTask?.receive(completionHandler: onReceive)
+        webSocketTask?.resume()
         
         self.send(text:"/switch")
-	}
-	
-	func disconnect() {
-		webSocketTask?.cancel(with: .normalClosure, reason: nil)
-	}
-	
-	// MARK: - Sending / recieving
-	private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
-		webSocketTask?.receive(completionHandler: onReceive)
-        
-		if case .success(let message) = incoming {
+        self.send(text:"/switch")
+    }
+    
+    func disconnect() {
+        webSocketTask?.cancel(with: .normalClosure, reason: nil)
+    }
+    
+    
+    
+    // MARK: - Sending / recieving
+    private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
+        webSocketTask?.receive(completionHandler: onReceive)
+
+        if case .success(let message) = incoming {
             if case .string(let text) = message {
                 
                 print("i got", text)
@@ -101,26 +110,28 @@ private final class ChatScreenModel: ObservableObject {
                     return
                 }
                 
-                print(control)
+                self.controls.insert(control)
                 
+                print(control)
             }
-		}
-		else if case .failure(let error) = incoming {
-			print("Error", error)
-		}
-	}
-	
+        }
+        else if case .failure(let error) = incoming {
+            print("Error", error)
+        }
+    }
+    
 
-	
-	func send(text: String) {
-		webSocketTask?.send(.string(text)) { error in
-			if let error = error {
-				print("Error sending message", error)
-			}
-		}
-	}
-	
-	deinit {
-		disconnect()
-	}
+
+    
+    func send(text: String) {
+        webSocketTask?.send(.string(text)) { error in
+            if let error = error {
+                print("Error sending message", error)
+            }
+        }
+    }
+    
+    deinit {
+        disconnect()
+    }
 }
