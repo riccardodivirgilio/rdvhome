@@ -35,6 +35,14 @@ struct ChatScreen: View {
                     Text(c.icon)
                     Text(c.name)
                     Text(c.on ? "on" : "off")
+                    
+                    Toggle("", isOn:
+                            Binding(
+                                get: {c.on},
+                                set: {(v) in model.switch_power(id: c.id, on: v)}
+                            )
+                    )
+                    
                 }
             }
         }
@@ -77,12 +85,6 @@ private final class ChatScreenModel: ObservableObject {
         self.send(text:"/switch")
     }
     
-    func disconnect() {
-        webSocketTask?.cancel(with: .normalClosure, reason: nil)
-    }
-    
-    
-    
     // MARK: - Sending / recieving
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         webSocketTask?.receive(completionHandler: onReceive)
@@ -111,7 +113,17 @@ private final class ChatScreenModel: ObservableObject {
         }
     }
     
-    
+    func switch_power(id: String, on: Bool) {
+        if var c = self.controls[id] {
+            c.on = on
+            
+            self.controls[id] = c
+            
+            let mode = on ? "on" : "off"
+            
+            self.send(text:"/switch/\(c.id)/set?mode=\(mode)")
+        }
+    }
     
     
     func send(text: String) {
@@ -120,6 +132,10 @@ private final class ChatScreenModel: ObservableObject {
                 print("Error sending message", error)
             }
         }
+    }
+    
+    func disconnect() {
+        webSocketTask?.cancel(with: .normalClosure, reason: nil)
     }
     
     deinit {
