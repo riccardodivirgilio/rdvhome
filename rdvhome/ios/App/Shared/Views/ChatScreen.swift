@@ -13,11 +13,9 @@ struct ChatScreen: View {
     
     @StateObject private var model = ChatScreenModel()
     
-    // MARK: -
     var body: some View {
-        
         NavigationView {
-            
+
             List(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
                 HStack {
                     Text(c.icon)
@@ -27,11 +25,11 @@ struct ChatScreen: View {
                             get: {c.on},
                             set: {(v) in model.switch_power(id: c.id, on: v)}
                         )
-                    )
+                    ).opacity(c.allow_on ? 1 : 0)
                 }
             }
+            .navigationTitle("RdvHome")
         }
-        .navigationTitle("RdvHome")
         .onAppear(perform: {model.connect()})
         .onDisappear(perform: {model.disconnect()})
     }
@@ -89,16 +87,15 @@ private final class ChatScreenModel: ObservableObject {
     
     func switch_power(id: String, on: Bool) {
         if var c = self.controls[id] {
-            c.on = on
-            
-            self.controls[id] = c
-            
-            let mode = on ? "on" : "off"
-            
-            self.send(text:"/switch/\(c.id)/set?mode=\(mode)")
+            if c.allow_on {
+                c.on = on
+                self.controls[id] = c
+                let mode = on ? "on" : "off"
+                self.send(text:"/switch/\(c.id)/set?mode=\(mode)")
+            }
         }
     }
-    
+
     func send(text: String) {
         webSocketTask?.send(.string(text)) { error in
             if let error = error {
