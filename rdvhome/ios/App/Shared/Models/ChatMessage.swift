@@ -13,15 +13,16 @@ import CoreLocation
 struct Control: Decodable, Hashable, Identifiable {
     var id: String
     var name: String
-    var icon: String
+    var icon: String = "💡"
     
-    var on: Bool
-    var ordering: Int
+    var ordering: Int = 1000
     
-    //var hue: Double
-    //var brightness: Double
-    //var saturation: Double
+    var allow_on: Bool = false
+    var allow_hue: Bool = false
     
-    var allow_on: Bool
-    var allow_hue: Bool
+    var on: Bool = false
+    var hue: Double = 0
+    var brightness: Double = 0
+    var saturation: Double = 0
+    
 }
