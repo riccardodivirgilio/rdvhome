@@ -14,46 +14,35 @@ import SwiftUI
 struct Control: Decodable, Hashable, Identifiable {
     var id: String
     var name: String
+    var icon: String
     var allow_on: Bool
     var on: Bool
     var ordering: Int
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
 }
 
 
 struct ChatScreen: View {
-
+    
     @StateObject private var model = ChatScreenModel()
     
     // MARK: -
     var body: some View {
-    
-         NavigationView {
+        
+        NavigationView {
             
-            List(model.controls.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
-                  HStack {
-                      Text("⚠️")
-                      Text(c.name)
-                      Text(c.on ? "on" : "off")
-                      /*Toggle("", isOn:
-                         Binding(
-                            get: {self.$controls[i].wrappedValue.on},
-                            set: {
-                                (v) in self.$controls[i].wrappedValue.on = v
-                                print(v)
-                            })*/
-                  }
-             }
-         }
+            List(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
+                HStack {
+                    Text(c.icon)
+                    Text(c.name)
+                    Text(c.on ? "on" : "off")
+                }
+            }
+        }
         .navigationTitle("RdvHome")
         .onAppear(perform: {model.connect()})
         .onDisappear(perform: {model.disconnect()})
     }
-       
+    
 }
 
 
@@ -64,18 +53,17 @@ struct ChatScreen: View {
  * All business logic is performed in this Observable Object.
  */
 private final class ChatScreenModel: ObservableObject {
-
+    
     private var webSocketTask: URLSessionWebSocketTask?
     
-    @Published private(set) var controls: Set<Control> = [
-    ]
-
+    @Published private(set) var controls = [String: Control]()
+    
     
     // MARK: - Connection
     func connect() {
-                        
+        
         let url = URL(string: "ws://rdvhome.local:8500/websocket")!
-
+        
         print("Connecting", url)
         
         guard webSocketTask == nil else {
@@ -98,7 +86,7 @@ private final class ChatScreenModel: ObservableObject {
     // MARK: - Sending / recieving
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         webSocketTask?.receive(completionHandler: onReceive)
-
+        
         if case .success(let message) = incoming {
             if case .string(let text) = message {
                 
@@ -110,7 +98,10 @@ private final class ChatScreenModel: ObservableObject {
                     return
                 }
                 
-                self.controls.insert(control)
+                
+                DispatchQueue.main.async {
+                    self.controls[control.id] = control
+                }
                 
                 print(control)
             }
@@ -120,8 +111,8 @@ private final class ChatScreenModel: ObservableObject {
         }
     }
     
-
-
+    
+    
     
     func send(text: String) {
         webSocketTask?.send(.string(text)) { error in
