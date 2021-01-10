@@ -21,8 +21,8 @@ struct Control: Decodable, Hashable, Identifiable {
     var allow_hue: Bool = false
     
     var on: Bool = false
-    var hue: Double = 0
-    var brightness: Double = 0
-    var saturation: Double = 0
+    //var hue: Double = 0
+    //var brightness: Double = 0
+    //var saturation: Double = 0
     
 }
