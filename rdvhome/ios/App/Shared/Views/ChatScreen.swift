@@ -38,6 +38,7 @@ struct ChatScreen: View {
                   HStack {
                       Text("⚠️")
                       Text(c.name)
+                      Text(c.on ? "on" : "off")
                       /*Toggle("", isOn:
                          Binding(
                             get: {self.$controls[i].wrappedValue.on},
@@ -85,7 +86,6 @@ private final class ChatScreenModel: ObservableObject {
         webSocketTask?.receive(completionHandler: onReceive)
         webSocketTask?.resume()
         
-        self.send(text:"/switch")
         self.send(text:"/switch")
     }
     
