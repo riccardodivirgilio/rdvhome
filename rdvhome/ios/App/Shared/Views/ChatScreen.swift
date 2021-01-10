@@ -2,24 +2,12 @@
 //  ChatScreen.swift
 //  SwiftChat
 //
-//  Created by Freek Zijlmans on 15/08/2020.
+//  Created by Riccardo Di Virgilio
 //
 
 import Combine
 import Foundation
 import SwiftUI
-
-
-
-struct Control: Decodable, Hashable, Identifiable {
-    var id: String
-    var name: String
-    var icon: String
-    var allow_on: Bool
-    var on: Bool
-    var ordering: Int
-}
-
 
 struct ChatScreen: View {
     
@@ -34,15 +22,12 @@ struct ChatScreen: View {
                 HStack {
                     Text(c.icon)
                     Text(c.name)
-                    Text(c.on ? "on" : "off")
-                    
                     Toggle("", isOn:
-                            Binding(
-                                get: {c.on},
-                                set: {(v) in model.switch_power(id: c.id, on: v)}
-                            )
+                        Binding(
+                            get: {c.on},
+                            set: {(v) in model.switch_power(id: c.id, on: v)}
+                        )
                     )
-                    
                 }
             }
         }
@@ -50,24 +35,14 @@ struct ChatScreen: View {
         .onAppear(perform: {model.connect()})
         .onDisappear(perform: {model.disconnect()})
     }
-    
 }
 
-
-
-
-// MARK: - Chat Screen model
-/**
- * All business logic is performed in this Observable Object.
- */
 private final class ChatScreenModel: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask?
     
     @Published private(set) var controls = [String: Control]()
     
-    
-    // MARK: - Connection
     func connect() {
         
         let url = URL(string: "ws://rdvhome.local:8500/websocket")!
@@ -85,7 +60,6 @@ private final class ChatScreenModel: ObservableObject {
         self.send(text:"/switch")
     }
     
-    // MARK: - Sending / recieving
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         webSocketTask?.receive(completionHandler: onReceive)
         
@@ -124,7 +98,6 @@ private final class ChatScreenModel: ObservableObject {
             self.send(text:"/switch/\(c.id)/set?mode=\(mode)")
         }
     }
-    
     
     func send(text: String) {
         webSocketTask?.send(.string(text)) { error in
