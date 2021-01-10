@@ -14,7 +14,15 @@ struct Control: Decodable, Hashable, Identifiable {
     var id: String
     var name: String
     var icon: String
-    var allow_on: Bool
+    
     var on: Bool
     var ordering: Int
+    
+    var hue: Double
+    var brightness: Double
+    var saturation: Double
+    
+    
+    var allow_on: Bool
+    var allow_hue: Bool
 }
