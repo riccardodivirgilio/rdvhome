@@ -118,9 +118,9 @@ def validate(
         yield "color", HSB(*args)
 
     if mode == "on":
-        yield "on", True
+        yield "power", True
     elif mode == "off":
-        yield "on", False
+        yield "power", False
     elif mode == "stop":
         yield "direction", None
     elif mode == "up":

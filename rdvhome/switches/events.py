@@ -16,10 +16,6 @@ class EventStream(AsyncStream):
     async def watch(self):
         pass
 
-    async def send(self, event):
-        await self.asend(event)
-        return event
-
 
 def subscribe(observable, func):
     return _subscribe(observable, AsyncAnonymousObserver(func))

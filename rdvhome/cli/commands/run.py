@@ -12,7 +12,6 @@ from rpy.functions.process import system_open
 
 from rdvhome.app import app
 from rdvhome.conf import settings
-from rdvhome.homekit import driver
 from rdvhome.state import switches
 from rdvhome.utils.json import dumps
 
@@ -76,12 +75,13 @@ class Command(SimpleCommand):
 
         # We want SIGTERM (kill) to be handled by the driver itself,
         # so that it can gracefully stop the accessory, server and advertising.
-        signal.signal(signal.SIGTERM, driver.signal_handler)
+        #from rdvhome.homekit import driver
+        #signal.signal(signal.SIGTERM, driver.signal_handler)
 
         # code borrowed from pyhap
         try:
-            driver.add_job(driver._do_start)
-            print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
+            #driver.add_job(driver._do_start)
+            #print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
             web.run_app(app, port=port)
         except KeyboardInterrupt:
             driver.loop.call_soon_threadsafe(

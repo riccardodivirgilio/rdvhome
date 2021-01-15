@@ -28,8 +28,6 @@ def get_bridge(driver):
     bridge = Bridge(driver, get_gpio().is_debug and "RdvTest" or "RdvHome")
 
     for switch in switches:
-
-        print(switch, switch.id)
         # bridge.add_accessory(LightBulb(driver, switch.name))
         for accessory in iterate(switch.create_homekit_accessory(driver) or ()):
             bridge.add_accessory(accessory)
