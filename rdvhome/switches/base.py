@@ -159,10 +159,10 @@ class SwitchList(object):
 
     switches = property(get_switches, set_switches)
 
-    async def status(self, *args, **opts):
+    async def status(self):
         return {
             serialized.id: serialized
-            for serialized in await wait_all(obj.status(*args, **opts) for obj in self)
+            for serialized in await wait_all(obj.status() for obj in self)
         }
 
     async def switch(self, *args, **opts):

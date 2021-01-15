@@ -11,7 +11,7 @@ def api_response(status=200, **opts):
     return data(opts, status=status, success=status == 200)
 
 
-async def status(number=None, **opts):
+async def status(number=None):
     objs = switches.filter(number)
     return api_response(
         mode="status", switches=await objs.status(), status=objs and 200 or 404
