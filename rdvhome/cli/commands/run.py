@@ -12,7 +12,7 @@ from rpy.functions.process import system_open
 
 from rdvhome.app import app
 from rdvhome.conf import settings
-from rdvhome.state import switches
+from rdvhome.state import switches, controllers
 from rdvhome.utils.json import dumps
 
 
@@ -67,7 +67,12 @@ class Command(SimpleCommand):
 
         run_all(
             # switches.subscribe(log),
-            (switches.watch(), switches.start())
+            (
+                switches.watch(), 
+                switches.start(),
+                controllers.watch(),
+                controllers.start(),
+            )
         )
 
         if auto_open:
