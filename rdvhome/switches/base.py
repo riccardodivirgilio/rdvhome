@@ -102,6 +102,18 @@ class Switch(EventStream):
 
         yield from to_color(self.color).serialize().items()
 
+    async def update(self, **opts):
+
+        changed = False
+
+        for key, value in opts.items():
+            if not getattr(self, key) == value:
+                setattr(self, key, value)
+                changed = True
+
+        if changed:
+            await self.send()
+
     async def send(self):
         event = self.serialize()
         await self.asend(event)
