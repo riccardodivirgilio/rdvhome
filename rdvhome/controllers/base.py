@@ -44,7 +44,7 @@ class Controller(AbstractController):
         self.access_token = access_token
 
     def get_value_for_property(self, command, prop):
-        return {id: info[prop] for id, info in getattr(self, command).items()}
+        return {id: info[prop]   for id, info in getattr(self, command).items()}
 
     def get_api_url(self, path="/"):
         raise NotImplementedError
@@ -62,14 +62,11 @@ class Controller(AbstractController):
                     return await response.json(loads=json.loads, content_type=None)
 
     async def get_current_state(self):
-        return {}
+        return 
 
     async def periodic_task(self):
         state = await self.get_current_state()
-
         if state:
-            print(state)
-
             await wait_all(
                 switches.get(key).update(**value)
                 for key, value in state.items()
