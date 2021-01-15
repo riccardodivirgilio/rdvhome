@@ -10,7 +10,7 @@ import aiohttp
 from pyhap.const import CATEGORY_LIGHTBULB
 from rpy.functions.datastructures import data
 
-from rdvhome.switches import switches
+from rdvhome.state import switches
 from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
 from rdvhome.utils import json
 from rdvhome.utils.colors import (

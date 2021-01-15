@@ -13,6 +13,7 @@ settings = data(
     SERVER_PORT=8500,
     SERVER_ADDRESS="0.0.0.0",
     SWITCHES={},
+    CONTROLS={},
     DEPENDENCIES={
         "aiohttp": "3.7.3",
         'aiofiles': '0.3.2',

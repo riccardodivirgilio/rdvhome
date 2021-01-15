@@ -8,8 +8,8 @@ import itertools
 from rpy.functions.asyncio import run_all, wait_all
 from rpy.functions.functional import is_iterable
 
-from rdvhome.switches import switches
-from rdvhome.switches.base import Switch, capabilities
+from rdvhome.state import switches
+from rdvhome.switches.base import Switch
 from rdvhome.utils.colors import random_color, to_color
 
 
@@ -17,7 +17,6 @@ class ControlSwitch(Switch):
 
     kind = "control"
     default_aliases = []
-    default_capabilities = capabilities(on=True)
 
     def __init__(
         self,

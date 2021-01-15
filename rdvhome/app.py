@@ -18,7 +18,7 @@ from rpy.functions.importutils import module_path
 
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
-from rdvhome.switches import switches
+from rdvhome.state import switches
 from rdvhome.utils.colors import HSB, to_color
 from rdvhome.utils.json import dumps
 

@@ -91,9 +91,9 @@ def run_rdv_command_line():
         return switch(id = id, **opts)
 
 
-    def tv(id, **opts):
+    def tv(id, ipaddress, **opts):
 
-        controls["samsungtv"]["power_control"][id] = {}
+        controls["samsungtv"]["power_control"][id] = data(ipaddress=ipaddress)
 
         return switch(id = id, **opts)
 

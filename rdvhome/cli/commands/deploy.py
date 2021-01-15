@@ -6,7 +6,7 @@ import os
 
 from rpy.cli.utils import SimpleCommand
 from rpy.functions.importutils import module_path
-from rdvhome.switches import switches
+from rdvhome.state import switches
 from rdvhome.conf import settings
 from itertools import groupby
 import base64

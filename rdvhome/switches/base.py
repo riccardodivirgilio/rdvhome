@@ -14,24 +14,6 @@ from rdvhome.switches.events import EventStream
 from rdvhome.utils.colors import to_color
 
 
-def capabilities(
-    on=False,
-    hue=False,
-    saturation=False,
-    brightness=False,
-    direction=False,
-    visibility=True,
-):
-    return data(
-        allow_on=on,
-        allow_hue=hue,
-        allow_saturation=saturation,
-        allow_brightness=brightness,
-        allow_direction=direction,
-        allow_visibility=visibility,
-    )
-
-
 class HomekitSwitch(Accessory):
 
     category = CATEGORY_SWITCH
@@ -75,17 +57,23 @@ class Switch(EventStream):
 
     kind = "switch"
     default_aliases = ["all"]
-    default_capabilities = capabilities(on=True)
 
     homekit_class = HomekitSwitch
 
-    def __init__(self, id, name=None, alias=(), ordering=None, icon=None):
+    def __init__(self, id, name=None, icon=None, visible=True, alias=(), ordering=0):
         self.id = id
         self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
-        self.capabilities = data(self.default_capabilities)
+
+        self.visible = visible
+
+        self.allow_on=False
+        self.allow_hue=False
+        self.allow_saturation=False
+        self.allow_brightness=False
+        self.allow_direction=False
 
         super().__init__()
 
@@ -130,19 +118,10 @@ class Switch(EventStream):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.id)
 
+class BaseSwitchList(object):
 
-class SwitchList(object):
     def __init__(self, switches):
         self.switches = switches
-
-    async def subscribe(self, func):
-        return await wait_all(switch.subscribe(func) for switch in self)
-
-    async def watch(self):
-        return await wait_all(switch.watch() for switch in self)
-
-    async def start(self):
-        return await wait_all(switch.start() for switch in self)
 
     def get_switches(self):
 
@@ -159,17 +138,14 @@ class SwitchList(object):
 
     switches = property(get_switches, set_switches)
 
-    async def status(self):
-        return {
-            serialized.id: serialized
-            for serialized in await wait_all(obj.status() for obj in self)
-        }
+    async def subscribe(self, func):
+        return await wait_all(switch.subscribe(func) for switch in self)
 
-    async def switch(self, *args, **opts):
-        return {
-            serialized.id: serialized
-            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self)
-        }
+    async def watch(self):
+        return await wait_all(switch.watch() for switch in self)
+
+    async def start(self):
+        return await wait_all(switch.start() for switch in self)
 
     def get(self, pk):
         return self.switches.get(pk)
@@ -184,8 +160,6 @@ class SwitchList(object):
             return self.copy(
                 filter(lambda switch: any(f in switch.alias for f in func), self)
             )
-        if isinstance(func, Switch):
-            return self.copy([func])
         if func:
             return self.copy(filter(func, self))
         return self
@@ -201,3 +175,18 @@ class SwitchList(object):
 
     def __repr__(self):
         return repr(tuple(self.switches))
+
+
+class SwitchList(BaseSwitchList):
+
+    async def status(self):
+        return {
+            serialized.id: serialized
+            for serialized in await wait_all(obj.status() for obj in self)
+        }
+
+    async def switch(self, *args, **opts):
+        return {
+            serialized.id: serialized
+            for serialized in await wait_all(obj.switch(*args, **opts) for obj in self)
+        }

@@ -9,7 +9,7 @@ from pyhap.accessory import Bridge
 from pyhap.accessory_driver import AccessoryDriver
 from rpy.functions.functional import iterate
 
-from rdvhome.switches import switches
+from rdvhome.state import switches
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.persistence import data_path
 
@@ -28,6 +28,8 @@ def get_bridge(driver):
     bridge = Bridge(driver, get_gpio().is_debug and "RdvTest" or "RdvHome")
 
     for switch in switches:
+
+        print(switch, switch.id)
         # bridge.add_accessory(LightBulb(driver, switch.name))
         for accessory in iterate(switch.create_homekit_accessory(driver) or ()):
             bridge.add_accessory(accessory)

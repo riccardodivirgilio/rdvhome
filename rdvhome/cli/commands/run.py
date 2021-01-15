@@ -13,7 +13,7 @@ from rpy.functions.process import system_open
 from rdvhome.app import app
 from rdvhome.conf import settings
 from rdvhome.homekit import driver
-from rdvhome.switches import switches
+from rdvhome.state import switches
 from rdvhome.utils.json import dumps
 
 
@@ -57,7 +57,7 @@ class Command(SimpleCommand):
                             name=s.name,
                             icon=s.icon,
                             ordering=s.ordering,
-                            allow_visibility=s.capabilities.allow_visibility,
+                            allow_visibility=s.visible,
                         )
                         for s in switches
                     },
