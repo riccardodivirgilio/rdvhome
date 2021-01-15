@@ -5,6 +5,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import has_gpio
 from rpy.functions.decorators import to_data
+from rpy.functions.datastructures import data
 from rdvhome.utils.colors import HSB, to_color, random_color
 import random
 import uuid
@@ -46,69 +47,89 @@ def timeout(min, max):
 
 def run_rdv_command_line():
 
+    controls = {
+        "philips": {
+            "class_path": "rdvhome.controllers.philips.Controller",
+            "access_token": "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W",
+            "ipaddress": "192.168.1.179",
+            "power_control": {},
+            "color_control": {},
+        },
+        "gpio": {
+            "class_path": "rdvhome.controllers.gpio.Controller",
+            "ipaddress": "rdvhome.local",
+            "power_control": {},
+            "direction_control": {}
+        },
+        "nanoleaf": {
+            "class_path": "rdvhome.controllers.nanoleaf.Controller",
+            "access_token": "lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1",
+            "ipaddress": "192.168.1.115",
+            "power_control": {},
+            "color_control": {},
+        },
+        "samsungtv": {
+            "class_path": "rdvhome.controllers.samsungtv.Controller",
+            "ipaddress": "192.168.1.115",
+            "power_control": {},
+        }
+    }
+
+
     control = lambda **opts: dict(
         class_path="rdvhome.switches.controls.ControlSwitch", **opts
     )
 
-    @to_data
-    def philips_control(**opts):
-        yield "class_path", "rdvhome.switches.philips.PhilipsPoolControl"
+    switch = lambda **opts: dict(
+        class_path="rdvhome.switches.vendor.VendorSwitch", **opts
+    )
 
-        yield "access_token", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-        yield "ipaddress", "192.168.1.179"
+    def nanoleaf(id, **opts):
 
-        yield from opts.items()
+        controls["nanoleaf"]["power_control"][id] = {}
 
-    @to_data
-    def nanoleaf(**opts):
-        yield "class_path", "rdvhome.switches.nanoleaf.NanoleafControl"
+        return switch(id = id, **opts)
 
-        yield "access_token", "lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1"
-        yield "ipaddress", "192.168.1.115"
 
-        yield from opts.items()
+    def tv(id, **opts):
 
+        controls["samsungtv"]["power_control"][id] = {}
+
+        return switch(id = id, **opts)
 
     @to_data
-    def tv(**opts):
-        yield "class_path", "rdvhome.switches.tv.SamsungSmartTV"
-        yield from opts.items()
+    def light(id, philips_id=None, gpio_relay=None, gpio_status=None, **opts):
 
-    @to_data
-    def light(philips_id=None, gpio_relay=None, gpio_status=None, **opts):
-
-        if gpio_relay:
-            assert gpio_relay in RELAY1 or gpio_relay in RELAY2, "%s not in %s" % (
-                gpio_relay,
-                ", ".join(map(str, (*RELAY1, *RELAY2))),
-            )
-            yield "gpio_relay", gpio_relay
-
-        if gpio_status:
+        if gpio_status or gpio_relay:
+            assert gpio_status and gpio_relay
             assert gpio_status in INPUT
-            yield "gpio_status", gpio_status
+            assert gpio_relay in RELAY1 or gpio_relay in RELAY2
+
+            controls["gpio"]["power_control"][id] = data(
+                gpio_relay= gpio_relay,
+                gpio_status= gpio_status,
+            )
 
         if philips_id:
-            yield "philips_id", philips_id
-            yield from philips_control().items()
 
-        yield "class_path", "rdvhome.switches.philips.Light"
+            if not gpio_relay:
+                controls["philips"]["power_control"][id] = data(philips_id = philips_id)
 
-        yield from opts.items()
+            controls["philips"]["color_control"][id] = data(philips_id = philips_id)
+
+        return switch(id = id, **opts)
 
     @to_data
-    def window(gpio_power, gpio_direction, **opts):
+    def window(id, gpio_power, gpio_direction, **opts):
         for pin in (gpio_power, gpio_direction):
-            assert pin in RELAY1 or pin in RELAY2, "%s not in %s" % (
-                pin,
-                ", ".join(map(str, (*RELAY1, *RELAY2))),
+            assert pin in RELAY1 or pin in RELAY2
+
+            controls["gpio"]["direction_control"][id] = data(
+                gpio_power= gpio_power,
+                gpio_direction= gpio_direction,
             )
 
-        yield "class_path", "rdvhome.switches.windows.Window"
-        yield "gpio_power", gpio_power
-        yield "gpio_direction", gpio_direction
-
-        yield from opts.items()
+        return switch(id = id, **opts)
 
     return execute_from_command_line(
         RASPBERRY_RELAY1=RELAY1,
@@ -117,8 +138,6 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES=True,
         DEBUG=not has_gpio(),  # raspberry is production.
         SWITCHES=[
-            philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
-
             light(
                 id="led_kitchen",
                 name="Kitchen Led",
@@ -244,7 +263,6 @@ def run_rdv_command_line():
                 icon="💡",
                 philips_id=9,
                 alias=["default"],
-                supports_hue=False
             ),
             window(
                 id="window_kitchen",
@@ -320,6 +338,10 @@ def run_rdv_command_line():
                 )
             ),
         ],
+        CONTROLS = [
+            data(id = id, **opts)
+            for id, opts in controls.items()
+        ]
     )
 
 
