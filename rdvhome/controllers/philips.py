@@ -45,7 +45,6 @@ class Controller(BaseController):
             for id, philips_id in mapping.items():
                 response[id].update(func(payload[philips_id]))
 
-
         return response
 
 
