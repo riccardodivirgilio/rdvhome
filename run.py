@@ -106,16 +106,16 @@ def run_rdv_command_line():
             assert gpio_relay in RELAY1 or gpio_relay in RELAY2
 
             controls["gpio"]["power_control"][id] = data(
-                gpio_relay= gpio_relay,
-                gpio_status= gpio_status,
+                gpio_relay= str(gpio_relay),
+                gpio_status= str(gpio_status),
             )
 
         if philips_id:
 
             if not gpio_relay:
-                controls["philips"]["power_control"][id] = data(philips_id = philips_id)
+                controls["philips"]["power_control"][id] = data(philips_id = str(philips_id))
 
-            controls["philips"]["color_control"][id] = data(philips_id = philips_id)
+            controls["philips"]["color_control"][id] = data(philips_id = str(philips_id))
 
         return switch(id = id, **opts)
 
@@ -285,8 +285,6 @@ def run_rdv_command_line():
                 gpio_direction=27,
                 icon="☀️",
             ),
-
-
             control(id="random", name="Random", icon="❓", effect = 'Color Burst'),
             control(
                 id="hloop",
@@ -337,6 +335,7 @@ def run_rdv_command_line():
                     ('🎉', 'Streaking Notes', None),
                 )
             ),
+            
         ],
         CONTROLS = [
             data(id = id, **opts)
