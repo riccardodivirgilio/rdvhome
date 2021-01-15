@@ -70,7 +70,10 @@ class Switch(EventStream):
         self.visible = visible
 
         self.on = False
-        self.color = HSB(hue=1, saturation=0.5, brightness=1)
+        
+        self.hue = 1
+        self.saturation = 0
+        self.brightness = 1
 
         self.allow_on=False
         self.allow_hue=False
@@ -97,10 +100,12 @@ class Switch(EventStream):
                 "allow_saturation",
                 "allow_brightness",
                 "allow_direction",
+                "on",
+                "hue",
+                "saturation",
+                "brightness",
             ):
             yield attr, getattr(self, attr)
-
-        yield from to_color(self.color).serialize().items()
 
     async def update(self, **opts):
 
@@ -110,6 +115,8 @@ class Switch(EventStream):
             if not getattr(self, key) == value:
                 setattr(self, key, value)
                 changed = True
+
+                #print('changed %s: %s=%s' % (self.id, key, value))
 
         if changed:
             await self.send()

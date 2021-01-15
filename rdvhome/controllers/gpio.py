@@ -10,9 +10,9 @@ class Controller(BaseController):
         data = await self.api_request('/status/')
         mapping = self.get_value_for_property('power', 'gpio_status')
         return {
-            key: {
+            id: {
                 'allow_on': True,
-                'on': not bool(data.input[value])
+                'on': not bool(data.input[key])
             } 
-            for key, value in mapping.items()
+            for id, key in mapping.items()
         }
