@@ -49,6 +49,9 @@ class Controller(AbstractController):
     def get_api_url(self, path="/"):
         raise NotImplementedError
 
+    async def update_switch(self, switch, **opts):
+        return await switch.update(**opts)
+
     async def api_request(self, path="/", payload=None):
 
         path = self.get_api_url(path)
@@ -77,5 +80,5 @@ class Controller(AbstractController):
         if state:
             for key, value in state.items():
                 asyncio.create_task(
-                    switches.get(key).update(**value)
+                    self.update_switch(switches.get(key), **value)
                 )
