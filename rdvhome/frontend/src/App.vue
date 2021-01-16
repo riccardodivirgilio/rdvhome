@@ -132,9 +132,6 @@ export default {
     toggle: function (item) {
       this.send_action(item.id, {
         mode:       this.format_on_value(item.on),
-        hue:        this.format_hsb_value(item.hue),
-        brightness: this.format_hsb_value(item.brightness),
-        saturation: this.format_hsb_value(item.saturation),
       })
     },
     toggle_hsb: debounce(
