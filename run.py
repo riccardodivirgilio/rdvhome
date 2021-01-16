@@ -79,6 +79,7 @@ def run_rdv_command_line():
     control = lambda **opts: dict(
         class_path="rdvhome.switches.controls.ControlSwitch", **opts
     )
+    control = lambda **opts: dict()
 
     switch = lambda **opts: dict(
         class_path="rdvhome.switches.vendor.VendorSwitch", **opts
