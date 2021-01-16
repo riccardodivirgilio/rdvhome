@@ -54,14 +54,12 @@ class Switch(EventStream):
 
     homekit_class = HomekitSwitch
 
-    def __init__(self, id, name=None, icon=None, visible=True, alias=(), ordering=0):
+    def __init__(self, id, name=None, icon=None, alias=(), ordering=0):
         self.id = id
         self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
-
-        self.visible = visible
 
         self.on = False
 
