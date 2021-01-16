@@ -5,7 +5,13 @@ from rdvhome.utils import json
 from rpy.functions.asyncio import wait_all
 from rpy.functions.asyncio import run_all
 import aiohttp
+import itertools
 import asyncio
+
+async def periodic_task(func, interval, **opts):
+    for i in itertools.count():
+        asyncio.create_task(func(i,  **opts))
+        await asyncio.sleep(interval)
 
 class AbstractController(EventStream):
     def __init__(self, id, power_control={}, color_control={}, direction_control={}, **opts):
@@ -68,14 +74,12 @@ class Controller(AbstractController):
         return
 
     async def watch(self):
+        await self.create_periodic_task(self.update_state, interval = self.interval)
 
-        while self.interval:
+    async def create_periodic_task(self, func, *args, **opts):
+        asyncio.create_task(periodic_task(func, *args, **opts))
 
-            asyncio.create_task(self.periodic_task())
-
-            await asyncio.sleep(self.interval)
-
-    async def periodic_task(self):
+    async def update_state(self, i):
         state = await self.get_current_state()
         if state:
             for key, value in state.items():
