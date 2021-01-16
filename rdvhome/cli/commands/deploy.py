@@ -93,7 +93,7 @@ class Command(SimpleCommand):
         )
         yield "sudo systemctl daemon-reload"
         yield "sudo systemctl start lights.service"
-        yield "sudo systemctl stop gpioserver.service"
+        yield "sudo systemctl start gpioserver.service"
 
     def handle(self, *args):
 
