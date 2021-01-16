@@ -3,8 +3,9 @@ from rdvhome.switches.events import EventStream
 from rdvhome.utils import json
 
 from rpy.functions.asyncio import wait_all
-
+from rpy.functions.asyncio import run_all
 import aiohttp
+import asyncio
 
 class AbstractController(EventStream):
     def __init__(self, id, power_control={}, color_control={}, direction_control={}, **opts):
@@ -64,6 +65,14 @@ class Controller(AbstractController):
 
     async def get_current_state(self):
         return
+
+    async def watch(self):
+
+        while self.interval:
+
+            asyncio.create_task(self.periodic_task())
+
+            await asyncio.sleep(self.interval)
 
     async def periodic_task(self):
         state = await self.get_current_state()
