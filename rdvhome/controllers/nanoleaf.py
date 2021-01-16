@@ -4,23 +4,29 @@ from rdvhome.controllers.base import Controller as BaseController
 from rdvhome.utils.colors import color_to_nanoleaf
 
 from rpy.functions.datastructures import data
+from rpy.functions.decorators import to_data
 
 import aiohttp
 
+@to_data
 def make_power_state(state):
 
-    return dict(on=bool(state and state.on.value), allow_on=bool(state),)
+    yield "allow_on", bool(state)
+    if state:
+        yield "on", bool(state.on.value)
 
+@to_data
 def make_color_state(state):
 
-    return dict(
-        allow_hue=bool(state),
-        allow_brightness=bool(state),
-        allow_saturation=bool(state),
-        hue=state and (state.hue.value / state.hue.max) or 0,
-        brightness=state and (state.brightness.value / state.brightness.max) or 0,
-        saturation=state and (state.sat.value / state.sat.max) or 0,
-    )
+    yield "allow_hue", bool(state)
+    yield "allow_brightness", bool(state)
+    yield "allow_saturation", bool(state)
+
+    if state:
+        yield "hue", (state.hue.value / state.hue.max)
+        yield "brightness", (state.brightness.value / state.brightness.max)
+        yield "saturation", (state.sat.value / state.sat.max)
+    
 
 class Controller(BaseController):
     def get_api_url(self, path="/"):

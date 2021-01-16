@@ -12,8 +12,11 @@ import aiohttp
 @to_data
 def make_power_state(response):
 
-    yield "on", bool(response and response.state.reachable and response.state.on or False)
+    
     yield "allow_on", bool(response and response.state.reachable)
+
+    if response:
+        yield "on", bool(response and response.state.reachable and response.state.on or False)
 
 @to_data
 def make_color_state(response):
