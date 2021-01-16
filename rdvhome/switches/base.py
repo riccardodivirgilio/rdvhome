@@ -108,7 +108,7 @@ class Switch(EventStream):
         changed = False
 
         for key, value in opts.items():
-            if not getattr(self, key) == value:
+            if (not value is None) and (not getattr(self, key) == value):
                 setattr(self, key, value)
                 changed = True
 
