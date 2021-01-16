@@ -7,8 +7,6 @@ import traceback
 
 class EventStream(AsyncStream):
 
-    interval = None
-
     def subscribe(self, func):
         return subscribe(self, func)
 
@@ -16,18 +14,8 @@ class EventStream(AsyncStream):
         pass
 
     async def watch(self):
-
-        while self.interval:
-            try:
-                await self.periodic_task()
-            except Exception as e:
-                print(e)
-                traceback.print_tb(e.__traceback__)
-
-            await asyncio.sleep(self.interval)
-
-    async def periodic_task(self):
         pass
+
 
 def subscribe(observable, func):
     return _subscribe(observable, AsyncAnonymousObserver(func))
