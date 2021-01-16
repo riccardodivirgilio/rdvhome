@@ -70,7 +70,7 @@ def run_rdv_command_line():
         },
         "samsungtv": {
             "class_path": "rdvhome.controllers.samsungtv.Controller",
-            "ipaddress": "192.168.1.115",
+            "ipaddress": "192.168.1.235",
             "power_control": {},
         }
     }
@@ -87,6 +87,7 @@ def run_rdv_command_line():
     def nanoleaf(id, **opts):
 
         controls["nanoleaf"]["power_control"][id] = {}
+        controls["nanoleaf"]["color_control"][id] = {}
 
         return switch(id = id, **opts)
 
