@@ -68,7 +68,8 @@ class Switch(EventStream):
         self.hue = 1
         self.saturation = 0
         self.brightness = 1
-        self.direction = None
+        self.up = False
+        self.down = False
 
         self.allow_on = False
         self.allow_hue = False
@@ -95,7 +96,8 @@ class Switch(EventStream):
             "allow_saturation",
             "allow_brightness",
             "allow_direction",
-            "direction",
+            "up",
+            "down",
             "on",
             "hue",
             "saturation",

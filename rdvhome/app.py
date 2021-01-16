@@ -109,7 +109,7 @@ def validate(
     elif mode == "off":
         yield "power", False
     elif mode == "stop":
-        yield "direction", None
+        yield "direction", "stop"
     elif mode == "up":
         yield "direction", "up"
     elif mode == "down":
