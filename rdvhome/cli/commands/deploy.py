@@ -1,7 +1,7 @@
 
 
 from rdvhome.conf import settings
-from rdvhome.state import switches
+from rdvhome.state import switches, controllers
 
 from rpy.cli.utils import SimpleCommand
 from rpy.functions.importutils import module_path
@@ -45,18 +45,23 @@ def generate_restpio_arguments():
     inp = set()
     out = set()
 
-    for switch in switches:
-        for attr, cont in (
-            ("gpio_power", out),
-            ("gpio_direction", out),
-            ("gpio_relay", out),
-            ("gpio_status", inp),
-        ):
+    gpio = controllers.get('gpio')
 
-            pin = getattr(switch, attr, None)
+    for switches in (gpio.power, gpio.direction):
 
-            if pin:
-                cont.add(pin)
+        for key, settings in switches.items():
+
+            for attr, cont in (
+                ("gpio_power", out),
+                ("gpio_direction", out),
+                ("gpio_relay", out),
+                ("gpio_status", inp),
+            ):
+
+                pin = settings.get(attr, None)
+
+                if pin:
+                    cont.add(pin)
 
     yield "--output-high=%s" % ",".join(map(str, sorted(out)))
     yield "--input-pull-up=%s" % ",".join(map(str, sorted(inp)))
@@ -91,6 +96,7 @@ class Command(SimpleCommand):
         yield "sudo systemctl stop gpioserver.service"
 
     def handle(self, *args):
+
         for cmd in tuple(self.commands(**server)):
             print(cmd)
             os.system(cmd)
