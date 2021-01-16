@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from rdvhome.controllers.base import Controller as BaseController
 from rdvhome.utils.colors import color_to_philips, philips_to_color
+import asyncio
 
 from rpy.functions.asyncio import wait_all
 from rpy.functions.datastructures import data
@@ -12,8 +13,6 @@ import aiohttp
 
 @to_data
 def make_power_state(response):
-
-    
     yield "allow_on", bool(response and response.state.reachable)
 
     if response:
@@ -52,7 +51,7 @@ class Controller(BaseController):
 
             if self.philips_initial_color == color and not self.philips_initial_color == switch.to_color():
 
-                await self.switch_color((switch, ), switch.to_color())
+                asyncio.create_task(self.switch_color((switch, ), switch.to_color()))
 
                 opts.pop("hue", None)
                 opts.pop("saturation", None)
