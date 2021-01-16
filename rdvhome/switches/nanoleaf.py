@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+
 
 from rdvhome.switches.base import capabilities
 from rdvhome.switches.philips import debounce, RemoteBase, remove_none

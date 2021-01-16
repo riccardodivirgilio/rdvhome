@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function, unicode_literals
+
 
 from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import has_gpio

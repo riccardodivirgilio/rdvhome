@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function, unicode_literals
+
 
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_SWITCH
