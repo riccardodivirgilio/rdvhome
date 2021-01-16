@@ -1,6 +1,7 @@
 
 from rdvhome.controllers.base import Controller as BaseController
 import aiohttp
+from collections import defaultdict
 
 class Controller(BaseController):
     
@@ -13,14 +14,19 @@ class Controller(BaseController):
         except aiohttp.ClientConnectionError:
             data = None
         
-        mapping = self.get_value_for_property('power', 'gpio_status')
-        return {
-            id: {
-                'allow_on': bool(data),
-                'on': bool(data and not bool(data.input[key]))
-            } 
-            for id, key in mapping.items()
-        }
+        result = defaultdict(dict)
+
+        for id, key in self.get_value_for_property('power', 'gpio_status').items():
+            result[id].update(dict(
+                allow_on= bool(data),
+                on= bool(data and not bool(data.input[key]))
+            ))
+
+        for id, key in self.get_value_for_property('direction', 'gpio_direction').items():
+            result[id]['allow_direction']= bool(data)
+
+
+        return result
 
     def generate_power_path(self, switches):
 
