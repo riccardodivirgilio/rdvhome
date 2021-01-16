@@ -127,8 +127,8 @@ def run_rdv_command_line():
             assert pin in RELAY1 or pin in RELAY2
 
             controls["gpio"]["direction_control"][id] = data(
-                gpio_power= gpio_power,
-                gpio_direction= gpio_direction,
+                gpio_power= str(gpio_power),
+                gpio_direction= str(gpio_direction),
             )
 
         return switch(id = id, **opts)
