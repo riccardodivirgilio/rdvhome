@@ -1,21 +1,23 @@
 
 from rdvhome.controllers.base import Controller as BaseController
+import aiohttp
 
 from rpy.functions.datastructures import data
 
 from rdvhome.utils.colors import philips_to_color
 from rpy.functions.decorators import to_data
 from collections import defaultdict
+
 @to_data
 def make_power_state(response):
 
-    yield "on", response.state.reachable and response.state.on or False
-    yield "allow_on", response.state.reachable
+    yield "on", bool(response and response.state.reachable and response.state.on or False)
+    yield "allow_on", bool(response and response.state.reachable)
 
 @to_data
 def make_color_state(response):
 
-    allow_hue = 'hue' in response.state
+    allow_hue = response and ('hue' in response.state)
 
     yield "allow_hue", allow_hue
     yield "allow_saturation", allow_hue
@@ -35,7 +37,12 @@ class Controller(BaseController):
         return "http://%s/api/%s/lights%s" % (self.ipaddress, self.access_token, path)
 
     async def get_current_state(self):
-        payload = await self.api_request(path="/")
+
+        try:
+            payload = await self.api_request(path="/")
+        except aiohttp.ClientConnectionError:
+            payload = {}
+
         response = defaultdict(data)
 
         for func, mapping in (
@@ -43,7 +50,7 @@ class Controller(BaseController):
             (make_color_state, self.get_value_for_property('color', 'philips_id')),
             ):
             for id, philips_id in mapping.items():
-                response[id].update(func(payload[philips_id]))
+                response[id].update(func(payload.get(philips_id, None)))
 
         return response
 

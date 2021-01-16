@@ -1,5 +1,6 @@
 
 from rdvhome.controllers.base import Controller as BaseController
+import aiohttp
 
 class Controller(BaseController):
     
@@ -7,12 +8,16 @@ class Controller(BaseController):
         return "http://%s:8080%s" % (self.ipaddress, path)
 
     async def get_current_state(self):
-        data = await self.api_request('/status/')
+        try:
+            data = await self.api_request('/status/')
+        except aiohttp.ClientConnectionError:
+            data = None
+        
         mapping = self.get_value_for_property('power', 'gpio_status')
         return {
             id: {
-                'allow_on': True,
-                'on': not bool(data.input[key])
+                'allow_on': bool(data),
+                'on': bool(data and not bool(data.input[key]))
             } 
             for id, key in mapping.items()
         }

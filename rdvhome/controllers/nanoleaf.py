@@ -1,5 +1,6 @@
 
 from rdvhome.controllers.base import Controller as BaseController
+import aiohttp
 
 from rpy.functions.datastructures import data
 from collections import defaultdict
@@ -10,19 +11,19 @@ from collections import defaultdict
 def make_power_state(state):
 
     return dict(
-        on= state.on.value,
-        allow_on= True, 
+        on= bool(state and state.on.value),
+        allow_on= bool(state), 
     )
 
 def make_color_state(state):
 
     return dict(
-        allow_hue = True,
-        allow_brightness = True,
-        allow_saturation = True,
-        hue= state.hue.value / state.hue.max, 
-        brightness= state.brightness.value / state.brightness.max, 
-        saturation= state.sat.value / state.sat.max
+        allow_hue = bool(state),
+        allow_brightness = bool(state),
+        allow_saturation = bool(state),
+        hue= state and (state.hue.value / state.hue.max) or 0, 
+        brightness= state and (state.brightness.value / state.brightness.max) or 0, 
+        saturation= state and (state.sat.value / state.sat.max) or 0
     )  
 
 class Controller(BaseController):
@@ -31,7 +32,11 @@ class Controller(BaseController):
         return "http://%s:16021/api/v1/%s%s" % (self.ipaddress, self.access_token, path)
 
     async def get_current_state(self):
-        state = await self.api_request('/state')
+        
+        try:
+            state = await self.api_request('/state')
+        except aiohttp.ClientConnectionError:
+            state = None
 
         mapping = defaultdict(data)
 
