@@ -6,6 +6,7 @@ from rdvhome.utils.colors import color_to_philips, philips_to_color
 from rpy.functions.asyncio import wait_all
 from rpy.functions.datastructures import data
 from rpy.functions.decorators import to_data
+from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, HSB, philips_to_color, to_color
 
 import aiohttp
 
@@ -36,8 +37,28 @@ def make_color_state(response):
         ).serialize().items()
 
 class Controller(BaseController):
+
+    philips_initial_color = HSB(
+        hue=0.12845044632639047, saturation=0.5511811023622047, brightness=1
+    )
+
     def get_api_url(self, path="/"):
         return "http://%s/api/%s/lights%s" % (self.ipaddress, self.access_token, path)
+
+    async def update_switch(self, switch, **opts):
+
+        if 'hue' in opts:
+            color = to_color(opts)
+
+            if self.philips_initial_color == color and not self.philips_initial_color == switch.to_color():
+
+                await self.switch_color((switch, ), switch.to_color())
+
+                opts.pop("hue", None)
+                opts.pop("saturation", None)
+                opts.pop("brightness", None)
+
+        return await switch.update(**opts)
 
     async def get_current_state(self):
 

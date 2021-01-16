@@ -8,7 +8,7 @@ from rdvhome.switches.events import EventStream
 from rpy.functions.asyncio import run_all
 from rpy.functions.decorators import to_data
 from rpy.functions.functional import iterate
-
+from rdvhome.utils.colors import HSB
 class HomekitSwitch(Accessory):
 
     category = CATEGORY_SWITCH
@@ -78,6 +78,9 @@ class Switch(EventStream):
         self.allow_direction = False
 
         super().__init__()
+
+    def to_color(self):
+        return HSB(hue = self.hue, saturation = self.saturation, brightness = self.brightness)
 
     def create_homekit_accessory(self, driver):
         if self.homekit_class:
