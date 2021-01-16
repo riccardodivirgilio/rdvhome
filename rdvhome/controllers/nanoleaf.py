@@ -7,6 +7,8 @@ from collections import defaultdict
 
 from rpy.functions.decorators import to_data
 from collections import defaultdict
+from rpy.functions.asyncio import run_all, wait_all
+from rdvhome.utils.colors import color_to_nanoleaf
 
 def make_power_state(state):
 
@@ -49,3 +51,20 @@ class Controller(BaseController):
                 mapping[key].update(func(state))
 
         return mapping
+
+    async def switch_power(self, switches, power):
+        await self.api_request('/state', payload = {"on": {"value": bool(power)}})
+        await wait_all(
+            switch.update(on = bool(power))
+            for switch in switches
+        )
+
+    async def switch_color(self, switches, color):
+        await self.api_request('/state', payload = {
+            key: {"value": value}
+            for key, value in color_to_nanoleaf(color).items()
+        })
+        await wait_all(
+            switch.update(**color.serialize())
+            for switch in switches
+        )
