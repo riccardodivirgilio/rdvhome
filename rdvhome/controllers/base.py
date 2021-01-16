@@ -7,13 +7,10 @@ from rpy.functions.asyncio import run_all
 import aiohttp
 import itertools
 import asyncio
-
-async def periodic_task(func, interval, **opts):
-    for i in itertools.count():
-        asyncio.create_task(func(i,  **opts))
-        await asyncio.sleep(interval)
+from rpy.functions.functional import identity
 
 class AbstractController(EventStream):
+
     def __init__(self, id, power_control={}, color_control={}, direction_control={}, **opts):
         self.id = id
         self.power = power_control
@@ -23,18 +20,21 @@ class AbstractController(EventStream):
     def filter_switches_for(self, switches, command):
         return switches.filter(tuple(getattr(self, command).keys()))
 
+    async def update_switch(self, switch, **opts):
+        return await switch.update(**opts)
+
     async def switch(self, switches, command, value):
         print("%s switching %s for %s to %s" % (self.id, command, switches, value))
         return await getattr(self, "switch_%s" % command)(switches, value)
 
     async def switch_power(self, switches, power):
-        await wait_all(switch.update(on=bool(power)) for switch in switches)
+        await wait_all(self.update_switch(switch, on=bool(power)) for switch in switches)
 
     async def switch_direction(self, switches, direction):
-        await wait_all(switch.update(up=direction == "up", down=direction == "down") for switch in switches)
+        await wait_all(self.update_switch(switch, up=direction == "up", down=direction == "down") for switch in switches)
 
     async def switch_color(self, switches, color):
-        await wait_all(switch.update(**color.serialize()) for switch in switches)
+        await wait_all(self.update_switch(switch, **color.serialize()) for switch in switches)
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.id)
@@ -55,9 +55,6 @@ class Controller(AbstractController):
     def get_api_url(self, path="/"):
         raise NotImplementedError
 
-    async def update_switch(self, switch, **opts):
-        return await switch.update(**opts)
-
     async def api_request(self, path="/", payload=None):
 
         path = self.get_api_url(path)
@@ -75,9 +72,6 @@ class Controller(AbstractController):
 
     async def watch(self):
         await self.create_periodic_task(self.update_state, interval = self.interval)
-
-    async def create_periodic_task(self, func, *args, **opts):
-        asyncio.create_task(periodic_task(func, *args, **opts))
 
     async def update_state(self, i):
         state = await self.get_current_state()

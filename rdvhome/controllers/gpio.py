@@ -62,25 +62,23 @@ class Controller(BaseController):
                         state and data((name, state.input[value]) for name, value in opts.items()) or None
                     )
                 )
-
-        for w in self.direction.keys():
-            print(w, result[w])
-
+                
         return result
 
     @decorate(lambda s: "/%s/" % "/".join(s))
     def generate_power_path(self, switches, power):
-
         for s in switches:
-            yield "low"
-            yield self.power[s.id].gpio_relay
+            if not s.on == power:
+                yield "low"
+                yield self.power[s.id].gpio_relay
 
         yield "wait"
         yield "25"
 
         for s in switches:
-            yield "high"
-            yield self.power[s.id].gpio_relay
+            if not s.on == power:
+                yield "high"
+                yield self.power[s.id].gpio_relay
 
     @decorate(lambda s: "/%s/" % "/".join(s))
     def generate_direction_path(self, switches, direction):        
