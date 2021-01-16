@@ -57,7 +57,7 @@ def run_rdv_command_line():
         },
         "gpio": {
             "class_path": "rdvhome.controllers.gpio.Controller",
-            "ipaddress": "rdvhome.local",
+            "ipaddress": has_gpio() and "localhost" or "rdvhome.local",
             "power_control": {},
             "direction_control": {}
         },
@@ -72,18 +72,26 @@ def run_rdv_command_line():
             "class_path": "rdvhome.controllers.samsungtv.Controller",
             "ipaddress": "192.168.1.235",
             "power_control": {},
+        },
+        "scenes": {
+            "class_path": "rdvhome.controllers.scenes.Controller",
+            "power_control": {},
         }
     }
-
-
-    control = lambda **opts: dict(
-        class_path="rdvhome.switches.controls.ControlSwitch", **opts
-    )
-    control = lambda **opts: dict()
 
     switch = lambda **opts: dict(
         class_path="rdvhome.switches.vendor.VendorSwitch", **opts
     )
+
+
+    def control(id, name, icon, alias = (), **opts):
+
+        if has_gpio():
+            return
+
+        controls["scenes"]["power_control"][id] = data(opts)
+
+        return switch(id = id, name =name, icon = icon, alias = alias)
 
     def nanoleaf(id, **opts):
 
