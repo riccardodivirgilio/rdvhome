@@ -1,17 +1,16 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
-
-import asyncio
-import logging
 
 from pyhap.accessory import Bridge
 from pyhap.accessory_driver import AccessoryDriver
-from rpy.functions.functional import iterate
 
 from rdvhome.state import switches
 from rdvhome.utils.gpio import get_gpio
 from rdvhome.utils.persistence import data_path
+
+from rpy.functions.functional import iterate
+
+import asyncio
+import logging
 
 """An example of how to setup and start an Accessory.
 This is:
@@ -21,7 +20,6 @@ This is:
 """
 
 logging.basicConfig(level=logging.INFO)
-
 
 def get_bridge(driver):
     """Call this method to get a Bridge instead of a standalone accessory."""
@@ -33,7 +31,6 @@ def get_bridge(driver):
             bridge.add_accessory(accessory)
 
     return bridge
-
 
 # Start the accessory on port 51826
 driver = AccessoryDriver(

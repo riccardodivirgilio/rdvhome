@@ -21,8 +21,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="css">
 
-
-
 .toggle {
   position: relative;
   display: inline-block;
@@ -71,7 +69,6 @@ export default {
 .one.down {
   top: -1px
 }
-
 
 .two {
   top: 7px;

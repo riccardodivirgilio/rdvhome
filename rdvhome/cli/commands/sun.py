@@ -1,10 +1,9 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
+from astral import Astral, SUN_RISING
+
 import datetime
-
 import pytz
-
-from astral import SUN_RISING, Astral
 
 # KITCHEN WINDOW ->  2 gradi circa
 # KITCHEN LIVING ->  6 gradi circa
@@ -15,7 +14,6 @@ LON = 12.484656
 
 TZ = pytz.timezone("Europe/Rome")
 
-
 def sun_angle(dt=None):
 
     if not dt:
@@ -25,7 +23,6 @@ def sun_angle(dt=None):
         dt = TZ.localize(dt)
 
     return Astral().solar_elevation(dt, latitude=LAT, longitude=LON)
-
 
 def time_at_elevation(angle, date=None):
     return (
@@ -39,7 +36,6 @@ def time_at_elevation(angle, date=None):
         )
         .astimezone(TZ)
     )
-
 
 for dt in [datetime.datetime(2018, 7, 19, 6, 00, 0), datetime.datetime.now()]:
 

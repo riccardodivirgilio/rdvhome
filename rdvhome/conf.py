@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
-
 from rpy.functions.datastructures import data
+
+import asyncio
 
 loop = asyncio.get_event_loop()
 
@@ -16,7 +14,7 @@ settings = data(
     CONTROLS={},
     DEPENDENCIES={
         "aiohttp": "3.7.3",
-        'aiofiles': '0.3.2',
+        "aiofiles": "0.3.2",
         # "fabric3": "1.13.1.post1",
         #'hap-python': None,
         "aiohttp-autoreload": "0.0.1",
@@ -31,7 +29,7 @@ settings = data(
         "hap-python": "2.8.4",
         "python-rpy": "1.0.17",
         "websockets": "8.1",
-        "zeroconf": '0.26.3',
-        "gpioserver": '1.0.3',
+        "zeroconf": "0.26.3",
+        "gpioserver": "1.0.3",
     },
 )

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 from rdvhome.utils.keystore import KeyStore
@@ -13,7 +11,6 @@ try:
 
 except ImportError:
     GPIO = None
-
 
 class RaspberryGPIO(object):
 
@@ -37,7 +34,6 @@ class RaspberryGPIO(object):
     async def output(self, n, high=True):
         self.GPIO.output(n, high and self.GPIO.HIGH or self.GPIO.LOW)
 
-
 class DebugGPIO(object):
 
     is_debug = True
@@ -60,10 +56,8 @@ class DebugGPIO(object):
     async def output(self, n, high=True):
         await self.store.set(n, high and 1 or 0)
 
-
 def has_gpio():
     return bool(GPIO)
-
 
 def get_gpio():
     if has_gpio():

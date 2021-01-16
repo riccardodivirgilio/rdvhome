@@ -44,7 +44,6 @@
 
 <script>
 
-
 import loading   from './components/loading';
 import toggle    from './components/toggle';
 import btn       from './components/btn';
@@ -126,7 +125,6 @@ export default {
           this.switches[data.id] || {},
           data
         )
-
 
     },
     toggle: function (item) {
@@ -246,7 +244,6 @@ export default {
 
 <style lang="css">
 
-
 :root {
   --item-size: 50px;
   --item-padding: 15px;
@@ -280,8 +277,7 @@ a {
   color: red;
 }
 
-
-html, body, 
+html, body,
 .page,
 .container,
 .panel-home,
@@ -298,10 +294,10 @@ html, body,
   position:relative;
 
   width:100vw;
-  
+
   &::-webkit-scrollbar,
   &::-webkit-scrollbar-track,
-  &::-webkit-scrollbar-thumb { 
+  &::-webkit-scrollbar-thumb {
     display: none;
     -webkit-appearance: none;
     background-color: transparent;
@@ -319,7 +315,6 @@ html, body,
   order:3;
   overflow-y: scroll
 }
-
 
 .panel-switch {
   width:100%;
@@ -362,7 +357,6 @@ html, body,
 }
 .list-item > .line > .slider {
   width: calc(100% - var(--btn-width) * 2);
-
 
   height: var(--item-size);
   display:flex;
@@ -420,7 +414,7 @@ html, body,
 
 @media (min-width: 600px) {
 
-  html, body, 
+  html, body,
   .page,
   .container,
   .panel-switch,

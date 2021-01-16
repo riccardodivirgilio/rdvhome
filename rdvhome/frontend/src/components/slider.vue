@@ -23,8 +23,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="css">
 
-
-
 .slider {
   padding:0px;
   margin:0px;

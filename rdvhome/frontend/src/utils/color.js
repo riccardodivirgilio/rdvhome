@@ -20,7 +20,7 @@ export function hsb_to_hsl(data) {
 
 function round_with_postfix(v, molt, postfix) {
     if (is_string(v)) {
-        return v 
+        return v
     }
     return Math.round(v*molt) + (postfix || '')
 }

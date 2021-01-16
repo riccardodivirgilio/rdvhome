@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
-from rpy.functions.asyncio import run_all, wait_all
-from rpy.functions.datastructures import data
-from rpy.functions.decorators import to_data
-from rpy.functions.functional import iterate
-from rdvhome.conf import settings
-from rpy.functions.importutils import import_string
-import six
-class SwitchList(object):
 
+from rdvhome.conf import settings
+
+from rpy.functions.asyncio import wait_all
+from rpy.functions.functional import iterate
+from rpy.functions.importutils import import_string
+
+import six
+
+class SwitchList(object):
     def __init__(self, switches):
         self.switches = switches
 
@@ -47,9 +46,7 @@ class SwitchList(object):
         if isinstance(func, six.string_types):
             return self.copy(filter(lambda switch: func in switch.alias, self))
         if isinstance(func, (list, tuple, dict)):
-            return self.copy(
-                filter(lambda switch: any(f in switch.alias for f in func), self)
-            )
+            return self.copy(filter(lambda switch: any(f in switch.alias for f in func), self))
         if func:
             return self.copy(filter(func, self))
         return self
@@ -66,18 +63,17 @@ class SwitchList(object):
     def __repr__(self):
         return repr(tuple(self.switches))
 
-
 def construct(n, class_path, **switch):
     return import_string(class_path)(**dict({"ordering": n + 1}, **switch))
 
 switches, controllers = (
     SwitchList(
         # lazy construction so that we don't have any problem with recursion
-        lambda opts = opts: (
+        lambda opts=opts: (
             construct(n, **switch)
             for n, switch in enumerate(opts)
             if switch and switch.get("active", True)
         )
     )
-    for  opts in (settings.SWITCHES, settings.CONTROLS)
+    for opts in (settings.SWITCHES, settings.CONTROLS)
 )

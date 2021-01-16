@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
-
-import asyncio
-import random
-import itertools
-from rpy.functions.asyncio import run_all, wait_all
-from rpy.functions.functional import is_iterable
 
 from rdvhome.state import switches
 from rdvhome.switches.base import Switch
 from rdvhome.utils.colors import random_color, to_color
 
+from rpy.functions.asyncio import run_all, wait_all
+from rpy.functions.functional import is_iterable
+
+import asyncio
+import itertools
+import random
 
 class ControlSwitch(Switch):
 
@@ -28,7 +26,7 @@ class ControlSwitch(Switch):
         colors=None,
         timeout=None,
         effect=None,
-        **opts
+        **opts,
     ):
         self.on = on
         self.filter = filter
@@ -36,8 +34,7 @@ class ControlSwitch(Switch):
         self.timeout = timeout
         self.automatic_on = automatic_on
         self.automatic_off = automatic_off
-        self.effect=effect
-
+        self.effect = effect
 
         self._future_when_on = None
         self._future_when_off = None
@@ -67,9 +64,9 @@ class ControlSwitch(Switch):
             or (),
             self.on
             and self.automatic_off
-            and switches.filter(
-                lambda s: s.kind == self.kind and not s.id == self.id
-            ).switch(on=False)
+            and switches.filter(lambda s: s.kind == self.kind and not s.id == self.id).switch(
+                on=False
+            )
             or (),
         )
 
@@ -117,25 +114,25 @@ class ControlSwitch(Switch):
         else:
             return self.timeout
 
-    def create_color_generator(self, switch, i, repetitions = 1):
+    def create_color_generator(self, switch, i, repetitions=1):
 
         if repetitions > 1:
-            yield from zip(*(
-                self.create_color_generator(switch, i + j)
-                for j in range(repetitions)
-            ))
+            yield from zip(
+                *(self.create_color_generator(switch, i + j) for j in range(repetitions))
+            )
         elif callable(self.colors):
-            c = to_color(self.colors(switch = switch, i = i))
-            yield {'color': c, 'effect': self.effect or c}
+            c = to_color(self.colors(switch=switch, i=i))
+            yield {"color": c, "effect": self.effect or c}
             for j in itertools.count():
-                c = to_color(self.colors(switch = switch, i = i + j + 1, color = c))
-                yield {'color': c, 'effect': self.effect or c}
+                c = to_color(self.colors(switch=switch, i=i + j + 1, color=c))
+                yield {"color": c, "effect": self.effect or c}
         elif is_iterable(self.colors):
             for j in itertools.count():
-                c = self.colors[(i + j) % len(self.colors)] 
-                yield {'color': c, 'effect': self.effect or c}
+                c = self.colors[(i + j) % len(self.colors)]
+                yield {"color": c, "effect": self.effect or c}
         else:
             for j in itertools.count():
-                yield {'color': self.colors or random_color(), 'effect': self.effect or self.colors or random_color()}
-
-
+                yield {
+                    "color": self.colors or random_color(),
+                    "effect": self.effect or self.colors or random_color(),
+                }

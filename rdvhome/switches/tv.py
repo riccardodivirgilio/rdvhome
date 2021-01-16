@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
-
-import aiohttp
-import websockets
-from rpy.functions.functional import iterate
-
-from rdvhome.switches.base import Switch, capabilities
+from rdvhome.switches.base import capabilities, Switch
 from rdvhome.utils import json
 
+from rpy.functions.functional import iterate
+
+import aiohttp
+import asyncio
+import websockets
 
 async def send_commands(tv_addr, keys):
     try:
@@ -35,7 +32,6 @@ async def send_commands(tv_addr, keys):
     except Exception as e:
         print("ERROR", e)
 
-
 class SamsungSmartTV(Switch):
 
     default_capabilities = capabilities()
@@ -55,9 +51,7 @@ class SamsungSmartTV(Switch):
             async with aiohttp.ClientSession(
                 read_timeout=timeout, conn_timeout=timeout
             ) as session:
-                async with session.get(
-                    "http://%s:8001/api/v2/" % self.ipaddress
-                ) as response:
+                async with session.get("http://%s:8001/api/v2/" % self.ipaddress) as response:
                     return True
         except asyncio.TimeoutError:
             return False

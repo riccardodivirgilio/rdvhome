@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
-
-import os
-
-import aiofiles
 
 from rdvhome.utils import json
 from rdvhome.utils.persistence import data_path
 
+import aiofiles
+import os
 
 class KeyStore(object):
 
@@ -30,9 +26,7 @@ class KeyStore(object):
     def path_for_key(self, key, prefix=None, version=None):
         return os.path.join(
             self.path,
-            "-".join(
-                filter(None, (prefix or self.prefix, str(key), version or self.version))
-            )
+            "-".join(filter(None, (prefix or self.prefix, str(key), version or self.version)))
             + self.extension,
         )
 

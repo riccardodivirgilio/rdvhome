@@ -1,20 +1,17 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
+from rdvhome.conf import settings
+from rdvhome.utils.gpio import get_gpio
 
 from rpy.cli.utils import SimpleCommand
 from rpy.functions.asyncio import syncronous_wait_all, wait_all
 from rpy.functions.functional import iterate
 
-from rdvhome.conf import settings
-from rdvhome.utils.gpio import get_gpio
+import asyncio
 
 RELAY1 = settings.RASPBERRY_RELAY1
 RELAY2 = settings.RASPBERRY_RELAY2
 INPUT = settings.RASPBERRY_INPUT
-
 
 async def relay(number=RELAY2, timing=0.2, timing_between=1):
 
@@ -37,7 +34,6 @@ async def relay(number=RELAY2, timing=0.2, timing_between=1):
         await gpio.output(n, high=True)
         await asyncio.sleep(timing)
 
-
 async def read(number=INPUT, timing=0.5, index=1000):
 
     gpio = get_gpio()
@@ -50,14 +46,8 @@ async def read(number=INPUT, timing=0.5, index=1000):
 
         results = await wait_all(map(gpio.input, iterate(number)))
 
-        print(
-            *(
-                (not v and str(n).zfill(2) or "--")
-                for v, n in zip(results, iterate(number))
-            )
-        )
+        print(*((not v and str(n).zfill(2) or "--") for v, n in zip(results, iterate(number))))
         await asyncio.sleep(timing)
-
 
 async def callback(number=INPUT):
 
@@ -74,7 +64,6 @@ async def callback(number=INPUT):
 
     while True:
         await asyncio.sleep(0.1)
-
 
 class Command(SimpleCommand):
 

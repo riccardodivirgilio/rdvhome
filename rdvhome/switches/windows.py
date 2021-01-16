@@ -1,21 +1,17 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
+
+from rdvhome.conf import settings
+from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
+from rdvhome.utils.gpio import get_gpio
 
 import asyncio
 
-from rdvhome.conf import settings
-from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
-from rdvhome.utils.gpio import get_gpio
-
-
 class HomekitWindow(HomekitSwitch):
-
     def switch_name(self):
-        return '%s %s' % (self.switch.name, self.event_name.title())
+        return "%s %s" % (self.switch.name, self.event_name.title())
 
     def set_on(self, value):
-        return super().set_on(value and self.event_name or 'stop')
+        return super().set_on(value and self.event_name or "stop")
 
 class Window(Switch):
 
@@ -23,10 +19,7 @@ class Window(Switch):
 
     default_capabilities = capabilities(direction=True)
 
-    timings = {
-        'up': settings.DEBUG and 4 or 13,
-        'down': settings.DEBUG and 4 or 12
-    }
+    timings = {"up": settings.DEBUG and 4 or 13, "down": settings.DEBUG and 4 or 12}
 
     homekit_class = HomekitWindow
 
@@ -40,16 +33,16 @@ class Window(Switch):
         super().__init__(id, **opts)
 
     def create_homekit_accessory(self, driver):
-        yield self.homekit_class(driver=driver, switch=self, event_name = 'up')
-        yield self.homekit_class(driver=driver, switch=self, event_name = 'down')
+        yield self.homekit_class(driver=driver, switch=self, event_name="up")
+        yield self.homekit_class(driver=driver, switch=self, event_name="down")
 
     async def start(self):
-        #on start we make sure gpio is all off
+        # on start we make sure gpio is all off
         await self.stop()
 
     async def watch(self, interval=1):
 
-        counters = {'up': 0, 'down': 0}
+        counters = {"up": 0, "down": 0}
 
         while True:
 
@@ -86,12 +79,12 @@ class Window(Switch):
         going_up = await gpio.input(self.gpio_direction)
 
         return {
-            'up': bool(not power_off and going_up),
-            'down': bool(not power_off and not going_up),
+            "up": bool(not power_off and going_up),
+            "down": bool(not power_off and not going_up),
         }
 
     async def status(self):
-        return await self.send(** await self.direction())
+        return await self.send(**await self.direction())
 
     async def stop(self):
 
@@ -106,7 +99,7 @@ class Window(Switch):
 
         gpio = await self.setup_gpio()
 
-        if not direction or direction == 'stop':
+        if not direction or direction == "stop":
             return await self.stop()
 
         status = await self.direction()

@@ -1,20 +1,11 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import asyncio
-import logging
-import sys
-from operator import methodcaller
-
-import aiohttp
 from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPForbidden, HTTPNotFound
 from aiohttp.web_fileresponse import FileResponse
-from rpy.functions.asyncio import run_all
-from rpy.functions.decorators import to_data
-from rpy.functions.importutils import module_path
+
+from operator import methodcaller
 
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
@@ -22,6 +13,14 @@ from rdvhome.state import switches
 from rdvhome.utils.colors import HSB, to_color
 from rdvhome.utils.json import dumps
 
+from rpy.functions.asyncio import run_all
+from rpy.functions.decorators import to_data
+from rpy.functions.importutils import module_path
+
+import aiohttp
+import asyncio
+import logging
+import sys
 
 @web.middleware
 async def server_error(request, handler):
@@ -59,9 +58,7 @@ async def server_error(request, handler):
 
         return JsonResponse(api_response(status=500))
 
-
 app = web.Application(middlewares=[server_error])
-
 
 def url(path, name, **opts):
     def inner(func):
@@ -70,10 +67,8 @@ def url(path, name, **opts):
 
     return inner
 
-
 def JsonResponse(data, status=None, **opts):
     return web.Response(text=dumps(data), status=status or data.status or 200, **opts)
-
 
 def validate_color(spec):
     if spec in (None, "-"):
@@ -88,20 +83,12 @@ def validate_color(spec):
     else:
         return spec / 100
 
-
 def getargs(request):
     return validate(**dict(request.query, **request.match_info))
 
-
 @to_data
 def validate(
-    number=None,
-    color=None,
-    hue=None,
-    saturation=None,
-    brightness=None,
-    mode=None,
-    **extra,
+    number=None, color=None, hue=None, saturation=None, brightness=None, mode=None, **extra,
 ):
     if number:
         yield "number", number
@@ -131,7 +118,6 @@ def validate(
     elif not mode in ("-", None):
         raise HTTPBadRequest(reason="InvalidMode")
 
-
 @url("/", name="home")
 async def view_home(request):
     return FileResponse(module_path("rdvhome", "frontend", "dist", "index.html"))
@@ -144,11 +130,8 @@ async def homekit_pair(request):
     from rdvhome.homekit import driver
 
     return JsonResponse(
-        api_response(
-            paircode=driver.state.pincode.decode(), uri=driver.accessory.xhm_uri()
-        )
+        api_response(paircode=driver.state.pincode.decode(), uri=driver.accessory.xhm_uri())
     )
-
 
 @url("/qrcode", name="homekit-qrcode")
 async def homekit_pair(request):
@@ -163,31 +146,25 @@ async def homekit_pair(request):
 
     return web.Response(body=stream.read(), status=200, content_type="image/svg+xml")
 
-
 @url("/switch", name="status-list")
 async def view_status_list(request):
     return JsonResponse(await status(**getargs(request)))
-
 
 @url("/switch/{number:[a-zA-Z-0-9_-]+}", name="status")
 async def view_status_list(request):
     return JsonResponse(await status(**getargs(request)))
 
-
 @url("/switch/{number:[a-zA-Z-0-9_-]+}/set", name="switch")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
-
 
 @url("/switch/{number:[a-zA-Z-0-9_-]+}/color/{color:[a-zA-Z-0-9]+}", name="color")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
-
 @url("/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off|up|down|stop)}", name="on")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
-
 
 @url(
     "/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}",
@@ -195,7 +172,6 @@ async def view_status_list(request):
 )
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
-
 
 @url("/websocket", name="websocket")
 async def websocket(request):

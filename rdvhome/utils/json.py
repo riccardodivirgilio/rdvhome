@@ -1,17 +1,15 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
+
+from colour import Color
+
+from rdvhome.utils.colors import HSB, to_color
+
+from rpy.functions.datastructures import data
 
 import datetime
 import decimal
 import json
 import types
-
-from colour import Color
-from rpy.functions.datastructures import data
-
-from rdvhome.utils.colors import HSB, to_color
-
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -28,18 +26,14 @@ class JSONEncoder(json.JSONEncoder):
         else:
             return json.JSONEncoder.default(self, obj)
 
-
 def dump(obj, f, indent=4):
     return json.dump(obj, f, indent=indent, cls=JSONEncoder)
-
 
 def load(f, indent=4):
     return json.load(f, object_hook=data)
 
-
 def dumps(obj, indent=4):
     return json.dumps(obj, indent=indent, cls=JSONEncoder)
-
 
 def loads(obj):
     return json.loads(obj, object_hook=data)

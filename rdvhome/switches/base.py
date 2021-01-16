@@ -1,24 +1,19 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import six
 from pyhap.accessory import Accessory
 from pyhap.const import CATEGORY_SWITCH
-from rpy.functions.asyncio import run_all, wait_all
-from rpy.functions.datastructures import data
-from rpy.functions.decorators import to_data
-from rpy.functions.functional import iterate
 
 from rdvhome.switches.events import EventStream
-from rdvhome.utils.colors import to_color, HSB
 
+from rpy.functions.asyncio import run_all
+from rpy.functions.decorators import to_data
+from rpy.functions.functional import iterate
 
 class HomekitSwitch(Accessory):
 
     category = CATEGORY_SWITCH
 
-    def __init__(self, driver, switch, event_name = 'on'):
+    def __init__(self, driver, switch, event_name="on"):
 
         self.switch = switch
         self.event_name = event_name
@@ -26,7 +21,7 @@ class HomekitSwitch(Accessory):
         super().__init__(
             driver=driver,
             display_name=self.switch_name(),
-            #aid=random_aid(self.switch_id())
+            # aid=random_aid(self.switch_id())
         )
         run_all(self.switch.subscribe(self.on_event), loop=self.driver.loop)
         self.setup_services()
@@ -52,7 +47,6 @@ class HomekitSwitch(Accessory):
         except KeyError:
             pass
 
-
 class Switch(EventStream):
 
     kind = "switch"
@@ -70,17 +64,17 @@ class Switch(EventStream):
         self.visible = visible
 
         self.on = False
-        
+
         self.hue = 1
         self.saturation = 0
         self.brightness = 1
         self.direction = None
 
-        self.allow_on=False
-        self.allow_hue=False
-        self.allow_saturation=False
-        self.allow_brightness=False
-        self.allow_direction=False
+        self.allow_on = False
+        self.allow_hue = False
+        self.allow_saturation = False
+        self.allow_brightness = False
+        self.allow_direction = False
 
         super().__init__()
 
@@ -91,22 +85,22 @@ class Switch(EventStream):
     @to_data
     def serialize(self):
         for attr in (
-                "id",
-                "name",
-                "kind",
-                "icon",
-                "ordering",
-                "allow_on",
-                "allow_hue",
-                "allow_saturation",
-                "allow_brightness",
-                "allow_direction",
-                "direction",
-                "on",
-                "hue",
-                "saturation",
-                "brightness",
-            ):
+            "id",
+            "name",
+            "kind",
+            "icon",
+            "ordering",
+            "allow_on",
+            "allow_hue",
+            "allow_saturation",
+            "allow_brightness",
+            "allow_direction",
+            "direction",
+            "on",
+            "hue",
+            "saturation",
+            "brightness",
+        ):
             yield attr, getattr(self, attr)
 
     async def update(self, **opts):
@@ -118,7 +112,7 @@ class Switch(EventStream):
                 setattr(self, key, value)
                 changed = True
 
-                #print('changed %s: %s=%s' % (self.id, key, value))
+                # print('changed %s: %s=%s' % (self.id, key, value))
 
         if changed:
             await self.send()

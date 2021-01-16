@@ -1,36 +1,27 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
+
+from rdvhome.signals import dispatch_status, dispatch_switch
 
 from rpy.functions.datastructures import data
 
-from rdvhome.state import switches, controllers
-from rpy.functions.asyncio import run_all, wait_all
-from rdvhome.signals import dispatch_status, dispatch_switch
-
 def api_response(status=200, **opts):
     return data(opts, status=status, success=status == 200)
-
 
 async def status(*args, **opts):
     target = await dispatch_status(*args, **opts)
 
     return api_response(
-        mode="status", 
+        mode="status",
         status=target and 200 or 404,
-        switches={
-            serialized.id: serialized
-            for serialized in target
-        }
+        switches={serialized.id: serialized for serialized in target},
     )
-
 
 async def switch(*args, **opts):
     target = await dispatch_switch(*args, **opts)
 
     return api_response(
-        mode="switch", 
+        mode="switch",
         status=target and 200 or 404,
-        switches=[obj.id for obj in target], 
-        **opts
+        switches=[obj.id for obj in target],
+        **opts,
     )

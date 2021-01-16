@@ -1,29 +1,23 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
+from pyhap.const import CATEGORY_LIGHTBULB
+
+from rdvhome.state import switches
+from rdvhome.switches.base import capabilities, HomekitSwitch, Switch
+from rdvhome.utils import json
+from rdvhome.utils.colors import color_to_homekit, color_to_philips, homekit_to_color, HSB, philips_to_color, to_color
+from rdvhome.utils.gpio import get_gpio
+from rdvhome.utils.keystore import KeyStore
+
+from rpy.functions.datastructures import data
+
+import aiohttp
 import asyncio
 import time
 import traceback
 
-import aiohttp
-from pyhap.const import CATEGORY_LIGHTBULB
-from rpy.functions.datastructures import data
-
-from rdvhome.state import switches
-from rdvhome.switches.base import HomekitSwitch, Switch, capabilities
-from rdvhome.utils import json
-from rdvhome.utils.colors import (
-    HSB, color_to_homekit, color_to_philips, homekit_to_color,
-    philips_to_color, to_color
-)
-from rdvhome.utils.gpio import get_gpio
-from rdvhome.utils.keystore import KeyStore
-
-
 def remove_none(**d):
     return d.__class__((key, value) for key, value in d.items() if value is not None)
-
 
 def debounce(s):
     """Decorator ensures function that can only be called once every `s` seconds.
@@ -42,7 +36,6 @@ def debounce(s):
         return wrapped
 
     return decorate
-
 
 class HomekitLight(HomekitSwitch):
 
@@ -97,7 +90,6 @@ class HomekitLight(HomekitSwitch):
             except AttributeError:
                 pass
 
-
 class RemoteBase(Switch):
 
     store = KeyStore(prefix="remote")
@@ -124,7 +116,6 @@ class RemoteBase(Switch):
                 async with session.get(path) as response:
                     return await response.json(loads=json.loads, content_type=None)
 
-
 class Light(RemoteBase):
 
     homekit_class = HomekitLight
@@ -142,7 +133,9 @@ class Light(RemoteBase):
         on=False, allow_on=True, hue=0.5, brightness=1, saturation=1
     )
 
-    def __init__(self, id, philips_id=None, gpio_relay=None, gpio_status=None, supports_hue = True, **opts):
+    def __init__(
+        self, id, philips_id=None, gpio_relay=None, gpio_status=None, supports_hue=True, **opts
+    ):
 
         self._gpio = None
 
@@ -154,9 +147,7 @@ class Light(RemoteBase):
         super().__init__(id, **opts)
 
     async def api_request(self, path="", *args, **opts):
-        return await super().api_request(
-            path="%s%s" % (self.philips_id, path), *args, **opts
-        )
+        return await super().api_request(path="%s%s" % (self.philips_id, path), *args, **opts)
 
     async def watch(self, interval=0.3):
 
@@ -260,7 +251,6 @@ class Light(RemoteBase):
 
         return await self.send(on=on, color=color, full=False)
 
-
 class PhilipsPoolControl(RemoteBase):
 
     default_capabilities = capabilities(visibility=False)
@@ -281,9 +271,7 @@ class PhilipsPoolControl(RemoteBase):
 
         lights = {
             str(light.philips_id): light
-            for light in switches.filter(
-                lambda switch: getattr(switch, "philips_id", None)
-            )
+            for light in switches.filter(lambda switch: getattr(switch, "philips_id", None))
         }
 
         while True:
@@ -311,7 +299,7 @@ class PhilipsPoolControl(RemoteBase):
                 current_on = response.state.reachable and response.state.on or False
                 current_allow_on = response.state.reachable or bool(light.gpio_relay)
 
-                if 'hue' in response.state:
+                if "hue" in response.state:
                     current_color = philips_to_color(
                         hue=float(response.state.hue),
                         saturation=float(response.state.sat),
@@ -358,6 +346,6 @@ class PhilipsPoolControl(RemoteBase):
                     await light.update_status(
                         on=current_on,
                         allow_on=current_allow_on,
-                        **(current_color and current_color.serialize() or {})
+                        **(current_color and current_color.serialize() or {}),
                     )
                     await light.status()
