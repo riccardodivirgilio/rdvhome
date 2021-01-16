@@ -22,14 +22,12 @@ class AbstractController(EventStream):
         return await getattr(self, "switch_%s" % command)(switches, value)
 
     async def switch_power(self, switches, power):
-
         await wait_all(switch.update(on=bool(power)) for switch in switches)
 
     async def switch_direction(self, switches, direction):
-        pass
+        await wait_all(switch.update(up=direction == "up", down=direction == "down") for switch in switches)
 
     async def switch_color(self, switches, color):
-
         await wait_all(switch.update(**color.serialize()) for switch in switches)
 
     def __repr__(self):
@@ -77,4 +75,7 @@ class Controller(AbstractController):
     async def periodic_task(self):
         state = await self.get_current_state()
         if state:
-            await wait_all(switches.get(key).update(**value) for key, value in state.items())
+            for key, value in state.items():
+                asyncio.create_task(
+                    switches.get(key).update(**value)
+                )
