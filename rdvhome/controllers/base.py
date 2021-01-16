@@ -19,16 +19,17 @@ class AbstractController(EventStream):
         )
 
     async def switch(self, switches, command, value):
+        print('%s switching %s for %s to %s' % (self.id, command, switches, value))
         return await getattr(self, 'switch_%s' % command)(switches, value)
 
     async def switch_power(self, switches, power):
-        print('%s switching power for %s to %s' % (self.id, switches, power))
+        pass
 
     async def switch_direction(self, switches, direction):
-        print('%s switching direction for %s to %s' % (self.id, switches, direction))
+        pass
 
     async def switch_color(self, switches, color):
-        print('%s switching color for %s to %s' % (self.id, switches, color))
+        pass
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.id)
@@ -71,9 +72,3 @@ class Controller(AbstractController):
                 switches.get(key).update(**value)
                 for key, value in state.items()
             )
-
-
-
-
-
-
