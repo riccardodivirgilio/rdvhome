@@ -80,9 +80,7 @@ class Controller(BaseController):
     async def timout_handler(self, i):
         print(time.time(), i)
 
-
     async def watch(self):
         await self.sync_switches()
-
-        await self.create_periodic_task(self.timout_handler, interval = self.timout_next_interval)
+        #await self.create_periodic_task(self.timout_handler, interval = self.timout_next_interval)
 
