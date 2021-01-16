@@ -21,3 +21,11 @@ class Controller(BaseController):
             } 
             for id, key in mapping.items()
         }
+
+    async def switch_power(self, switches, power):
+        mapping = self.get_value_for_property('power', 'gpio_power')
+        await wait_all(
+            self.api_request(path="/%s/state" % mapping[switch.id], payload=dict(on = bool(power)))
+            for switch in switches
+        )
+

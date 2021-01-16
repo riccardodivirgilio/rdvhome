@@ -46,7 +46,6 @@ class Controller(BaseController):
             (make_power_state, self.power.keys()),
             (make_color_state, self.color.keys())
             ):
-
             for key in keys:
                 mapping[key].update(func(state))
 
@@ -54,17 +53,11 @@ class Controller(BaseController):
 
     async def switch_power(self, switches, power):
         await self.api_request('/state', payload = {"on": {"value": bool(power)}})
-        await wait_all(
-            switch.update(on = bool(power))
-            for switch in switches
-        )
+        await super().switch_power(switches, power)
 
     async def switch_color(self, switches, color):
         await self.api_request('/state', payload = {
             key: {"value": value}
             for key, value in color_to_nanoleaf(color).items()
         })
-        await wait_all(
-            switch.update(**color.serialize())
-            for switch in switches
-        )
+        await super().switch_color(switches, color)

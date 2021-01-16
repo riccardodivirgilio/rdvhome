@@ -23,13 +23,21 @@ class AbstractController(EventStream):
         return await getattr(self, 'switch_%s' % command)(switches, value)
 
     async def switch_power(self, switches, power):
-        pass
+        
+        await wait_all(
+            switch.update(on = bool(power))
+            for switch in switches
+        )
 
     async def switch_direction(self, switches, direction):
         pass
 
     async def switch_color(self, switches, color):
-        pass
+
+        await wait_all(
+            switch.update(**color.serialize())
+            for switch in switches
+        )
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.id)

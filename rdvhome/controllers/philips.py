@@ -57,31 +57,20 @@ class Controller(BaseController):
         return response
 
     async def switch_power(self, switches, power):
-
         mapping = self.get_value_for_property('power', 'philips_id')
-
         await wait_all(
             self.api_request(path="/%s/state" % mapping[switch.id], payload=dict(on = bool(power)))
             for switch in switches
         )
-
-        await wait_all(
-            switch.update(on = bool(power))
-            for switch in switches
-        )
+        await super().switch_power(switches, power)
 
     async def switch_color(self, switches, color):
-
         mapping = self.get_value_for_property('color', 'philips_id')
-
         await wait_all(
             self.api_request(path="/%s/state" % mapping[switch.id], payload=color_to_philips(color))
             for switch in switches
         )
+        await super().switch_color(switches, color)
 
-        await wait_all(
-            switch.update(**color.serialize())
-            for switch in switches
-        )
 
 
