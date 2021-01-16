@@ -3,19 +3,24 @@
 from rdvhome.state import controllers, switches
 
 from rpy.functions.asyncio import wait_all
+import asyncio
+
 
 async def dispatch_status(number=None):
     target = switches.filter(number)
-    return await wait_all(obj.status() for obj in target)
 
-def generate_commands(target, **opts):
+    for obj in target:
+        asyncio.create_task(obj.status())
+
+    return target
+
+async def dispatch_switch(number=None, **opts):
+    target = switches.filter(number)
+
     for command, value in opts.items():
         for control in controllers:
             values = control.filter_switches_for(target, command)
             if values:
-                yield control.switch(values, command, value)
+                asyncio.create_task(control.switch(values, command, value))
 
-async def dispatch_switch(number=None, **opts):
-    target = switches.filter(number)
-    await wait_all(generate_commands(target, **opts))
     return target
