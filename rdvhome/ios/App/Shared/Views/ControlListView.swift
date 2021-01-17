@@ -8,6 +8,35 @@
 
 import SwiftUI
 
+struct SingleView: View {
+    
+    @ObservedObject var control: ControlViewModel
+    var switch_power: (String, Bool) -> ()
+    
+    var body: some View {
+        HStack {
+            Text(control.icon)
+            Text(control.name)
+            Spacer()
+            Toggle("", isOn:
+                Binding(
+                    get: {control.on},
+                    set: {
+                        (v) in
+                            switch_power(control.id, v)
+                            control.on = v
+                    }
+                )
+            )
+            .opacity(control.allow_on ? 1 : 0)
+            .toggleStyle(
+                SwitchToggleStyle(tint: control.allow_hue ? control.color() : .gray)
+            )
+        }
+        .listRowBackground(control.color().opacity(control.on ? 0.1 : 0))
+    }
+}
+
 struct ControlListView: View {
     // Using an ObservedObject for reference-based data (classes)
     @ObservedObject var controlList = ControlListModel()
@@ -28,28 +57,21 @@ struct ControlListView: View {
                 // This will be faster for longer lists and feels more like how ObservedObject is meant to be used.
                 // Note that ControlDetailView has changed from using @Binding to @ObservedObject.
 
-                ForEach(controlList.controls) { control in
+                ForEach(controlList.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
                     NavigationLink(destination:
                         ControlDetailView(control: control)
                             .onReceive(control.objectWillChange) { _ in
                                 self.controlList.objectWillChange.send()
                             }
                     ) {
-                        Text("\(control.first) \(control.last)")
+                        SingleView(control: control, switch_power: controlList.switch_power)
                     }
                 }
-                .onDelete { indexSet in
-                    // add this modifier to allow deleting from the list
-                    self.controlList.controls.remove(atOffsets: indexSet)
-                }
-                .onMove { indices, newOffset in
-                    // add this modifier to allow moving in the list
-                    self.controlList.controls.move(fromOffsets: indices, toOffset: newOffset)
-                }
+
             }
                 
             // This runs when the view appears to load the initial data
-            .onAppear(perform: { self.controlList.fetchData() })
+            .onAppear(perform: { self.controlList.connect() })
             
             // set up the navigation bar details
             // EditButton() is a standard View

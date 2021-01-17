@@ -8,47 +8,70 @@
 
 import Foundation
 
+import SwiftUI
+import CoreLocation
+
 class ControlListModel: ObservableObject {
     // Main list view model
     // ObservableObject so that updates are detected
     
+    private var webSocketTask: URLSessionWebSocketTask?
+    @Published var controls = [String: ControlViewModel]()
 
-    @Published var controls: [ControlViewModel] = []
-
-    func fetchData() {
-        // avoid too many calls to the API
-        if controls.count > 0 { return }
-
-        let address = "https://next.json-generator.com/api/json/get/VyQroKB8P?indent=2"
-        guard let url = URL(string: address) else {
-            fatalError("Bad data URL!")
+    func connect() {
+        
+        let url = URL(string: "ws://rdvhome.local:8500/websocket")!
+        
+        print("Connecting", url)
+        
+        guard webSocketTask == nil else {
+            return
         }
-
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard let data = data, error == nil else {
-                print("Error fetching data")
-                return
-            }
-
-            do {
-                let jsonDecoder = JSONDecoder()
-                jsonDecoder.dateDecodingStrategy = .iso8601
-                let dataArray = try jsonDecoder.decode([ControlModel].self, from: data)
-                DispatchQueue.main.async {
-                    self.controls = dataArray.map { ControlViewModel(with: $0) }.sorted() {
-                        $0.last + $0.first < $1.last + $1.first
-                    }
+        
+        webSocketTask = URLSession.shared.webSocketTask(with: url)
+        webSocketTask?.receive(completionHandler: onReceive)
+        webSocketTask?.resume()
+        
+        self.send(text:"/switch")
+    }
+    
+    private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
+        webSocketTask?.receive(completionHandler: onReceive)
+        
+        if case .success(let message) = incoming {
+            if case .string(let text) = message {
+                
+                print("i got", text)
+                
+                guard let data = text.data(using: .utf8),
+                      let control = try? JSONDecoder().decode(ControlModel.self, from: data)
+                else {
+                    return
                 }
-            } catch {
-                print(error)
+                
+                DispatchQueue.main.async {
+                    self.controls[control.id] = ControlViewModel(with: control)
+                }
             }
-        }.resume()
+        }
+        else if case .failure(let error) = incoming {
+            print("Error", error)
+        }
     }
-
-    func refreshData() {
-        controls = []
-        fetchData()
+    
+    func send(text: String) {
+        webSocketTask?.send(.string(text)) { error in
+            if let error = error {
+                print("Error sending message", error)
+            }
+        }
     }
+    
+    func switch_power(id: String, on: Bool) {
+        let mode = on ? "on" : "off"
+        self.send(text:"/switch/\(id)/set?mode=\(mode)")
+    }
+    
 }
 
 class ControlViewModel: Identifiable, ObservableObject {
@@ -58,83 +81,51 @@ class ControlViewModel: Identifiable, ObservableObject {
     // Even though this is not observed directly,
     // it must be an ObservableObject for the data flow to work
 
-    var id = UUID()
-    @Published var first: String = ""
-    @Published var last: String = ""
-    @Published var phone: String = ""
-    @Published var address: String = ""
-    @Published var city: String = ""
-    @Published var state: String = ""
-    @Published var zip: String = ""
-    @Published var registered: Date = Date()
-
+    var id: String
+    @Published var name: String
+    @Published var icon: String = "💡"
+    @Published var ordering: Int = 1000
+    @Published var allow_on: Bool = false
+    @Published var allow_hue: Bool = false
+    @Published var on: Bool = false
+    @Published var hue: Double = 0
+    @Published var brightness: Double = 0
+    @Published var saturation: Double = 0
+    
+    func color() -> Color {
+        return Color(
+            hue: hue,
+            saturation: saturation,
+            brightness: brightness
+        )
+    }
+    
     init(with control: ControlModel) {
         self.id = control.id
-        self.first = control.first
-        self.last = control.last
-        self.phone = control.phone
-        self.address = control.address
-        self.city = control.city
-        self.state = control.state
-        self.zip = control.zip
-        self.registered = control.registered
+        self.name = control.name
+        self.icon = control.icon
+        self.ordering = control.ordering
+        self.allow_on = control.allow_on
+        self.allow_hue = control.allow_hue
+        self.on = control.on
+        self.hue = control.hue
+        self.brightness = control.brightness
+        self.saturation = control.saturation
     }
 }
 
 struct ControlModel: Codable {
     // Basic model for decoding from JSON
 
-    let id: UUID
-    let first: String
-    let last: String
-    let phone: String
-    let address: String
-    let city: String
-    let state: String
-    let zip: String
-    let registered: Date
+    var id: String
+    var name: String
+    var icon: String
+    var ordering: Int
+    var allow_on: Bool
+    var allow_hue: Bool
+    var on: Bool
+    var hue: Double
+    var brightness: Double
+    var saturation: Double
 
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        id = try values.decode(UUID.self, forKey: .id)
-        first = try values.decode(String.self, forKey: .first)
-        last = try values.decode(String.self, forKey: .last)
-        phone = try values.decode(String.self, forKey: .phone)
-        registered = try values.decode(Date.self, forKey: .registered)
-
-        // split up address into separate lines for easier editing
-        let addressData = try values.decode(String.self, forKey: .address)
-        let addressComponents = addressData.components(separatedBy: ", ")
-        address = addressComponents[0]
-        city = addressComponents[1]
-        state = addressComponents[2]
-        zip = addressComponents[3]
-    }
-}
-
-// Previewing requires using .constant to convert the data to a binding
-// Sample data is generated in an extension in Preview Content
-
-extension ControlViewModel {
-    // Sample data for use in Previews only
-
-    static func sampleControl() -> ControlViewModel {
-        let json = """
-        {
-          "id": "07534800-9c07-4857-b931-d6541ff0df08",
-          "first": "Beasley",
-          "last": "Burnett",
-          "phone": "+1 (957) 453-3538",
-          "address": "740 Jodie Court, Manchester, Vermont, 8934",
-          "registered": "2018-06-08T01:08:31+00:00"
-        }
-        """
-
-        let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
-
-        // Uisng force un-wrapping for sample data only, not for production
-        let control = try! jsonDecoder.decode(ControlModel.self, from: json.data(using: .utf8)!)
-        return ControlViewModel(with: control)
-    }
 }

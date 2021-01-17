@@ -18,12 +18,12 @@ struct ControlDetailView: View {
     var body: some View {
         VStack {
             Form {
-                Section(header: Text("First Name")) {
-                    TextField("Enter first name", text: $control.first)
+                Section(header: Text("Name")) {
+                    TextField("Enter first name", text: $control.name)
                         .autocapitalization(.words)
                 }
-                Section(header: Text("Last Name")) {
-                    TextField("Enter last name", text: $control.last)
+                Section(header: Text("Icon")) {
+                    TextField("Enter last name", text: $control.icon)
                         .autocapitalization(.words)
                 }
             }
@@ -32,15 +32,5 @@ struct ControlDetailView: View {
                 .padding(6)
             Text("\(control.id)")
         }
-    }
-}
-
-
-
-
-struct ControlDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        let control = ControlViewModel.sampleControl()
-        return ControlDetailView(control: control)
     }
 }
