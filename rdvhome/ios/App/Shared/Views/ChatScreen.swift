@@ -35,7 +35,7 @@ struct ChatScreen: View {
                             SwitchToggleStyle(tint: c.allow_hue ? c.color : .gray)
                         )
                     }
-                    .listRowBackground(c.color.opacity(c.on ? 0.1 : 0.))
+                    .listRowBackground(c.color.opacity(c.on ? 0.1 : 0))
                 }
             }
             .navigationTitle("RdvHome")
