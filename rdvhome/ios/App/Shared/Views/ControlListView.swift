@@ -33,7 +33,7 @@ struct SingleView: View {
                 SwitchToggleStyle(tint: control.allow_hue ? control.color() : .gray)
             )
         }
-        .listRowBackground(control.color().opacity(control.on ? 0.1 : 0))
+        
     }
 }
 
@@ -65,7 +65,9 @@ struct ControlListView: View {
                             }
                     ) {
                         SingleView(control: control, switch_power: controlList.switch_power)
+                            
                     }
+                    .listRowBackground(control.row_background())
                 }
 
             }

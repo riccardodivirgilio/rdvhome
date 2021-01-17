@@ -100,6 +100,10 @@ class ControlViewModel: Identifiable, ObservableObject {
         )
     }
     
+    func row_background() -> Color {
+        return color().opacity(on ? 0.3 : 0)
+    }
+    
     init(with control: ControlModel) {
         self.id = control.id
         self.name = control.name
