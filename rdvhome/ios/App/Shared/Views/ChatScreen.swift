@@ -25,7 +25,11 @@ struct ChatScreen: View {
                             get: {c.on},
                             set: {(v) in model.switch_power(id: c.id, on: v)}
                         )
-                    ).opacity(c.allow_on ? 1 : 0)
+                    )
+                    .opacity(c.allow_on ? 1 : 0)
+                    .toggleStyle(
+                        SwitchToggleStyle(tint: c.allow_hue ? c.color : .gray)
+                    )
                 }
             }
             .navigationTitle("RdvHome")
@@ -78,6 +82,7 @@ private final class ChatScreenModel: ObservableObject {
                 }
                 
                 print(control)
+
             }
         }
         else if case .failure(let error) = incoming {
