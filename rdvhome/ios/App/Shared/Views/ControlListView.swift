@@ -22,7 +22,10 @@ struct SingleView: View {
             Text(control.name)
             Spacer()
             PowerToggleView(control: control, model: model)
+                .opacity(control.allow_on ? 1 : 0)
         }
+        .padding(.top, 4)
+        .padding(.bottom, 4)
     }
 }
 
