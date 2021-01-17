@@ -19,8 +19,8 @@ struct PowerToggleView: View {
                 get: {control.on},
                 set: {
                     (v) in
-                        model.switch_power(id:control.id, on:v)
                         control.on = v
+                        model.switch_power(control:control)
                 }
             )
         )

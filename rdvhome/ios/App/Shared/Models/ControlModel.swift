@@ -60,6 +60,7 @@ class ControlListModel: ObservableObject {
     }
     
     func send(text: String) {
+        print("sending", text)
         webSocketTask?.send(.string(text)) { error in
             if let error = error {
                 print("Error sending message", error)
@@ -67,10 +68,23 @@ class ControlListModel: ObservableObject {
         }
     }
     
-    func switch_power(id: String, on: Bool) {
-        let mode = on ? "on" : "off"
-        self.send(text:"/switch/\(id)/set?mode=\(mode)")
+    func switch_power(control: ControlViewModel) {
+        let mode = control.on ? "on" : "off"
+        self.send(text:"/switch/\(control.id)/set?mode=\(mode)")
     }
+    func switch_hue(control: ControlViewModel) {
+        let value = Int(round(100 * control.hue))
+        self.send(text:"/switch/\(control.id)/set?hue=\(value)")
+    }
+    func switch_saturation(control: ControlViewModel) {
+        let value = Int(round(100 * control.saturation))
+        self.send(text:"/switch/\(control.id)/set?saturation=\(value)")
+    }
+    func switch_brightness(control: ControlViewModel) {
+        let value = Int(round(100 * control.brightness))
+        self.send(text:"/switch/\(control.id)/set?brightness=\(value)")
+    }
+    
     
 }
 
