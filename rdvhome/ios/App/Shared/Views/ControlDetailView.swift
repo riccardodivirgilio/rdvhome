@@ -26,7 +26,7 @@ struct ControlDetailView: View {
                         .padding(.bottom, 4)
                 }
                 if control.on && control.allow_hue {
-                    
+                    Section(header: Text("Color")) {
                         SliderView(
                             value: $control.hue,
                             processor: {v in model.switch_hue(control:control); return v},
@@ -53,6 +53,7 @@ struct ControlDetailView: View {
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 0),
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 1)
                             ])
+                    }
                 }
             }
             
