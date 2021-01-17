@@ -15,8 +15,8 @@
 		C037E19324E80B0B005466C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C037E17D24E80B0B005466C9 /* Assets.xcassets */; };
 		C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
 		C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
-		C037E1A524E81C9C005466C9 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* ChatMessage.swift */; };
-		C037E1A624E81C9C005466C9 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* ChatMessage.swift */; };
+		C037E1A524E81C9C005466C9 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* Control.swift */; };
+		C037E1A624E81C9C005466C9 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* Control.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,7 +29,7 @@
 		C037E18C24E80B0B005466C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C037E18D24E80B0B005466C9 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		C037E19F24E80C07005466C9 /* SwitchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchScreen.swift; sourceTree = "<group>"; };
-		C037E1A424E81C9C005466C9 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		C037E1A424E81C9C005466C9 /* Control.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Control.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,7 +109,7 @@
 		C037E1A324E81C92005466C9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C037E1A424E81C9C005466C9 /* ChatMessage.swift */,
+				C037E1A424E81C9C005466C9 /* Control.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -213,7 +213,7 @@
 			files = (
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
-				C037E1A524E81C9C005466C9 /* ChatMessage.swift in Sources */,
+				C037E1A524E81C9C005466C9 /* Control.swift in Sources */,
 				C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -224,7 +224,7 @@
 			files = (
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
-				C037E1A624E81C9C005466C9 /* ChatMessage.swift in Sources */,
+				C037E1A624E81C9C005466C9 /* Control.swift in Sources */,
 				C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

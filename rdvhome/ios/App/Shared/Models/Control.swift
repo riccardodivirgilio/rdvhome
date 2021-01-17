@@ -1,11 +1,10 @@
 //
-//  ChatMessage.swift
+//  Control.swift
 //  SwiftChat
 //
 //  Created by Freek Zijlmans on 15/08/2020.
 //
 
-import Foundation
 import Foundation
 import SwiftUI
 import CoreLocation
