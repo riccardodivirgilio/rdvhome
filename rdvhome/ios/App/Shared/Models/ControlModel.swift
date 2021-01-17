@@ -116,6 +116,7 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.brightness = control.brightness
         self.saturation = control.saturation
     }
+    
 }
 
 struct ControlModel: Codable {

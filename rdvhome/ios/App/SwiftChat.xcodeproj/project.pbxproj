@@ -13,6 +13,8 @@
 		2563FD2825B46B4000CF8C59 /* ControlDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */; };
 		2563FD2C25B46B5E00CF8C59 /* ControlModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */; };
 		2563FD2D25B46B5E00CF8C59 /* ControlModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */; };
+		2563FD4325B49FDD00CF8C59 /* PowerToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD4225B49FDD00CF8C59 /* PowerToggleView.swift */; };
+		2563FD4425B49FDD00CF8C59 /* PowerToggleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD4225B49FDD00CF8C59 /* PowerToggleView.swift */; };
 		C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E19024E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
@@ -25,6 +27,7 @@
 		2563FD2125B46B1700CF8C59 /* ControlListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlListView.swift; sourceTree = "<group>"; };
 		2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlDetailView.swift; sourceTree = "<group>"; };
 		2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlModel.swift; sourceTree = "<group>"; };
+		2563FD4225B49FDD00CF8C59 /* PowerToggleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerToggleView.swift; sourceTree = "<group>"; };
 		C037E17B24E80B09005466C9 /* SwiftChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftChatApp.swift; sourceTree = "<group>"; };
 		C037E17C24E80B09005466C9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C037E17D24E80B0B005466C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -106,6 +109,7 @@
 			children = (
 				2563FD2125B46B1700CF8C59 /* ControlListView.swift */,
 				2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */,
+				2563FD4225B49FDD00CF8C59 /* PowerToggleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -219,6 +223,7 @@
 				2563FD2C25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
+				2563FD4325B49FDD00CF8C59 /* PowerToggleView.swift in Sources */,
 				2563FD2725B46B4000CF8C59 /* ControlDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,6 +236,7 @@
 				2563FD2D25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
+				2563FD4425B49FDD00CF8C59 /* PowerToggleView.swift in Sources */,
 				2563FD2825B46B4000CF8C59 /* ControlDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

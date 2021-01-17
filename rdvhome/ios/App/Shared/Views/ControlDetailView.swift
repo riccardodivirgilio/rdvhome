@@ -11,7 +11,8 @@ import SwiftUI
 struct ControlDetailView: View {
     // Data passed from parent list view
     @ObservedObject var control: ControlViewModel
-
+    @ObservedObject var model: ControlListModel
+    
     // SwiftUI form with data fields
     // note the autocapitalization and keyboard modifiers
 
@@ -19,7 +20,7 @@ struct ControlDetailView: View {
         VStack {
             Form {
                 Section(header: Text("Power")) {
-                    Toggle(control.on ? "ON" : "OFF", isOn: $control.on)
+                    PowerToggleView(control: control, model:model, title:control.on ? "ON" : "OFF")
                 }
                 if control.on && control.allow_hue {
                     Section(header: Text("Hue")) {

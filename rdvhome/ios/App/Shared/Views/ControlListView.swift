@@ -8,38 +8,27 @@
 
 import SwiftUI
 
+
+
+
 struct SingleView: View {
     
     @ObservedObject var control: ControlViewModel
-    var switch_power: (String, Bool) -> ()
+    @ObservedObject var model: ControlListModel
     
     var body: some View {
         HStack {
             Text(control.icon)
             Text(control.name)
             Spacer()
-            Toggle("", isOn:
-                Binding(
-                    get: {control.on},
-                    set: {
-                        (v) in
-                            switch_power(control.id, v)
-                            control.on = v
-                    }
-                )
-            )
-            .opacity(control.allow_on ? 1 : 0)
-            .toggleStyle(
-                SwitchToggleStyle(tint: control.allow_hue ? control.color() : .gray)
-            )
+            PowerToggleView(control: control, model: model)
         }
-        
     }
 }
 
 struct ControlListView: View {
     // Using an ObservedObject for reference-based data (classes)
-    @ObservedObject var controlList = ControlListModel()
+    @ObservedObject var model = ControlListModel()
     
     var body: some View {
         NavigationView {
@@ -53,34 +42,49 @@ struct ControlListView: View {
                 
                 // And now thanks to Vadim Shpakovski (@vadimshpakovski) for another option
                 // which does not rely on creating a binding to every control, but uses
-                // onReceive to react to changes to the control and trigger an update of controlList.
+                // onReceive to react to changes to the control and trigger an update of model.
                 // This will be faster for longer lists and feels more like how ObservedObject is meant to be used.
                 // Note that ControlDetailView has changed from using @Binding to @ObservedObject.
 
-                ForEach(controlList.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
-                    NavigationLink(destination:
-                        ControlDetailView(control: control)
-                            .onReceive(control.objectWillChange) { _ in
-                                self.controlList.objectWillChange.send()
-                            }
-                    ) {
-                        SingleView(control: control, switch_power: controlList.switch_power)
+                ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
+                    
+                    
+                    
+                    
+                    ZStack {
+                        SingleView(control: control, model: model)
+                        
+                        if control.on && control.allow_hue {
+                            NavigationLink(destination:
+                                ControlDetailView(control: control, model: model)
+                                    .onReceive(control.objectWillChange) { _ in
+                                        self.model.objectWillChange.send()
+                                    }
+                            ) {
+                                EmptyView()
+                                    
+                            }.buttonStyle(PlainButtonStyle()).frame(width:0).opacity(0)
                             
+                        }
+                        
+
                     }
                     .listRowBackground(control.row_background())
+                    
+                    
                 }
 
             }
                 
             // This runs when the view appears to load the initial data
-            .onAppear(perform: { self.controlList.connect() })
+            .onAppear(perform: { self.model.connect() })
             
             // set up the navigation bar details
             // EditButton() is a standard View
             .navigationBarTitle("RdvHome")
             /*.navigationBarItems(trailing:
                 HStack {
-                    Button(action: { self.controlList.refreshData() }) {
+                    Button(action: { self.model.refreshData() }) {
                         Image(systemName: "arrow.clockwise")
                     }
                     Spacer().frame(width: 30)
