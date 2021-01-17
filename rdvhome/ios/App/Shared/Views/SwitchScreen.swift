@@ -9,6 +9,30 @@ import Combine
 import Foundation
 import SwiftUI
 
+struct SingleView: View {
+    
+    var control: Control
+    var switch_power: (Control, Bool) -> ()
+    
+    var body: some View {
+        HStack {
+            Text(control.icon)
+            Text(control.name)
+            Spacer()
+            Toggle("", isOn:
+                Binding(
+                    get: {control.on},
+                    set: {(v) in switch_power(control, v)}
+                )
+            )
+            .opacity(control.allow_on ? 1 : 0)
+            .toggleStyle(
+                SwitchToggleStyle(tint: control.allow_hue ? control.color : .gray)
+            )
+        }
+        .listRowBackground(control.color.opacity(control.on ? 0.1 : 0))
+    }
+}
 
 struct SwitchScreen: View {
     
@@ -16,26 +40,12 @@ struct SwitchScreen: View {
     
     var body: some View {
         NavigationView {
-
-
-            
             List {
-                ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
-                    HStack {
-                        Text(c.icon)
-                        Text(c.name)
-                        Toggle("", isOn:
-                            Binding(
-                                get: {c.on},
-                                set: {(v) in model.switch_power(id: c.id, on: v)}
-                            )
-                        )
-                        .opacity(c.allow_on ? 1 : 0)
-                        .toggleStyle(
-                            SwitchToggleStyle(tint: c.allow_hue ? c.color : .gray)
-                        )
-                    }
-                    .listRowBackground(c.color.opacity(c.on ? 0.1 : 0))
+                ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
+                    SingleView(
+                        control: control,
+                        switch_power: model.switch_power
+                    )
                 }
             }
             .navigationTitle("RdvHome")
@@ -98,11 +108,11 @@ private final class SwitchScreenModel: ObservableObject {
         }
     }
     
-    func switch_power(id: String, on: Bool) {
-        if var c = self.controls[id] {
+    func switch_power(control: Control, on: Bool) {
+        if var c = self.controls[control.id] {
             if c.allow_on {
                 c.on = on
-                self.controls[id] = c
+                self.controls[control.id] = c
                 let mode = on ? "on" : "off"
                 self.send(text:"/switch/\(c.id)/set?mode=\(mode)")
             }
