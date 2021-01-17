@@ -13,8 +13,8 @@
 		C037E19124E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
 		C037E19224E80B0B005466C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C037E17D24E80B0B005466C9 /* Assets.xcassets */; };
 		C037E19324E80B0B005466C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C037E17D24E80B0B005466C9 /* Assets.xcassets */; };
-		C037E1A024E80C07005466C9 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* ChatScreen.swift */; };
-		C037E1A124E80C07005466C9 /* ChatScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* ChatScreen.swift */; };
+		C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
+		C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
 		C037E1A524E81C9C005466C9 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* ChatMessage.swift */; };
 		C037E1A624E81C9C005466C9 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* ChatMessage.swift */; };
 /* End PBXBuildFile section */
@@ -28,7 +28,7 @@
 		C037E18A24E80B0B005466C9 /* SwiftChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C037E18C24E80B0B005466C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C037E18D24E80B0B005466C9 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		C037E19F24E80C07005466C9 /* ChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScreen.swift; sourceTree = "<group>"; };
+		C037E19F24E80C07005466C9 /* SwitchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchScreen.swift; sourceTree = "<group>"; };
 		C037E1A424E81C9C005466C9 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,7 +101,7 @@
 		C037E1A224E81C86005466C9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C037E19F24E80C07005466C9 /* ChatScreen.swift */,
+				C037E19F24E80C07005466C9 /* SwitchScreen.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -214,7 +214,7 @@
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				C037E1A524E81C9C005466C9 /* ChatMessage.swift in Sources */,
-				C037E1A024E80C07005466C9 /* ChatScreen.swift in Sources */,
+				C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +225,7 @@
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				C037E1A624E81C9C005466C9 /* ChatMessage.swift in Sources */,
-				C037E1A124E80C07005466C9 /* ChatScreen.swift in Sources */,
+				C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

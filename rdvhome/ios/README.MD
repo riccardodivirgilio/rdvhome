@@ -208,13 +208,13 @@ In Xcode create a new project. This time, under _Multiplatform_ select _App_. Ag
 
 The app does not rely on any external third-party frameworks or libraries. Indeed, everything we need is available via `Foundation`, `Combine` and `SwiftUI` (in Xcode 12+).
 
-Let's start working on the chat screen immediately. Create a new Swift file and name it `ChatScreen.swift`. It doesn't matter whether you choose the _Swift File_ or the _SwiftUI View_ template. We're deleting everything in it regardless.
+Let's start working on the chat screen immediately. Create a new Swift file and name it `SwitchScreen.swift`. It doesn't matter whether you choose the _Swift File_ or the _SwiftUI View_ template. We're deleting everything in it regardless.
 
-Here's the starter's kit of `ChatScreen.swift`:
+Here's the starter's kit of `SwitchScreen.swift`:
 ```swift
 import SwiftUI
 
-struct ChatScreen: View {
+struct SwitchScreen: View {
 	@State private var message = ""
 
 	var body: some View {
@@ -244,11 +244,11 @@ struct ChatScreen: View {
 }
 ```
 
-In `ContentsView.swift`, replace the _Hello World_ with `ChatScreen()`:
+In `ContentsView.swift`, replace the _Hello World_ with `SwitchScreen()`:
 ```swift
 struct ContentView: View {
 	var body: some View {
-		ChatScreen()
+		SwitchScreen()
 	}
 }
 ```
@@ -276,15 +276,15 @@ Coming from a [React](https://reactjs.org/) background, this luxury is something
 >
 > Discussing these is out-of-scope for this tutorial. But it's generally agreed upon that business logic and UI logic should not be intertwined.
 
-This concept is true just as much for our _ChatScreen_. The only thing the _ChatScreen_ should care about is displaying the messages and handling the user-input text. It doesn't care about ✌️We**Bs**Oc**K**eTs✌, nor should it.
+This concept is true just as much for our _SwitchScreen_. The only thing the _SwitchScreen_ should care about is displaying the messages and handling the user-input text. It doesn't care about ✌️We**Bs**Oc**K**eTs✌, nor should it.
 
-You can create a new Swift file or write the following code at the bottom of `ChatScreen.swift`. Your choice. Wherever it lives, make sure you don't forget the `import`s!
+You can create a new Swift file or write the following code at the bottom of `SwitchScreen.swift`. Your choice. Wherever it lives, make sure you don't forget the `import`s!
 
 ```swift
 import Combine
 import Foundation
 
-final class ChatScreenModel: ObservableObject {
+final class SwitchScreenModel: ObservableObject {
 	private var webSocketTask: URLSessionWebSocketTask? // 1
 
 	// MARK: - Connection
@@ -322,25 +322,25 @@ Whenever a message is received from the server, the method `onReceive(incoming:)
 7. A public method to close the connection (very important!).
 8. Disconnecting the WebSocket connection.  
 With WebSockets, you have the option to inform the server _why_ a client disconnected. With optional additional data provided.
-8. Make sure we gracefully disconnect when the `ChatScreenModel` is purged from memory.
+8. Make sure we gracefully disconnect when the `SwitchScreenModel` is purged from memory.
 
-This is a great start. We now have a place where we can put all our WebSocket logic without cluttering the UI code. It's time to have `ChatScreen` communicate with `ChatScreenModel`.
+This is a great start. We now have a place where we can put all our WebSocket logic without cluttering the UI code. It's time to have `SwitchScreen` communicate with `SwitchScreenModel`.
 
-Add the `ChatScreenModel` as a State Object in `ChatScreen`:
+Add the `SwitchScreenModel` as a State Object in `SwitchScreen`:
 ```swift
-struct ChatScreen: View {
-	@StateObject private var model = ChatScreenModel() // <- this here
+struct SwitchScreen: View {
+	@StateObject private var model = SwitchScreenModel() // <- this here
 	@State private var message = ""
 	
 	// etc...
 }
 ```
 
-When should we connect to the server? Well, when the screen is _actually_ visible, of course. You may be tempted to call `.connect()` in the `init()` of `ChatScreen`. This is a dangerous thing. In fact, in SwiftUI one should try to avoid putting anything the `init()`, as the View can be initialized even when it will never appear. (For instance in `LazyVStack` or in `NavigationLink(destination:)`.) It'd be a shame to waste precious CPU cycles. Therefore, let's defer everything to `onAppear`.
+When should we connect to the server? Well, when the screen is _actually_ visible, of course. You may be tempted to call `.connect()` in the `init()` of `SwitchScreen`. This is a dangerous thing. In fact, in SwiftUI one should try to avoid putting anything the `init()`, as the View can be initialized even when it will never appear. (For instance in `LazyVStack` or in `NavigationLink(destination:)`.) It'd be a shame to waste precious CPU cycles. Therefore, let's defer everything to `onAppear`.
 
-Add an `onAppear` method to `ChatScreen`. Then add and pass that method to the `.onAppear(perform:)` modifier of `VStack`:
+Add an `onAppear` method to `SwitchScreen`. Then add and pass that method to the `.onAppear(perform:)` modifier of `VStack`:
 ```swift
-struct ChatScreen: View {
+struct SwitchScreen: View {
 	// ...
 
 	private func onAppear() {
@@ -366,7 +366,7 @@ struct ChatScreen: View {
 
 By the same token, we should also disconnect when the view disappears. The implementation should be self explanatory, but just in case:
 ```swift
-struct ChatScreen: View {
+struct SwitchScreen: View {
 	// ...
 
 	private func onDisappear() {
@@ -385,10 +385,10 @@ struct ChatScreen: View {
 
 It's very important to close WebSocket connections whenever we stop caring about them. When you (gracefully) close a WebSocket connection, the server will be informed and can purge the connection from memory. The server should _never_ have dead or unknown connections lingering in memory.
 
-Phew. Quite a ride we've been through so far. Time to test it out. ▶️ Run the app! (Use Simulator if you're testing for iOS.) Make sure you still have the server running in your other Xcode window. When the app has successfully started and is displaying `ChatScreen`, you should see the `Connected: WebSocketKit.WebSocket` message in the Xcode console of the server. If not, retrace your steps and start debugging!
+Phew. Quite a ride we've been through so far. Time to test it out. ▶️ Run the app! (Use Simulator if you're testing for iOS.) Make sure you still have the server running in your other Xcode window. When the app has successfully started and is displaying `SwitchScreen`, you should see the `Connected: WebSocketKit.WebSocket` message in the Xcode console of the server. If not, retrace your steps and start debugging!
 
 ### Testing disconnection
-One more thing™️. We should also test whether the WebSocket connection is closed when the user closes the app (or leaves `ChatScreen`). Head back to the `main.swift` file of the server project. Currently our WebSocket listener looks like this:
+One more thing™️. We should also test whether the WebSocket connection is closed when the user closes the app (or leaves `SwitchScreen`). Head back to the `main.swift` file of the server project. Currently our WebSocket listener looks like this:
 
 ```swift
 app.webSocket("chat") { req, client in
@@ -540,14 +540,14 @@ struct ReceivingChatMessage: Decodable, Identifiable {
 ```
 Notice how the `Encodable` and `Decodable` protocols have been swapped. It only makes sense: in the app, we only encode `SubmittedChatMessage` and only decode `ReceivingChatMessage`. The opposite of the server. We also removed the automatic initializations of `date` and `id`. The app has no business generating these.
 
-Okay, back to `ChatScreenModel` (whether it's in a separate file or at the bottom of `ChatScreen.swift`). 
-Add the top, but inside `ChatScreenModel` add the following instance property:
+Okay, back to `SwitchScreenModel` (whether it's in a separate file or at the bottom of `SwitchScreen.swift`). 
+Add the top, but inside `SwitchScreenModel` add the following instance property:
 ```swift
 @Published private(set) var messages: [ReceivingChatMessage] = []
 ```
-This where we'll store received messages. Thanks to `@Published`, the `ChatScreen` will know exactly when this array gets updated and will react to this change. `private(set)` makes sure only `ChatScreenModel` can update this property. (After all, it's the owner of the data. No other object has any business modifying it directly!)
+This where we'll store received messages. Thanks to `@Published`, the `SwitchScreen` will know exactly when this array gets updated and will react to this change. `private(set)` makes sure only `SwitchScreenModel` can update this property. (After all, it's the owner of the data. No other object has any business modifying it directly!)
 
-Still inside `ChatScreenModel`, add the following method:
+Still inside `SwitchScreenModel`, add the following method:
 ```swift
 func send(text: String) {	
 	let message = SubmittedChatMessage(message: text) // 1
@@ -572,7 +572,7 @@ A `SubmittedChatMessage` that, for now, just holds the message.
 4. If any errors occurred, simply print the error.  
 Of course, in a real app you'd respond a bit more respectfully to such an error. 🙃
 
-Open `ChatScreen.swift` and add the following method to `ChatScreen`:
+Open `SwitchScreen.swift` and add the following method to `SwitchScreen`:
 ```swift
 private func onCommit() {
 	if !message.isEmpty {
@@ -583,7 +583,7 @@ private func onCommit() {
 ```
 This method will be called when the user either presses the submit button or when pressing Return on the keyboard. Though it'll only send the message if it _actually contains anything_.
 
-In the `.body` of `ChatScreen`, locate the `TextField` and `Button`, then replace them (but not their modifiers or contents) with the following initializations:
+In the `.body` of `SwitchScreen`, locate the `TextField` and `Button`, then replace them (but not their modifiers or contents) with the following initializations:
 ```swift
 TextField("Message", text: $message, onEditingChanged: { _ in }, onCommit: onCommit)
 	// .modifiers here
@@ -600,7 +600,7 @@ Now is the time to start testing what we have. Make sure the server is still run
 ### Receiving client-side
 Sending messages is cute and all. But what about receiving them? (Well, technically we are receiving them, just never reacting to them.) Right you are!
 
-Let's visit `ChatScreenModel` once more. Remember that `onReceive(incoming:)` method? Replace it and give it a sibling method as shown below:
+Let's visit `SwitchScreenModel` once more. Remember that `onReceive(incoming:)` method? Replace it and give it a sibling method as shown below:
 ```swift
 private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
 	webSocketTask?.receive(completionHandler: onReceive) // 1
@@ -639,7 +639,7 @@ So...
 
 Nearly there!
 
-Check back in on `ChatScreen.swift`. See that empty `ScrollView`? We can _finally_ populate it with messages:
+Check back in on `SwitchScreen.swift`. See that empty `ScrollView`? We can _finally_ populate it with messages:
 ```swift
 ScrollView {
 	LazyVStack(spacing: 8) {
@@ -660,7 +660,7 @@ Enter...
 ## Autoscrolling
 Remember, the server generates a unique identifier for each message. We can finally put it to good use! The wait was worth it for this incredible payoff, I assure you.
 
-In `ChatScreen`, turn the `ScrollView` into this beauty:
+In `SwitchScreen`, turn the `ScrollView` into this beauty:
 ```swift
 ScrollView {
 	ScrollViewReader { proxy in // 1
@@ -762,7 +762,7 @@ struct SettingsScreen: View {
 			Section(header: Text("Username")) {
 				TextField("E.g. John Applesheed", text: $userInfo.username) // 3
 
-				NavigationLink("Continue", destination: ChatScreen()) // 4
+				NavigationLink("Continue", destination: SwitchScreen()) // 4
 					.disabled(!isUsernameValid)
 			}
 		}
@@ -773,7 +773,7 @@ struct SettingsScreen: View {
 1. The previously created `UserInfo` class will be accessible here as an `EnvironmentObject`.
 2. A simple validation to make sure the username isn't just whitespace.
 3. The `TextField` will directly write its contents into `userInfo.username`.
-4. The `NavigationLink` that will present `ChatScreen` when pressed. The button is disabled while the username is invalid. (Do you notice how we initialize `ChatScreen` in the `NavigationLink`? Had we made `ChatScreen` connect to the server in its `init()`, it would've done so _right now_!)
+4. The `NavigationLink` that will present `SwitchScreen` when pressed. The button is disabled while the username is invalid. (Do you notice how we initialize `SwitchScreen` in the `NavigationLink`? Had we made `SwitchScreen` connect to the server in its `init()`, it would've done so _right now_!)
 
 If you wish you can add a little _panache_ to screen. 😉
 
@@ -796,9 +796,9 @@ struct ContentView: View {
 2. ... pass it along as an `EnvironmentObject`, making it accessible to all succeeding views.
 3. This is just to make the app not use a columned navigation view on certain screen sizes.
 
-Now to send the data of `UserInfo` along with the messages we send to the server. Go to `ChatScreenModel` (wherever you put it). At the top of the class add the following properties:
+Now to send the data of `UserInfo` along with the messages we send to the server. Go to `SwitchScreenModel` (wherever you put it). At the top of the class add the following properties:
 ```swift
-final class ChatScreenModel: ObservableObject {
+final class SwitchScreenModel: ObservableObject {
 	private var username: String?
 	private var userID: UUID?
 
@@ -828,13 +828,13 @@ func send(text: String) {
 }
 ```
 
-Aaaand that's it for `ChatScreenModel`. It's _finished_. 😙👌
+Aaaand that's it for `SwitchScreenModel`. It's _finished_. 😙👌
 
-For the final time, open up `ChatScreen.swift`. At the top of `ChatScreen` add:
+For the final time, open up `SwitchScreen.swift`. At the top of `SwitchScreen` add:
 ```swift
 @EnvironmentObject private var userInfo: UserInfo
 ```
-Don't forget to supply the `username` and `userID` to `ChatScreenModel` when the view appears:
+Don't forget to supply the `username` and `userID` to `SwitchScreenModel` when the view appears:
 ```swift
 private func onAppear() {
 	model.connect(username: userInfo.username, userID: userInfo.userID)
@@ -891,7 +891,7 @@ It's not particularly exciting looking. Here's what it looks like on an iPhone:
 
 (Remember how the server also sends the date of a message? Here it's used to display the time.)
 
-Colors and positioning are based on the `isUser` property that's passed down by the parent. In this case, that parent is none other than `ChatScreen`. Because `ChatScreen` has access to the messages _as well_ as the `UserInfo`, it's there where the logic is placed to determine whether the message belongs to the user or not. 
+Colors and positioning are based on the `isUser` property that's passed down by the parent. In this case, that parent is none other than `SwitchScreen`. Because `SwitchScreen` has access to the messages _as well_ as the `UserInfo`, it's there where the logic is placed to determine whether the message belongs to the user or not. 
 
 `ChatMessageRow` replaces the boring `Text` we used before to represent messages:
 ```swift
@@ -964,7 +964,7 @@ To do this, in `main.swift` of the server code, add the following line _directly
 ```swift
 app.http.server.configuration.hostname = "0.0.0.0"
 ```
-Now in `ChatScreenModel`, in the `connect(username:userID:)` method, you need to change the URL to match your machine's local IP:
+Now in `SwitchScreenModel`, in the `connect(username:userID:)` method, you need to change the URL to match your machine's local IP:
 ```swift
 let url = URL(string: "ws://127.0.0.1:8080/chat")!
                           //^^this^^^

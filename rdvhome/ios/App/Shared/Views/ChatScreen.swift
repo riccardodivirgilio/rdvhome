@@ -1,5 +1,5 @@
 //
-//  ChatScreen.swift
+//  SwitchScreen.swift
 //  SwiftChat
 //
 //  Created by Riccardo Di Virgilio
@@ -10,9 +10,9 @@ import Foundation
 import SwiftUI
 
 
-struct ChatScreen: View {
+struct SwitchScreen: View {
     
-    @StateObject private var model = ChatScreenModel()
+    @StateObject private var model = SwitchScreenModel()
     
     var body: some View {
         NavigationView {
@@ -47,7 +47,7 @@ struct ChatScreen: View {
     }
 }
 
-private final class ChatScreenModel: ObservableObject {
+private final class SwitchScreenModel: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask?
     
