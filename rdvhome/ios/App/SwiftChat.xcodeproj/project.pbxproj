@@ -7,19 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2563FD2225B46B1700CF8C59 /* ControlListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2125B46B1700CF8C59 /* ControlListView.swift */; };
+		2563FD2325B46B1700CF8C59 /* ControlListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2125B46B1700CF8C59 /* ControlListView.swift */; };
+		2563FD2725B46B4000CF8C59 /* ControlDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */; };
+		2563FD2825B46B4000CF8C59 /* ControlDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */; };
+		2563FD2C25B46B5E00CF8C59 /* ControlModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */; };
+		2563FD2D25B46B5E00CF8C59 /* ControlModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */; };
 		C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E19024E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
 		C037E19124E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
 		C037E19224E80B0B005466C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C037E17D24E80B0B005466C9 /* Assets.xcassets */; };
 		C037E19324E80B0B005466C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C037E17D24E80B0B005466C9 /* Assets.xcassets */; };
-		C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
-		C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E19F24E80C07005466C9 /* SwitchScreen.swift */; };
-		C037E1A524E81C9C005466C9 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* Control.swift */; };
-		C037E1A624E81C9C005466C9 /* Control.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E1A424E81C9C005466C9 /* Control.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2563FD2125B46B1700CF8C59 /* ControlListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlListView.swift; sourceTree = "<group>"; };
+		2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlDetailView.swift; sourceTree = "<group>"; };
+		2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlModel.swift; sourceTree = "<group>"; };
 		C037E17B24E80B09005466C9 /* SwiftChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftChatApp.swift; sourceTree = "<group>"; };
 		C037E17C24E80B09005466C9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C037E17D24E80B0B005466C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -28,8 +33,6 @@
 		C037E18A24E80B0B005466C9 /* SwiftChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C037E18C24E80B0B005466C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C037E18D24E80B0B005466C9 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
-		C037E19F24E80C07005466C9 /* SwitchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchScreen.swift; sourceTree = "<group>"; };
-		C037E1A424E81C9C005466C9 /* Control.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Control.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,7 +104,8 @@
 		C037E1A224E81C86005466C9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				C037E19F24E80C07005466C9 /* SwitchScreen.swift */,
+				2563FD2125B46B1700CF8C59 /* ControlListView.swift */,
+				2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -109,7 +113,7 @@
 		C037E1A324E81C92005466C9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C037E1A424E81C9C005466C9 /* Control.swift */,
+				2563FD2B25B46B5E00CF8C59 /* ControlModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -211,10 +215,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2563FD2225B46B1700CF8C59 /* ControlListView.swift in Sources */,
+				2563FD2C25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
-				C037E1A524E81C9C005466C9 /* Control.swift in Sources */,
-				C037E1A024E80C07005466C9 /* SwitchScreen.swift in Sources */,
+				2563FD2725B46B4000CF8C59 /* ControlDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,10 +227,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2563FD2325B46B1700CF8C59 /* ControlListView.swift in Sources */,
+				2563FD2D25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
-				C037E1A624E81C9C005466C9 /* Control.swift in Sources */,
-				C037E1A124E80C07005466C9 /* SwitchScreen.swift in Sources */,
+				2563FD2825B46B4000CF8C59 /* ControlDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
