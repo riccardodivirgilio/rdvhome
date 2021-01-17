@@ -9,6 +9,7 @@ import Combine
 import Foundation
 import SwiftUI
 
+
 struct ChatScreen: View {
     
     @StateObject private var model = ChatScreenModel()
@@ -16,23 +17,30 @@ struct ChatScreen: View {
     var body: some View {
         NavigationView {
 
-            List(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
-                HStack {
-                    Text(c.icon)
-                    Text(c.name)
-                    Toggle("", isOn:
-                        Binding(
-                            get: {c.on},
-                            set: {(v) in model.switch_power(id: c.id, on: v)}
+
+            
+            List {
+                ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { c in
+                    HStack {
+                        Text(c.icon)
+                        Text(c.name)
+                        Toggle("", isOn:
+                            Binding(
+                                get: {c.on},
+                                set: {(v) in model.switch_power(id: c.id, on: v)}
+                            )
                         )
-                    )
-                    .opacity(c.allow_on ? 1 : 0)
-                    .toggleStyle(
-                        SwitchToggleStyle(tint: c.allow_hue ? c.color : .gray)
-                    )
+                        .opacity(c.allow_on ? 1 : 0)
+                        .toggleStyle(
+                            SwitchToggleStyle(tint: c.allow_hue ? c.color : .gray)
+                        )
+                    }
+                    .listRowBackground(c.color.opacity(c.on ? 0.1 : 0.))
                 }
             }
             .navigationTitle("RdvHome")
+            
+            
         }
         .onAppear(perform: {model.connect()})
         .onDisappear(perform: {model.disconnect()})
