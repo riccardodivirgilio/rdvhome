@@ -51,6 +51,8 @@ class ControlListModel: ObservableObject {
         }
     }
     
+
+    
     
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         
@@ -95,5 +97,9 @@ class ControlListModel: ObservableObject {
         let s = Int(round(100 * control.saturation))
         let b = Int(round(100 * control.brightness))
         self.send(text:"/switch/\(control.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)")
+    }
+    func switch_random_color(control: ControlViewModel) {
+        control.hue = Double.random(in: 0..<1)
+        self.switch_color(control: control)
     }
 }

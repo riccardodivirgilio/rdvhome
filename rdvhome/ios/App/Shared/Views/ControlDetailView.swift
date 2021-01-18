@@ -68,9 +68,10 @@ struct ControlDetailView: View {
         .navigationBarTitle(control.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Random") {
-                    control.hue = Double.random(in: 0..<1)
-                    model.switch_color(control: control)
+                Button {
+                    model.switch_random_color(control: control)
+                } label: {
+                    Image(systemName: "shuffle")
                 }
                 .disabled(!(control.on && control.allow_hue))
             }

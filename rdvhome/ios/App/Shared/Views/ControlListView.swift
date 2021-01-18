@@ -45,6 +45,19 @@ struct ControlListView: View {
     @ObservedObject var model = ControlListModel()
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    var current_on:[ControlViewModel] {
+        get {
+            return model.controls.values.filter({c in c.on})
+        }
+    }
+    var current_on_color:[ControlViewModel] {
+        get {
+            return model.controls.values.filter({c in c.on && c.allow_hue})
+        }
+    }
+        
+
 
     var body: some View {
         NavigationView {
@@ -52,6 +65,7 @@ struct ControlListView: View {
             if model.controls.isEmpty {
                 ProgressView()
             } else {
+                
                 List {
                     // To make the navigation link edits return to here,
                     // the data sent must be a direct reference to an element
@@ -66,6 +80,8 @@ struct ControlListView: View {
                     // This will be faster for longer lists and feels more like how ObservedObject is meant to be used.
                     // Note that ControlDetailView has changed from using @Binding to @ObservedObject.
 
+
+                    
                     ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
                         
                         
@@ -97,13 +113,26 @@ struct ControlListView: View {
                 }
                 .navigationBarTitle("RdvHome")
                 .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button("Random") {
-                            for control in model.controls.values.filter({c in c.on && c.allow_hue}) {
-                                control.hue = Double.random(in: 0..<1)
-                                model.switch_color(control: control)
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            for control in current_on {
+                                control.on = false
+                                model.switch_power(control: control)
                             }
+                         } label: {
+                            Image(systemName: "power")
+                         }
+                        .disabled(current_on.isEmpty)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            for control in current_on_color {
+                                model.switch_random_color(control: control)
+                            }
+                        } label: {
+                            Image(systemName: "shuffle")
                         }
+                        .disabled(current_on_color.isEmpty)
                     }
                 }
             }
