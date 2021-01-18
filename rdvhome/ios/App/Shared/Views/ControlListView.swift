@@ -96,22 +96,22 @@ struct ControlListView: View {
 
                 }
                 .navigationBarTitle("RdvHome")
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button("Random") {
+                            for control in model.controls.values.filter({c in c.on && c.allow_hue}) {
+                                control.hue = Double.random(in: 0..<1)
+                                model.switch_color(control: control)
+                            }
+                        }
+                    }
+                }
             }
         }
         // This runs when the view appears to load the initial data
         .onAppear(perform: { self.model.connect() })
         .onReceive(timer) { input in self.model.heartbeat()}
-        // set up the navigation bar details
-        // EditButton() is a standard View
-        /*.navigationBarItems(trailing:
-            HStack {
-                Button(action: { self.model.reconnect() }) {
-                    Image(systemName: "arrow.clockwise")
-                }
-                Spacer().frame(width: 30)
-                EditButton()
-            }
-        )*/
+
         
     }
 }

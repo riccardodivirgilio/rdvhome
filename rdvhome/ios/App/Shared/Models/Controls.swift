@@ -63,7 +63,7 @@ class ControlViewModel: Identifiable, ObservableObject {
     }
     
     func row_background() -> Color {
-        return color.opacity(on ? 0.3 : 0)
+        return color.opacity(on ? (allow_hue ? 0.3 : 0.15) : 0)
     }
     
     init(with control: ControlModel) {

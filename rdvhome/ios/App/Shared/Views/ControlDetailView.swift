@@ -63,18 +63,17 @@ struct ControlDetailView: View {
                 }
             }
             
-            Button(action: {
-                control.hue = Double.random(in: 0..<1)
-                model.switch_color(control: control)
-            }, label: {
-                HStack {
-                    Spacer()
-                    Text("Random Color")
-                    Spacer()
-                }
-            })
-            
+  
         }
         .navigationBarTitle(control.name)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Random") {
+                    control.hue = Double.random(in: 0..<1)
+                    model.switch_color(control: control)
+                }
+                .disabled(!(control.on && control.allow_hue))
+            }
+        }
     }
 }
