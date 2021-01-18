@@ -26,11 +26,8 @@ struct ControlDetailView: View {
     var body: some View {
         VStack {
             List {
-                Section(header: Text("Power")) {
-                    PowerToggleView(control: control, model:model, title:control.on ? "ON" : "OFF")
-                        .padding(.top, 4)
-                        .padding(.bottom, 4)
-                }
+                SingleView(title:control.on ? "ON" : "OFF", control: control, model: model)
+                    .listRowBackground(control.row_background())
                 if control.on && control.allow_hue {
                     Section(header: Text("Color")) {
                         SliderView(
@@ -62,24 +59,22 @@ struct ControlDetailView: View {
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 0),
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 1)
                             ])
-                        
-                        ColorPickerView(
-                            title: "Choose your color",
-                            control: control,
-                            model: model
-                        )
                     }
                 }
             }
             
-            Text("Registered on:")
-                .font(.headline)
-                .padding(6)
-                
-            Text("\(control.id)")
-                .padding(6)
+            Button(action: {
+                control.hue = Double.random(in: 0..<1)
+                model.switch_color(control: control)
+            }, label: {
+                HStack {
+                    Spacer()
+                    Text("Random Color")
+                    Spacer()
+                }
+            })
+            
         }
         .navigationBarTitle(control.name)
-        
     }
 }

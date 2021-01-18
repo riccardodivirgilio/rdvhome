@@ -11,10 +11,10 @@ struct PowerToggleView: View {
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
 
-    var title: String = ""
+    var title: String?
     
     var body: some View {
-        Toggle(title, isOn:
+        Toggle(title ?? "", isOn:
             Binding(
                 get: {control.on},
                 set: {

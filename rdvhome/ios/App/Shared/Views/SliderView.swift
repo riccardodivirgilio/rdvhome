@@ -20,7 +20,7 @@ struct SliderView: View {
                 set: {
                     (v) in
                     value = v
-                    model.switch_power(control:control)
+                    model.switch_color(control:control)
                 }
             ),
             in: 0...1

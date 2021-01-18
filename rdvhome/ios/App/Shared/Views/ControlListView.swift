@@ -13,6 +13,7 @@ import SwiftUI
 
 struct SingleView: View {
     
+    var title: String?
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
     
@@ -29,7 +30,7 @@ struct SingleView: View {
                     .frame(width:30, alignment: .center)
             }
             
-            Text(control.name)
+            Text(title ?? control.name)
             Spacer()
             PowerToggleView(control: control, model: model)
                 .opacity(control.allow_on ? 1 : 0)

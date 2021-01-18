@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ColorPickerView: View {
     
-    var title = ""
+    var title : String?
     
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
     
     var body: some View {
         ColorPicker(
-            title,
+            title ?? "",
             selection:Binding(
                 get: {control.color},
                 set: { value in
