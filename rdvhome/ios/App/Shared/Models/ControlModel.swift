@@ -85,6 +85,19 @@ class ControlListModel: ObservableObject {
         self.send(text:"/switch/\(control.id)/set?brightness=\(value)")
     }
     
+    func heartbeat() {
+        print("ping")
+        webSocketTask?.sendPing() { error in
+            if let error = error {
+                print("Error sending ping", error)
+                
+                self.connect()
+            }
+        }
+
+        
+    }
+    
     
 }
 

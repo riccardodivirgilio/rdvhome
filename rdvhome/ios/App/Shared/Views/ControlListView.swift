@@ -33,6 +33,8 @@ struct ControlListView: View {
     // Using an ObservedObject for reference-based data (classes)
     @ObservedObject var model = ControlListModel()
     
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     var body: some View {
         NavigationView {
             List {
@@ -81,7 +83,9 @@ struct ControlListView: View {
                 
             // This runs when the view appears to load the initial data
             .onAppear(perform: { self.model.connect() })
-            
+            .onReceive(timer) { input in
+                self.model.heartbeat()
+            }
             // set up the navigation bar details
             // EditButton() is a standard View
             .navigationBarTitle("RdvHome")
