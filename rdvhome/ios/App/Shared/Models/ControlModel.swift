@@ -21,6 +21,7 @@ class ControlListModel: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask
     @Published var controls = [String: ControlViewModel]()
+    @Published var connected = false
 
     init() {
         webSocketTask = session()
@@ -40,10 +41,13 @@ class ControlListModel: ObservableObject {
     }
     
     func heartbeat() {
+        // The heartbeat is trying to reconnect every second the app is alive
+        // The timer is happening only while the app is on screen
         print("ping", Date())
         webSocketTask.sendPing() { error in
             if let error = error {
-                print("Error sending ping", error)
+                print("PING ERROR", error)
+                self.connected = false
                 self.reconnect()
             }
         }
@@ -53,12 +57,12 @@ class ControlListModel: ObservableObject {
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         
         if case .success(let message) = incoming {
-            
+            self.connected = true
             webSocketTask.receive(completionHandler: onReceive)
             
             if case .string(let text) = message {
                 
-                print("i got", text)
+                print("INCOMING", text)
                 
                 guard let data = text.data(using: .utf8),
                       let control = try? JSONDecoder().decode(ControlModel.self, from: data)
@@ -72,7 +76,8 @@ class ControlListModel: ObservableObject {
             }
         }
         else if case .failure(let error) = incoming {
-            print("Error Aborting", error)
+            print("ABORTING", error)
+            self.connected = false
         }
     }
     
@@ -80,7 +85,7 @@ class ControlListModel: ObservableObject {
         print("sending", text)
         webSocketTask.send(.string(text)) { error in
             if let error = error {
-                print("Error sending message", error)
+                print("ERROR SENDING MESSAGE", error)
             }
         }
     }
