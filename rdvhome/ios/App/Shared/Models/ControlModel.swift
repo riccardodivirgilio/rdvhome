@@ -90,17 +90,10 @@ class ControlListModel: ObservableObject {
         let mode = control.on ? "on" : "off"
         self.send(text:"/switch/\(control.id)/set?mode=\(mode)")
     }
-    func switch_hue(control: ControlViewModel) {
-        let value = Int(round(100 * control.hue))
-        self.send(text:"/switch/\(control.id)/set?hue=\(value)")
+    func switch_color(control: ControlViewModel) {
+        let h = Int(round(100 * control.hue))
+        let s = Int(round(100 * control.saturation))
+        let b = Int(round(100 * control.brightness))
+        self.send(text:"/switch/\(control.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)")
     }
-    func switch_saturation(control: ControlViewModel) {
-        let value = Int(round(100 * control.saturation))
-        self.send(text:"/switch/\(control.id)/set?saturation=\(value)")
-    }
-    func switch_brightness(control: ControlViewModel) {
-        let value = Int(round(100 * control.brightness))
-        self.send(text:"/switch/\(control.id)/set?brightness=\(value)")
-    }
-
 }

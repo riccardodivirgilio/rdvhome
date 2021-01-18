@@ -48,9 +48,14 @@ extension Color {
     }
     
     var hsb: (HSB) {
+        
+
+        
         let r = rgb.red
         let g = rgb.green
         let b = rgb.blue
+        
+        print("rgb", r, g, b)
 
         let Max:Double = max(r, g, b)
         let Min:Double = min(r, g, b)
@@ -68,7 +73,6 @@ extension Color {
         } else if Max == b {
             h = 60 * (r-g)/(Max-Min) + 240
         }
-        print("h = \(h)")
         
         //s 0-1
         var s:Double = 0
@@ -77,13 +81,13 @@ extension Color {
         } else {
             s = (Max - Min)/Max
         }
-        print("s = \(s)")
         
         //v
         let v:Double = Max
-        print("v = \(v)")
         
-        return HSB(hue: h, brightness: v, saturation: s)
+        print("hsv", h, s, v)
+        
+        return HSB(hue: h / 360, brightness: v, saturation: s)
     }
     
 }

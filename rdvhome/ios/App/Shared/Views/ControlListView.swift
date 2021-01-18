@@ -18,7 +18,17 @@ struct SingleView: View {
     
     var body: some View {
         HStack {
-            Text(control.icon)
+            if (control.on && control.allow_hue) {
+                ColorPickerView(
+                    control: control,
+                    model: model
+                )
+                .frame(width:30, alignment: .trailing)
+            } else {
+                Text(control.icon)
+                    .frame(width:30, alignment: .center)
+            }
+            
             Text(control.name)
             Spacer()
             PowerToggleView(control: control, model: model)

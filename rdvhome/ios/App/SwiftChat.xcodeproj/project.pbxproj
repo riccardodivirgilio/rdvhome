@@ -21,6 +21,8 @@
 		25DD3F9625B6141900B31005 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DD3F9425B6141900B31005 /* Colors.swift */; };
 		25DD3F9A25B6146900B31005 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DD3F9925B6146900B31005 /* Controls.swift */; };
 		25DD3F9B25B6146900B31005 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DD3F9925B6146900B31005 /* Controls.swift */; };
+		25DD3FA325B6322D00B31005 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DD3FA225B6322D00B31005 /* ColorPickerView.swift */; };
+		25DD3FA425B6322D00B31005 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25DD3FA225B6322D00B31005 /* ColorPickerView.swift */; };
 		C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17B24E80B09005466C9 /* SwiftChatApp.swift */; };
 		C037E19024E80B0B005466C9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C037E17C24E80B09005466C9 /* ContentView.swift */; };
@@ -37,6 +39,7 @@
 		2563FD4725B4B24800CF8C59 /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		25DD3F9425B6141900B31005 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		25DD3F9925B6146900B31005 /* Controls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		25DD3FA225B6322D00B31005 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		C037E17B24E80B09005466C9 /* SwiftChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftChatApp.swift; sourceTree = "<group>"; };
 		C037E17C24E80B09005466C9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C037E17D24E80B0B005466C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 				2563FD2125B46B1700CF8C59 /* ControlListView.swift */,
 				2563FD2625B46B4000CF8C59 /* ControlDetailView.swift */,
 				2563FD4225B49FDD00CF8C59 /* PowerToggleView.swift */,
+				25DD3FA225B6322D00B31005 /* ColorPickerView.swift */,
 				2563FD4725B4B24800CF8C59 /* SliderView.swift */,
 			);
 			path = Views;
@@ -235,6 +239,7 @@
 				25DD3F9525B6141900B31005 /* Colors.swift in Sources */,
 				2563FD2C25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19024E80B0B005466C9 /* ContentView.swift in Sources */,
+				25DD3FA325B6322D00B31005 /* ColorPickerView.swift in Sources */,
 				25DD3F9A25B6146900B31005 /* Controls.swift in Sources */,
 				C037E18E24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				2563FD4325B49FDD00CF8C59 /* PowerToggleView.swift in Sources */,
@@ -251,6 +256,7 @@
 				25DD3F9625B6141900B31005 /* Colors.swift in Sources */,
 				2563FD2D25B46B5E00CF8C59 /* ControlModel.swift in Sources */,
 				C037E19124E80B0B005466C9 /* ContentView.swift in Sources */,
+				25DD3FA425B6322D00B31005 /* ColorPickerView.swift in Sources */,
 				25DD3F9B25B6146900B31005 /* Controls.swift in Sources */,
 				C037E18F24E80B0B005466C9 /* SwiftChatApp.swift in Sources */,
 				2563FD4425B49FDD00CF8C59 /* PowerToggleView.swift in Sources */,

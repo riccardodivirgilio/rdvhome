@@ -9,6 +9,12 @@
 import SwiftUI
 
 
+
+
+
+
+
+
 struct ControlDetailView: View {
     // Data passed from parent list view
     @ObservedObject var control: ControlViewModel
@@ -29,7 +35,8 @@ struct ControlDetailView: View {
                     Section(header: Text("Color")) {
                         SliderView(
                             value: $control.hue,
-                            processor: {v in model.switch_hue(control:control); return v},
+                            control: control,
+                            model: model,
                             colors: [
                                 Color(hue: 0 / 360, saturation: 1, brightness: 1),
                                 Color(hue: 60 / 360, saturation: 1, brightness: 1),
@@ -41,18 +48,26 @@ struct ControlDetailView: View {
                             ])
                         SliderView(
                             value: $control.saturation,
-                            processor: {v in model.switch_saturation(control:control); return v},
+                            control: control,
+                            model: model,
                             colors: [
                                 Color(hue: control.hue, saturation: 0, brightness: 1),
                                 Color(hue: control.hue, saturation: 1, brightness: 1)
                             ])
                         SliderView(
                             value: $control.brightness,
-                            processor: {v in model.switch_brightness(control:control); return v},
+                            control: control,
+                            model: model,
                             colors: [
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 0),
                                 Color(hue: control.hue, saturation: control.saturation, brightness: 1)
                             ])
+                        
+                        ColorPickerView(
+                            title: "Choose your color",
+                            control: control,
+                            model: model
+                        )
                     }
                 }
             }

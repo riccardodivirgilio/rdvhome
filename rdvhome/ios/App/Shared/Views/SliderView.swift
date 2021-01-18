@@ -6,11 +6,10 @@
 //
 
 import SwiftUI
-
 struct SliderView: View {
     @Binding var value: Double
-    
-    var processor: (Double) -> Double
+    @ObservedObject var control: ControlViewModel
+    @ObservedObject var model: ControlListModel
     
     var colors: [Color]
     
@@ -18,7 +17,11 @@ struct SliderView: View {
         Slider(
             value: Binding(
                 get: {value},
-                set: {(v) in value = processor(v)}
+                set: {
+                    (v) in
+                    value = v
+                    model.switch_power(control:control)
+                }
             ),
             in: 0...1
         )
