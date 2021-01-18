@@ -11,36 +11,51 @@ import Foundation
 import SwiftUI
 import CoreLocation
 
-
+func session() -> URLSessionWebSocketTask {
+    URLSession.shared.webSocketTask(with: URL(string: "ws://rdvhome.local:8500/websocket")!)
+}
 
 class ControlListModel: ObservableObject {
     // Main list view model
     // ObservableObject so that updates are detected
     
-    private var webSocketTask: URLSessionWebSocketTask?
+    private var webSocketTask: URLSessionWebSocketTask
     @Published var controls = [String: ControlViewModel]()
 
+    init() {
+        webSocketTask = session()
+    }
+    
     func connect() {
         
-        let url = URL(string: "ws://rdvhome.local:8500/websocket")!
-        
-        print("Connecting", url)
-        
-        guard webSocketTask == nil else {
-            return
-        }
-        
-        webSocketTask = URLSession.shared.webSocketTask(with: url)
-        webSocketTask?.receive(completionHandler: onReceive)
-        webSocketTask?.resume()
+        webSocketTask.receive(completionHandler: onReceive)
+        webSocketTask.resume()
         
         self.send(text:"/switch")
     }
     
+    func reconnect() {
+        webSocketTask = session()
+        connect()
+    }
+    
+    func heartbeat() {
+        print("ping", Date())
+        webSocketTask.sendPing() { error in
+            if let error = error {
+                print("Error sending ping", error)
+                self.reconnect()
+            }
+        }
+    }
+    
+    
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
-        webSocketTask?.receive(completionHandler: onReceive)
         
         if case .success(let message) = incoming {
+            
+            webSocketTask.receive(completionHandler: onReceive)
+            
             if case .string(let text) = message {
                 
                 print("i got", text)
@@ -57,13 +72,13 @@ class ControlListModel: ObservableObject {
             }
         }
         else if case .failure(let error) = incoming {
-            print("Error", error)
+            print("Error Aborting", error)
         }
     }
     
     func send(text: String) {
         print("sending", text)
-        webSocketTask?.send(.string(text)) { error in
+        webSocketTask.send(.string(text)) { error in
             if let error = error {
                 print("Error sending message", error)
             }
@@ -86,17 +101,5 @@ class ControlListModel: ObservableObject {
         let value = Int(round(100 * control.brightness))
         self.send(text:"/switch/\(control.id)/set?brightness=\(value)")
     }
-    
-    func heartbeat() {
-        print("ping")
-        webSocketTask?.sendPing() { error in
-            if let error = error {
-                print("Error sending ping", error)
-                
-                self.connect()
-            }
-        }
 
-        
-    }
 }
