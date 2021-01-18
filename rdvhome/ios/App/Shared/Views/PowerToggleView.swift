@@ -26,7 +26,7 @@ struct PowerToggleView: View {
         )
         .disabled(!control.allow_on)
         .toggleStyle(
-            SwitchToggleStyle(tint: control.allow_hue ? control.color() : .gray)
+            SwitchToggleStyle(tint: control.allow_hue ? control.color : .gray)
         )
     }
 }
