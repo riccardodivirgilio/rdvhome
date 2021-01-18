@@ -21,7 +21,6 @@ class ControlListModel: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask
     @Published var controls = [String: ControlViewModel]()
-    @Published var connected = false
 
     init() {
         webSocketTask = session()
@@ -47,7 +46,6 @@ class ControlListModel: ObservableObject {
         webSocketTask.sendPing() { error in
             if let error = error {
                 print("PING ERROR", error)
-                self.connected = false
                 self.reconnect()
             }
         }
@@ -57,7 +55,6 @@ class ControlListModel: ObservableObject {
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
         
         if case .success(let message) = incoming {
-            self.connected = true
             webSocketTask.receive(completionHandler: onReceive)
             
             if case .string(let text) = message {
@@ -77,7 +74,6 @@ class ControlListModel: ObservableObject {
         }
         else if case .failure(let error) = incoming {
             print("ABORTING", error)
-            self.connected = false
         }
     }
     
