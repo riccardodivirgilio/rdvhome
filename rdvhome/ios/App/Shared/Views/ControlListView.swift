@@ -105,7 +105,7 @@ struct ControlListView: View {
         // EditButton() is a standard View
         /*.navigationBarItems(trailing:
             HStack {
-                Button(action: { self.model.refreshData() }) {
+                Button(action: { self.model.reconnect() }) {
                     Image(systemName: "arrow.clockwise")
                 }
                 Spacer().frame(width: 30)
