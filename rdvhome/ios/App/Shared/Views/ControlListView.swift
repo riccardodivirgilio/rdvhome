@@ -89,7 +89,7 @@ struct ControlListView: View {
     var body: some View {
         NavigationView {
             
-            if model.controls.isEmpty {
+            if sorted_controls.isEmpty {
                 ProgressView()
             } else {
                 
