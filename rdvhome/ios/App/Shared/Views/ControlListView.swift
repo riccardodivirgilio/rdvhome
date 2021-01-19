@@ -131,8 +131,10 @@ struct ControlListView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             for control in current_on_color {
-                                model.switch_random_color(control: control)
+                                control.set_random_color()
                             }
+                            model.switch_color(control: current_on_color)
+
                         } label: {
                             Image(systemName: "shuffle")
                         }

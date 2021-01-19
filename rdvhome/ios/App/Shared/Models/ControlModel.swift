@@ -81,15 +81,16 @@ class ControlListModel: ObservableObject {
     }
     
     func send(text: String, debounce: TimeInterval? = nil) {
-        
+        return self.send(text: [text], debounce: debounce)
+    }
+    
+    func send(text: [String], debounce: TimeInterval? = nil) {
         var to_skip = false
-        
         if let debounce = debounce {
             to_skip = Date(timeIntervalSinceNow:-debounce) <= last_message_date
         }
-            
         if !to_skip {
-            webSocketTask.send(.string(text)) { error in
+            webSocketTask.send(.string(text.joined(separator: "\n"))) { error in
                 if let error = error {
                     print("ERROR SENDING MESSAGE", error)
                 }
@@ -98,28 +99,34 @@ class ControlListModel: ObservableObject {
         }
     }
     
+    func switch_power(control: [ControlViewModel], debounce: TimeInterval? = nil) {
+        
+        self.send(text:control.map {
+                    c in
+                    let mode = c.on ? "on" : "off"
+                    return "/switch/\(c.id)/set?mode=\(mode)"
+            
+        },
+                  debounce:debounce
+        )
+    }
     func switch_power(control: ControlViewModel, debounce: TimeInterval? = nil) {
-        let mode = control.on ? "on" : "off"
-        self.send(text:"/switch/\(control.id)/set?mode=\(mode)", debounce:debounce)
+        return self.switch_power(control:[control], debounce: debounce)
+    }
+    
+    func switch_color(control: [ControlViewModel], debounce: TimeInterval? = nil) {
+
+        self.send(text:control.map {c in
+            
+            let h = Int(round(100 * c.hue))
+            let s = Int(round(100 * c.saturation))
+            let b = Int(round(100 * c.brightness))
+            
+            return "/switch/\(c.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)"
+            
+        }, debounce:debounce)
     }
     func switch_color(control: ControlViewModel, debounce: TimeInterval? = nil) {
-        let h = Int(round(100 * control.hue))
-        let s = Int(round(100 * control.saturation))
-        let b = Int(round(100 * control.brightness))
-        self.send(text:"/switch/\(control.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)", debounce:debounce)
-    }
-    func switch_random_color(control: ControlViewModel) {
-        let hue: Double = control.hue + (Double.random(in: 0..<0.3) + 0.2) * (Int.random(in: 0..<1) == 0 ? -1 : 1)
-        
-        if hue <= 0 {
-            control.hue = 1 - hue
-        } else if hue >= 1{
-            control.hue = hue - 1
-        } else {
-            control.hue = hue
-        }
-        
-        control.saturation = Double.random(in: 0.8..<1)
-        self.switch_color(control: control)
+        return self.switch_color(control:[control], debounce: debounce)
     }
 }

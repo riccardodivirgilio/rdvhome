@@ -66,6 +66,21 @@ class ControlViewModel: Identifiable, ObservableObject {
         return color.opacity(on ? (allow_hue ? 0.3 : 0.15) : 0)
     }
     
+    func set_random_color() -> () {
+        
+        let hue: Double = self.hue + (Double.random(in: 0..<0.3) + 0.2) * (Int.random(in: 0..<1) == 0 ? -1 : 1)
+        
+        if hue <= 0 {
+            self.hue = 1 - hue
+        } else if hue >= 1{
+            self.hue = hue - 1
+        } else {
+            self.hue = hue
+        }
+        
+        self.saturation = Double.random(in: 0.8..<1)
+    }
+    
     init(with control: ControlModel) {
         self.id = control.id
         self.name = control.name

@@ -69,7 +69,8 @@ struct ControlDetailView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    model.switch_random_color(control: control)
+                    control.set_random_color()
+                    model.switch_color(control: control)
                 } label: {
                     Image(systemName: "shuffle")
                 }
