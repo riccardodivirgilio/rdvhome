@@ -1,6 +1,6 @@
 //
 //  ColorPickerView.swift
-//  SwiftChat
+//  RdvHome
 //
 //  Created by Riccardo on 18/01/21.
 //

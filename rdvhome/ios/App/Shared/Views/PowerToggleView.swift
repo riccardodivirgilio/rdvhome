@@ -1,6 +1,6 @@
 //
 //  PowerToggleView.swift
-//  SwiftChat
+//  RdvHome
 //
 //  Created by Riccardo on 17/01/21.
 //

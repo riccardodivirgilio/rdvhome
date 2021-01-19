@@ -203,7 +203,7 @@ _To test the chat app on a physical device, some (small) extra steps need to be 
 ## Creating the app
 Though we're not done with the backend yet, it's time to move to the frontend. The chat app itself!
 
-In Xcode create a new project. This time, under _Multiplatform_ select _App_. Again, choose a beautiful name for your app and continue. (I chose _SwiftChat_. I agree, it's ***perfect*** 🌈)
+In Xcode create a new project. This time, under _Multiplatform_ select _App_. Again, choose a beautiful name for your app and continue. (I chose _RdvHome_. I agree, it's ***perfect*** 🌈)
 ![New SwiftUI App](images/create-app.png)
 
 The app does not rely on any external third-party frameworks or libraries. Indeed, everything we need is available via `Foundation`, `Combine` and `SwiftUI` (in Xcode 12+).
@@ -915,7 +915,7 @@ By now you should have a primitive - but fuctioning - chat app. As well as a ser
 
 Congrats! And thank you very much for reading! 🎊
 
-You can download the final code from [Github](https://github.com/frzi/SwiftChatApp).
+You can download the final code from [Github](https://github.com/frzi/RdvHome).
 
 <br>
 
