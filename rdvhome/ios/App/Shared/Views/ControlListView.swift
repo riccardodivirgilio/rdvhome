@@ -75,15 +75,11 @@ struct ControlListView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var sorted_controls:[ControlViewModel] {
-        get {
-            return model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})
-        }
+        model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})
     }
 
     var current_on_color:[ControlViewModel] {
-        get {
-            return sorted_controls.filter({c in c.on && c.allow_hue})
-        }
+        sorted_controls.filter({c in c.on && c.allow_hue})
     }
 
     var body: some View {
