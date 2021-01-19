@@ -89,13 +89,18 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.on = !controls.filter({c in c.on}).isEmpty
         
         if controls.count > 0 {
-            self.hue = controls.map({c in c.hue}).reduce(0.0, +) / Double(controls.count)
-            self.brightness = controls.map({c in c.brightness}).reduce(0.0, +) / Double(controls.count)
-            self.saturation = controls.map({c in c.saturation}).reduce(0.0, +) / Double(controls.count)
+                        
+            self.color = Color(
+                red:   controls.map({c in c.color.rgb.red}).reduce(0.0, +) / Double(controls.count),
+                green: controls.map({c in c.color.rgb.green}).reduce(0.0, +) / Double(controls.count),
+                blue:  controls.map({c in c.color.rgb.blue}).reduce(0.0, +) / Double(controls.count)
+            )
+                        
+
         } else {
-            self.hue = 1
-            self.brightness = 1
-            self.saturation = 1
+            self.hue = 0
+            self.brightness = 0
+            self.saturation = 0
         }
     }
 }

@@ -27,7 +27,7 @@ struct ControlDetailView: View {
         VStack {
             List {
                 SingleView(title:control.on ? "ON" : "OFF", control: control, model: model)
-                    .listRowBackground(control.row_background())
+
                 if control.on && control.allow_hue {
                     Section(header: Text("Color")) {
                         SliderView(

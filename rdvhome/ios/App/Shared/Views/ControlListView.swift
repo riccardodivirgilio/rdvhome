@@ -37,6 +37,7 @@ struct SingleView: View {
         }
         .padding(.top, 4)
         .padding(.bottom, 4)
+        .listRowBackground(control.row_background())
     }
 }
 
@@ -62,6 +63,7 @@ struct SingleViewWithNavigation: View {
                 }.buttonStyle(PlainButtonStyle()).frame(width:0).opacity(0)
             }
         }
+        .listRowBackground(control.row_background())
     }
 }
 
@@ -114,17 +116,17 @@ struct ControlListView: View {
                     SingleViewWithNavigation(
                         control: ControlViewModel(
                             with: sorted_controls.filter({c in c.on}),
-                            name: "All",
-                            icon: "🤪"
+                            name: "ON",
+                            icon: "🔌"
                         ),
                         model: model
-                )
+                    )
                     
                     ForEach(sorted_controls) { control in
                         
                         
                         SingleViewWithNavigation(control: control, model: model)
-                            .listRowBackground(control.row_background())
+                            
                         
                         
                     }
