@@ -41,7 +41,7 @@ class AbstractController(EventStream):
 
 class Controller(AbstractController):
 
-    interval = 2
+    interval = 3
 
     def __init__(self, ipaddress, access_token=None, **opts):
         super().__init__(**opts)

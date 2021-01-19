@@ -101,6 +101,7 @@ class Controller(BaseController):
     async def switch_power(self, switches, power):
         await self.api_request(self.generate_power_path(switches, power))
         await super().switch_power(switches, power)
+        await self.update_state() #re-updating now to quickly recheck the response.
 
     async def switch_direction(self, switches, direction):
         await self.api_request(self.generate_direction_path(switches, direction))
