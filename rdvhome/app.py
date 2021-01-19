@@ -128,6 +128,7 @@ async def view_home(request):
 
 app.router.add_static("/css", module_path("rdvhome", "frontend", "dist", "css"))
 app.router.add_static("/js", module_path("rdvhome", "frontend", "dist", "js"))
+app.router.add_static("/assets", module_path("rdvhome", "frontend", "dist", "assets"))
 
 @url("/homekit", name="homekit")
 async def homekit_pair(request):
