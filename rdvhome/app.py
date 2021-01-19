@@ -4,7 +4,7 @@ from aiohttp import web
 from aiohttp.test_utils import make_mocked_request
 from aiohttp.web_exceptions import HTTPBadRequest, HTTPForbidden, HTTPNotFound
 from aiohttp.web_fileresponse import FileResponse
-
+from rpy.functions.asyncio import wait_all
 from operator import methodcaller
 
 from rdvhome.api import api_response, status, switch
@@ -198,7 +198,10 @@ async def websocket(request):
                 if msg.data == "/close":
                     await ws.close()
                 else:
-                    await app._handle(make_mocked_request("WS", msg.data))
+                    await wait_all(
+                        app._handle(make_mocked_request("WS", m))
+                        for m in msg.data.splitlines()
+                    )
 
             elif msg.type == aiohttp.WSMsgType.ERROR:
                 print("ws connection closed with exception %s" % ws.exception())
