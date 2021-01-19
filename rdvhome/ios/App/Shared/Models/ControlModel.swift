@@ -80,11 +80,14 @@ class ControlListModel: ObservableObject {
         }
     }
     
-    func send(text: String, debounce: TimeInterval = 0) {
-                
-        let comp = Date(timeIntervalSinceNow:-debounce)
-        let to_skip = comp <= last_message_date
+    func send(text: String, debounce: TimeInterval? = nil) {
         
+        var to_skip = false
+        
+        if let debounce = debounce {
+            to_skip = Date(timeIntervalSinceNow:-debounce) <= last_message_date
+        }
+            
         if !to_skip {
             webSocketTask.send(.string(text)) { error in
                 if let error = error {
@@ -95,11 +98,11 @@ class ControlListModel: ObservableObject {
         }
     }
     
-    func switch_power(control: ControlViewModel, debounce: TimeInterval = 0) {
+    func switch_power(control: ControlViewModel, debounce: TimeInterval? = nil) {
         let mode = control.on ? "on" : "off"
         self.send(text:"/switch/\(control.id)/set?mode=\(mode)", debounce:debounce)
     }
-    func switch_color(control: ControlViewModel, debounce: TimeInterval = 0) {
+    func switch_color(control: ControlViewModel, debounce: TimeInterval? = nil) {
         let h = Int(round(100 * control.hue))
         let s = Int(round(100 * control.saturation))
         let b = Int(round(100 * control.brightness))
