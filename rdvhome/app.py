@@ -12,7 +12,7 @@ from rdvhome.conf import settings
 from rdvhome.state import switches
 from rdvhome.utils.colors import HSB, to_color
 from rdvhome.utils.json import dumps
-
+from rpy.functions.functional import first, last
 from rpy.functions.asyncio import run_all
 from rpy.functions.decorators import to_data
 from rpy.functions.importutils import module_path
@@ -91,7 +91,11 @@ def validate(
     number=None, color=None, hue=None, saturation=None, brightness=None, mode=None, **extra,
 ):
     if number:
-        yield "number", number
+        number = number.split('~')
+        if len(number) == 1:
+            yield "number", first(number)
+        else:
+            yield "number", number
 
     if color:
         try:
@@ -150,24 +154,24 @@ async def homekit_pair(request):
 async def view_status_list(request):
     return JsonResponse(await status(**getargs(request)))
 
-@url("/switch/{number:[a-zA-Z-0-9_-]+}", name="status")
+@url("/switch/{number:[a-zA-Z-0-9_~-]+}", name="status")
 async def view_status_list(request):
     return JsonResponse(await status(**getargs(request)))
 
-@url("/switch/{number:[a-zA-Z-0-9_-]+}/set", name="switch")
+@url("/switch/{number:[a-zA-Z-0-9_~-]+}/set", name="switch")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
-@url("/switch/{number:[a-zA-Z-0-9_-]+}/color/{color:[a-zA-Z-0-9]+}", name="color")
+@url("/switch/{number:[a-zA-Z-0-9_~-]+}/color/{color:[a-zA-Z-0-9]+}", name="color")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
-@url("/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off|up|down|stop)}", name="on")
+@url("/switch/{number:[a-zA-Z-0-9_~-]+}/{mode:(-|on|off|up|down|stop)}", name="on")
 async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
 @url(
-    "/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}",
+    "/switch/{number:[a-zA-Z-0-9_~-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}",
     name="hsb",
 )
 async def view_status_list(request):
