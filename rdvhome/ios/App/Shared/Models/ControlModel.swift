@@ -107,6 +107,7 @@ class ControlListModel: ObservableObject {
     }
     func switch_random_color(control: ControlViewModel) {
         control.hue = Double.random(in: 0..<1)
+        control.saturation = Double.random(in: 0.8..<1)
         self.switch_color(control: control)
     }
 }

@@ -9,6 +9,8 @@ from rpy.functions.decorators import to_data, decorate
 from rpy.functions.datastructures import data
 from rdvhome.state import switches
 
+import uuid
+
 @to_data
 def make_power_state(state):
 
@@ -102,11 +104,13 @@ class Controller(BaseController):
 
     async def switch_direction(self, switches, direction):
         await self.api_request(self.generate_direction_path(switches, direction))
+        self._sender = sender = uuid.uuid4()
         await super().switch_direction(switches, direction)
 
         if direction in self.timings:
             await asyncio.sleep(self.timings[direction])
-            await self.switch_direction(switches, "stop")
+            if self._sender == sender:
+                await self.switch_direction(switches, "stop")
 
     async def ensure_window_off(self, i, switch, counters):
         for direction, moving in (("up", switch.up), ("down", switch.down)):
