@@ -79,7 +79,7 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.saturation = control.saturation
     }
     
-    init(with controls: [ControlViewModel], name: String, icon: String, ordering: Int = 0) {
+    init(with controls: [ControlViewModel], name: String = "", icon: String = "", ordering: Int = 0) {
         self.id = controls.map({c in c.id}).joined(separator: "~")
         self.name = name
         self.icon = icon

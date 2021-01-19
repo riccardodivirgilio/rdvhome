@@ -21,6 +21,8 @@ class ControlListModel: ObservableObject {
     
     private var webSocketTask: URLSessionWebSocketTask
     @Published var controls = [String: ControlViewModel]()
+    
+    private var last_message_date = Date()
 
     init() {
         webSocketTask = session()
@@ -42,7 +44,6 @@ class ControlListModel: ObservableObject {
     func heartbeat() {
         // The heartbeat is trying to reconnect every second the app is alive
         // The timer is happening only while the app is on screen
-        print("ping", Date())
         webSocketTask.sendPing() { error in
             if let error = error {
                 print("PING ERROR", error)
@@ -61,7 +62,7 @@ class ControlListModel: ObservableObject {
             
             if case .string(let text) = message {
                 
-                print("INCOMING", text)
+                print("INCOMING MSG")
                 
                 guard let data = text.data(using: .utf8),
                       let control = try? JSONDecoder().decode(ControlModel.self, from: data)
@@ -79,24 +80,30 @@ class ControlListModel: ObservableObject {
         }
     }
     
-    func send(text: String) {
-        print("sending", text)
-        webSocketTask.send(.string(text)) { error in
-            if let error = error {
-                print("ERROR SENDING MESSAGE", error)
+    func send(text: String, debounce: TimeInterval = 0) {
+                
+        let comp = Date(timeIntervalSinceNow:-debounce)
+        let to_skip = comp <= last_message_date
+        
+        if !to_skip {
+            webSocketTask.send(.string(text)) { error in
+                if let error = error {
+                    print("ERROR SENDING MESSAGE", error)
+                }
             }
+            last_message_date = Date()
         }
     }
     
-    func switch_power(control: ControlViewModel) {
+    func switch_power(control: ControlViewModel, debounce: TimeInterval = 0) {
         let mode = control.on ? "on" : "off"
-        self.send(text:"/switch/\(control.id)/set?mode=\(mode)")
+        self.send(text:"/switch/\(control.id)/set?mode=\(mode)", debounce:debounce)
     }
-    func switch_color(control: ControlViewModel) {
+    func switch_color(control: ControlViewModel, debounce: TimeInterval = 0) {
         let h = Int(round(100 * control.hue))
         let s = Int(round(100 * control.saturation))
         let b = Int(round(100 * control.brightness))
-        self.send(text:"/switch/\(control.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)")
+        self.send(text:"/switch/\(control.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)", debounce:debounce)
     }
     func switch_random_color(control: ControlViewModel) {
         control.hue = Double.random(in: 0..<1)

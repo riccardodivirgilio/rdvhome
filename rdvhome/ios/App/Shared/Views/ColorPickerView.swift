@@ -21,7 +21,7 @@ struct ColorPickerView: View {
                 get: {control.color},
                 set: { value in
                     control.color = value
-                    model.switch_color(control:control)
+                    model.switch_color(control:control, debounce: 0.20)
                 }
             ),
             supportsOpacity:false

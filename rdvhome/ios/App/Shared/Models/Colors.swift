@@ -48,15 +48,11 @@ extension Color {
     }
     
     var hsb: (HSB) {
-        
-
-        
+    
         let r = rgb.red
         let g = rgb.green
         let b = rgb.blue
         
-        print("rgb", r, g, b)
-
         let Max:Double = max(r, g, b)
         let Min:Double = min(r, g, b)
 
@@ -84,9 +80,7 @@ extension Color {
         
         //v
         let v:Double = Max
-        
-        print("hsv", h, s, v)
-        
+                
         return HSB(hue: h / 360, brightness: v, saturation: s)
     }
     
