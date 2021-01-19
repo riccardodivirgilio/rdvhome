@@ -92,8 +92,8 @@ class Command(SimpleCommand):
             v and "%s==%s" % (n, v) or n for n, v in settings.DEPENDENCIES.items()
         )
         yield "sudo systemctl daemon-reload"
-        yield "sudo systemctl start lights.service"
-        yield "sudo systemctl start gpioserver.service"
+        yield "sudo systemctl restart lights.service"
+        yield "sudo systemctl restart gpioserver.service"
 
     def handle(self, *args):
 
