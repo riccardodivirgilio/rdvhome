@@ -12,21 +12,20 @@ struct PowerToggleView: View {
     @ObservedObject var model: ControlListModel
 
     var title: String?
-    
+
     var body: some View {
         Toggle(title ?? "", isOn:
             Binding(
-                get: {control.on},
+                get: { control.on },
                 set: {
-                    (v) in
-                        control.on = v
-                        model.switch_power(control:control)
+                    v in
+                    control.on = v
+                    model.switch_power(control: control)
                 }
+            ))
+            .disabled(!control.allow_on)
+            .toggleStyle(
+                SwitchToggleStyle(tint: control.allow_hue ? control.color : .gray)
             )
-        )
-        .disabled(!control.allow_on)
-        .toggleStyle(
-            SwitchToggleStyle(tint: control.allow_hue ? control.color : .gray)
-        )
     }
 }

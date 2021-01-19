@@ -8,25 +8,18 @@
 
 import SwiftUI
 
-
-
-
-
-
-
-
 struct ControlDetailView: View {
     // Data passed from parent list view
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
-    
+
     // SwiftUI form with data fields
     // note the autocapitalization and keyboard modifiers
 
     var body: some View {
         VStack {
             List {
-                SingleView(title:control.on ? "ON" : "OFF", control: control, model: model)
+                SingleView(title: control.on ? "ON" : "OFF", control: control, model: model)
 
                 if control.on && control.allow_hue {
                     Section(header: Text("Color")) {
@@ -41,7 +34,7 @@ struct ControlDetailView: View {
                                 Color(hue: 180 / 360, saturation: 1, brightness: 1),
                                 Color(hue: 240 / 360, saturation: 1, brightness: 1),
                                 Color(hue: 300 / 360, saturation: 1, brightness: 1),
-                                Color(hue: 360 / 360, saturation: 1, brightness: 1),
+                                Color(hue: 360 / 360, saturation: 1, brightness: 1)
                             ])
                         SliderView(
                             value: $control.saturation,
@@ -62,8 +55,6 @@ struct ControlDetailView: View {
                     }
                 }
             }
-            
-  
         }
         .navigationBarTitle(control.name)
         .toolbar {

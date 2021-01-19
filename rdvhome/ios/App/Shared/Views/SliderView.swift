@@ -10,20 +10,20 @@ struct SliderView: View {
     @Binding var value: Double
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
-    
+
     var colors: [Color]
-    
+
     var body: some View {
         Slider(
             value: Binding(
-                get: {value},
+                get: { value },
                 set: {
-                    (v) in
+                    v in
                     value = v
-                    model.switch_color(control:control, debounce: 0.20)
+                    model.switch_color(control: control, debounce: 0.20)
                 }
             ),
-            in: 0...1
+            in: 0 ... 1
         )
         .accentColor(.white)
         .padding(.top, 10)
@@ -31,8 +31,8 @@ struct SliderView: View {
         .listRowBackground(
             LinearGradient(
                 gradient: Gradient(colors: colors),
-                startPoint: UnitPoint(x:0.08, y:0.5),
-                endPoint: UnitPoint(x:0.92, y:0.5)
+                startPoint: UnitPoint(x: 0.08, y: 0.5),
+                endPoint: UnitPoint(x: 0.92, y: 0.5)
             )
         )
     }

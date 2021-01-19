@@ -8,8 +8,8 @@
 
 import Foundation
 
-import SwiftUI
 import CoreLocation
+import SwiftUI
 
 struct ControlModel: Codable {
     // Basic model for decoding from JSON
@@ -25,9 +25,7 @@ struct ControlModel: Codable {
     var hue: Double
     var brightness: Double
     var saturation: Double
-
 }
-
 
 class ControlViewModel: Identifiable, ObservableObject {
     // Main model for use as ObservableObject
@@ -66,19 +64,18 @@ class ControlViewModel: Identifiable, ObservableObject {
         return color.opacity(on ? (allow_hue ? 0.3 : 0.15) : 0)
     }
     
-    func set_random_color() -> () {
-        
+    func set_random_color() {
         let hue: Double = self.hue + (Double.random(in: 0..<0.3) + 0.2) * (Int.random(in: 0..<1) == 0 ? -1 : 1)
         
         if hue <= 0 {
             self.hue = 1 - hue
-        } else if hue >= 1{
+        } else if hue >= 1 {
             self.hue = hue - 1
         } else {
             self.hue = hue
         }
         
-        self.saturation = Double.random(in: 0.8..<1)
+        saturation = Double.random(in: 0.8..<1)
     }
     
     init(with control: ControlModel) {
@@ -95,23 +92,21 @@ class ControlViewModel: Identifiable, ObservableObject {
     }
     
     init(with controls: [ControlViewModel], name: String = "", icon: String = "", ordering: Int = 0) {
-        self.id = controls.map({c in c.id}).joined(separator: "~")
+        self.id = controls.map { c in c.id }.joined(separator: "~")
         self.name = name
         self.icon = icon
         self.ordering = ordering
-        self.allow_on = !controls.filter({c in c.allow_on}).isEmpty
-        self.allow_hue = !controls.filter({c in c.allow_hue}).isEmpty
-        self.on = !controls.filter({c in c.on}).isEmpty
+        self.allow_on = !controls.filter { c in c.allow_on }.isEmpty
+        self.allow_hue = !controls.filter { c in c.allow_hue }.isEmpty
+        self.on = !controls.filter { c in c.on }.isEmpty
         
         if controls.count > 0 {
-                        
             self.color = Color(
-                red:   controls.map({c in c.color.rgb.red}).reduce(0.0, +) / Double(controls.count),
-                green: controls.map({c in c.color.rgb.green}).reduce(0.0, +) / Double(controls.count),
-                blue:  controls.map({c in c.color.rgb.blue}).reduce(0.0, +) / Double(controls.count)
+                red: controls.map { c in c.color.rgb.red }.reduce(0.0, +) / Double(controls.count),
+                green: controls.map { c in c.color.rgb.green }.reduce(0.0, +) / Double(controls.count),
+                blue: controls.map { c in c.color.rgb.blue }.reduce(0.0, +) / Double(controls.count)
             )
                         
-
         } else {
             self.hue = 0
             self.brightness = 0

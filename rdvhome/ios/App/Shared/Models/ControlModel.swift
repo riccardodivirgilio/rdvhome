@@ -8,8 +8,8 @@
 
 import Foundation
 
-import SwiftUI
 import CoreLocation
+import SwiftUI
 
 func session() -> URLSessionWebSocketTask {
     URLSession.shared.webSocketTask(with: URL(string: "ws://rdvhome.local:8500/websocket")!)
@@ -23,17 +23,16 @@ class ControlListModel: ObservableObject {
     @Published var controls = [String: ControlViewModel]()
     
     private var last_message_date = Date()
-
+    
     init() {
         webSocketTask = session()
     }
     
     func connect() {
-        
         webSocketTask.receive(completionHandler: onReceive)
         webSocketTask.resume()
         
-        self.send(text:"/switch")
+        send(text: "/switch")
     }
     
     func reconnect() {
@@ -44,7 +43,7 @@ class ControlListModel: ObservableObject {
     func heartbeat() {
         // The heartbeat is trying to reconnect every second the app is alive
         // The timer is happening only while the app is on screen
-        webSocketTask.sendPing() { error in
+        webSocketTask.sendPing { error in
             if let error = error {
                 print("PING ERROR", error)
                 self.reconnect()
@@ -52,16 +51,11 @@ class ControlListModel: ObservableObject {
         }
     }
     
-
-    
-    
     private func onReceive(incoming: Result<URLSessionWebSocketTask.Message, Error>) {
-        
         if case .success(let message) = incoming {
             webSocketTask.receive(completionHandler: onReceive)
             
             if case .string(let text) = message {
-                
                 print("INCOMING MSG")
                 
                 guard let data = text.data(using: .utf8),
@@ -81,13 +75,13 @@ class ControlListModel: ObservableObject {
     }
     
     func send(text: String, debounce: TimeInterval? = nil) {
-        return self.send(text: [text], debounce: debounce)
+        return send(text: [text], debounce: debounce)
     }
     
     func send(text: [String], debounce: TimeInterval? = nil) {
         var to_skip = false
         if let debounce = debounce {
-            to_skip = Date(timeIntervalSinceNow:-debounce) <= last_message_date
+            to_skip = Date(timeIntervalSinceNow: -debounce) <= last_message_date
         }
         if !to_skip {
             webSocketTask.send(.string(text.joined(separator: "\n"))) { error in
@@ -100,23 +94,21 @@ class ControlListModel: ObservableObject {
     }
     
     func switch_power(control: [ControlViewModel], debounce: TimeInterval? = nil) {
-        
-        self.send(text:control.map {
-                    c in
-                    let mode = c.on ? "on" : "off"
-                    return "/switch/\(c.id)/set?mode=\(mode)"
+        send(text: control.map {
+            c in
+            let mode = c.on ? "on" : "off"
+            return "/switch/\(c.id)/set?mode=\(mode)"
             
         },
-                  debounce:debounce
-        )
+        debounce: debounce)
     }
+
     func switch_power(control: ControlViewModel, debounce: TimeInterval? = nil) {
-        return self.switch_power(control:[control], debounce: debounce)
+        return switch_power(control: [control], debounce: debounce)
     }
     
     func switch_color(control: [ControlViewModel], debounce: TimeInterval? = nil) {
-
-        self.send(text:control.map {c in
+        send(text: control.map { c in
             
             let h = Int(round(100 * c.hue))
             let s = Int(round(100 * c.saturation))
@@ -124,9 +116,10 @@ class ControlListModel: ObservableObject {
             
             return "/switch/\(c.id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)"
             
-        }, debounce:debounce)
+        }, debounce: debounce)
     }
+
     func switch_color(control: ControlViewModel, debounce: TimeInterval? = nil) {
-        return self.switch_color(control:[control], debounce: debounce)
+        return switch_color(control: [control], debounce: debounce)
     }
 }

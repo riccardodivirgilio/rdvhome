@@ -8,26 +8,22 @@
 
 import SwiftUI
 
-
-
-
 struct SingleView: View {
-    
     var title: String?
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
     
     var body: some View {
         HStack {
-            if (control.on && control.allow_hue) {
+            if control.on && control.allow_hue {
                 ColorPickerView(
                     control: control,
                     model: model
                 )
-                .frame(width:30, alignment: .trailing)
+                .frame(width: 30, alignment: .trailing)
             } else {
                 Text(control.icon)
-                    .frame(width:30, alignment: .center)
+                    .frame(width: 30, alignment: .center)
             }
             
             Text(title ?? control.name)
@@ -42,7 +38,6 @@ struct SingleView: View {
 }
 
 struct SingleViewWithNavigation: View {
-    
     var title: String?
     @ObservedObject var control: ControlViewModel
     @ObservedObject var model: ControlListModel
@@ -60,13 +55,12 @@ struct SingleViewWithNavigation: View {
                 ) {
                     EmptyView()
                         
-                }.buttonStyle(PlainButtonStyle()).frame(width:0).opacity(0)
+                }.buttonStyle(PlainButtonStyle()).frame(width: 0).opacity(0)
             }
         }
         .listRowBackground(control.row_background())
     }
 }
-
 
 struct ControlListView: View {
     // Using an ObservedObject for reference-based data (classes)
@@ -74,21 +68,19 @@ struct ControlListView: View {
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    var sorted_controls:[ControlViewModel] {
-        model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})
+    var sorted_controls: [ControlViewModel] {
+        model.controls.values.sorted(by: { c1, c2 in c1.ordering < c2.ordering })
     }
 
-    var current_on_color:[ControlViewModel] {
-        sorted_controls.filter({c in c.on && c.allow_hue})
+    var current_on_color: [ControlViewModel] {
+        sorted_controls.filter { c in c.on && c.allow_hue }
     }
 
     var body: some View {
         NavigationView {
-            
             if sorted_controls.isEmpty {
                 ProgressView()
             } else {
-                
                 List {
                     // To make the navigation link edits return to here,
                     // the data sent must be a direct reference to an element
@@ -105,7 +97,7 @@ struct ControlListView: View {
 
                     SingleViewWithNavigation(
                         control: ControlViewModel(
-                            with: sorted_controls.filter({c in c.on}),
+                            with: sorted_controls.filter { c in c.on },
                             name: "ON",
                             icon: "🔌"
                         ),
@@ -114,13 +106,8 @@ struct ControlListView: View {
                     
                     ForEach(sorted_controls) { control in
                         
-                        
                         SingleViewWithNavigation(control: control, model: model)
-                            
-                        
-                        
                     }
-
                 }
                 .navigationBarTitle("RdvHome")
                 .toolbar {
@@ -141,9 +128,6 @@ struct ControlListView: View {
         }
         // This runs when the view appears to load the initial data
         .onAppear(perform: { self.model.connect() })
-        .onReceive(timer) { input in self.model.heartbeat()}
-
-        
+        .onReceive(timer) { _ in self.model.heartbeat() }
     }
 }
-
