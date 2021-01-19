@@ -103,6 +103,7 @@ class Switch(EventStream):
             "hue",
             "saturation",
             "brightness",
+            "alias"
         ):
             yield attr, getattr(self, attr)
 
