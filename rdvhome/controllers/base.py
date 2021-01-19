@@ -41,7 +41,7 @@ class AbstractController(EventStream):
 
 class Controller(AbstractController):
 
-    interval = 5
+    interval = 2
 
     def __init__(self, ipaddress, access_token=None, **opts):
         super().__init__(**opts)
@@ -73,7 +73,7 @@ class Controller(AbstractController):
     async def watch(self):
         await self.create_periodic_task(self.update_state, interval = self.interval)
 
-    async def update_state(self, i):
+    async def update_state(self, i = None):
         state = await self.get_current_state()
         if state:
             for key, value in state.items():
