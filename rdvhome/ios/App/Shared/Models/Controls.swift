@@ -79,4 +79,23 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.saturation = control.saturation
     }
     
+    init(with controls: [ControlViewModel], name: String, icon: String, ordering: Int = 0) {
+        self.id = controls.map({c in c.id}).joined(separator: "~")
+        self.name = name
+        self.icon = icon
+        self.ordering = ordering
+        self.allow_on = !controls.filter({c in c.allow_on}).isEmpty
+        self.allow_hue = !controls.filter({c in c.allow_hue}).isEmpty
+        self.on = !controls.filter({c in c.on}).isEmpty
+        
+        if controls.count > 0 {
+            self.hue = controls.map({c in c.hue}).reduce(0.0, +) / Double(controls.count)
+            self.brightness = controls.map({c in c.brightness}).reduce(0.0, +) / Double(controls.count)
+            self.saturation = controls.map({c in c.saturation}).reduce(0.0, +) / Double(controls.count)
+        } else {
+            self.hue = 1
+            self.brightness = 1
+            self.saturation = 1
+        }
+    }
 }

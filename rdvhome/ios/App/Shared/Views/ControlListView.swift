@@ -40,6 +40,32 @@ struct SingleView: View {
     }
 }
 
+struct SingleViewWithNavigation: View {
+    
+    var title: String?
+    @ObservedObject var control: ControlViewModel
+    @ObservedObject var model: ControlListModel
+    
+    var body: some View {
+        ZStack {
+            SingleView(control: control, model: model)
+            
+            if control.on && control.allow_hue {
+                NavigationLink(destination:
+                    ControlDetailView(control: control, model: model)
+                        .onReceive(control.objectWillChange) { _ in
+                            self.model.objectWillChange.send()
+                        }
+                ) {
+                    EmptyView()
+                        
+                }.buttonStyle(PlainButtonStyle()).frame(width:0).opacity(0)
+            }
+        }
+    }
+}
+
+
 struct ControlListView: View {
     // Using an ObservedObject for reference-based data (classes)
     @ObservedObject var model = ControlListModel()
@@ -57,6 +83,11 @@ struct ControlListView: View {
         }
     }
         
+    var sorted_controls:[ControlViewModel] {
+        get {
+            return model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})
+        }
+    }
 
 
     var body: some View {
@@ -80,32 +111,20 @@ struct ControlListView: View {
                     // This will be faster for longer lists and feels more like how ObservedObject is meant to be used.
                     // Note that ControlDetailView has changed from using @Binding to @ObservedObject.
 
-
+                    SingleViewWithNavigation(
+                        control: ControlViewModel(
+                            with: sorted_controls.filter({c in c.on}),
+                            name: "All",
+                            icon: "🤪"
+                        ),
+                        model: model
+                )
                     
-                    ForEach(model.controls.values.sorted(by: {c1, c2 in c1.ordering < c2.ordering})) { control in
+                    ForEach(sorted_controls) { control in
                         
                         
-                        
-                        
-                        ZStack {
-                            SingleView(control: control, model: model)
-                            
-                            if control.on && control.allow_hue {
-                                NavigationLink(destination:
-                                    ControlDetailView(control: control, model: model)
-                                        .onReceive(control.objectWillChange) { _ in
-                                            self.model.objectWillChange.send()
-                                        }
-                                ) {
-                                    EmptyView()
-                                        
-                                }.buttonStyle(PlainButtonStyle()).frame(width:0).opacity(0)
-                                
-                            }
-                            
-
-                        }
-                        .listRowBackground(control.row_background())
+                        SingleViewWithNavigation(control: control, model: model)
+                            .listRowBackground(control.row_background())
                         
                         
                     }
@@ -142,18 +161,6 @@ struct ControlListView: View {
         .onReceive(timer) { input in self.model.heartbeat()}
 
         
-    }
-}
-
-// To preview this with navigation, it must be embedded in a NavigationView
-// but the main ContentView provides the main NavigationView
-// so this view will only get its own when in Proview mode
-
-struct ControlList_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            ControlListView()
-        }
     }
 }
 
