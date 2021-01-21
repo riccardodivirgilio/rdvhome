@@ -27,7 +27,7 @@ struct ControlTabView: View {
         ),
         Room(
             id: "Night",
-            filter: {c in c.alias.contains("bedroom") || c.alias.contains("bathroom")},
+            filter: {c in c.alias.contains("bedroom") || c.alias.contains("bathroom") || c.alias.contains("studio")},
             icon: "bed.double"
         ),
         Room(

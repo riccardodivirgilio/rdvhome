@@ -24,16 +24,20 @@ struct SingleView: View {
             } else {
                 Text(control.icon)
                     .frame(width: 30, alignment: .center)
+                    
             }
             
             Text(title ?? control.name)
+                .lineLimit(1)
             Spacer()
             PowerToggleView(control: control, model: model)
-                .disabled(!control.allow_on)
+                .frame(width: 1, alignment: .trailing)
         }
         .padding(.top, 4)
         .padding(.bottom, 4)
         .listRowBackground(control.row_background())
+        .disabled(!control.allow_on)
+        .opacity(control.allow_on ? 1 : 0.5)
     }
 }
 
@@ -89,8 +93,8 @@ struct ControlListView: View {
             SingleViewWithNavigation(
                 control: ControlViewModel(
                     with: controls.filter { c in c.on && c.allow_on },
-                    name: "ON",
-                    icon: "🔌"
+                    name: "On",
+                    icon: "💡"
                 ),
                 model: model
             )

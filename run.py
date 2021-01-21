@@ -204,7 +204,6 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf', "living"],
             ),
-
             light(
                 id="spotlight_entrance",
                 name="Entrance Light",
