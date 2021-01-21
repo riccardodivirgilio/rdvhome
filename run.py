@@ -210,7 +210,7 @@ def run_rdv_command_line():
                 id="spotlight_entrance",
                 name="Entrance Light",
                 icon="🚪",
-                alias=[],
+                alias=["living"],
                 gpio_relay=18,
                 gpio_status=7,
             ),
@@ -228,7 +228,7 @@ def run_rdv_command_line():
                 philips_id=2,
                 gpio_relay=14,
                 gpio_status=8,
-                alias=["bathroom"],
+                alias=["bedroom"],
             ),
             light(
                 id="spotlight_bedroom",
@@ -243,7 +243,7 @@ def run_rdv_command_line():
                 name="Bathroom Bedroom",
                 icon="🚽",
                 philips_id=4,
-                alias=["bedroom"],
+                alias=["bathroom"],
             ),
             light(
                 id="spotlight_room",
@@ -280,7 +280,7 @@ def run_rdv_command_line():
                 gpio_power=5,
                 gpio_direction=6,
                 icon="☀️",
-                alias = ["window", "living"]
+                alias = ["window"]
             ),
             window(
                 id="window_living_room",
@@ -288,7 +288,7 @@ def run_rdv_command_line():
                 gpio_power=9,
                 gpio_direction=13,
                 icon="☀️",
-                alias = ["window", "living"]
+                alias = ["window"]
             ),
             window(
                 id="window_tv",
@@ -296,7 +296,7 @@ def run_rdv_command_line():
                 gpio_power=11,
                 gpio_direction=27,
                 icon="☀️",
-                alias = ["window", "living"]
+                alias = ["window"]
             ),
             control(id="random", name="Random", icon="❓", effect = 'Color Burst'),
             control(
@@ -305,6 +305,7 @@ def run_rdv_command_line():
                 icon="🤓",
                 timeout=timeout(5, 10),
                 colors=perturbation,
+                alias = ["scene"]
             ),
 
             control(
@@ -313,7 +314,8 @@ def run_rdv_command_line():
                 icon="🌞",
                 colors=to_color({"hue": 0.13, "saturation": 0.6}),
                 automatic_on="default",
-                effect = 'Flames'
+                effect = 'Flames',
+                alias = ["scene"]
             ),
             control(
                 id="disco",
@@ -321,7 +323,8 @@ def run_rdv_command_line():
                 icon="🌐",
                 timeout=timeout(0.3, 1.2),
                 automatic_on=["default", "nanoleaf"],
-                effect = 'Fireworks'
+                effect = 'Fireworks',
+                alias = ["scene"]
             ),
             *(
                 control(
@@ -330,7 +333,8 @@ def run_rdv_command_line():
                     icon = i,
                     automatic_on = ['nanoleaf'],
                     effect = effect,
-                    colors = color
+                    colors = color,
+                    alias = ["scene"]
                 )
                 for i, effect, color in (
                     ('🌲', 'Forest', partial(perturbation, color = {'hue': 0.297, 'saturation': 0.6}, factor = 0.15)),
