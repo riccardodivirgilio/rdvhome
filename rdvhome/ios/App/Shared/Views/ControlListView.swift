@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+
 struct SingleView: View {
     var title: String?
     @ObservedObject var control: ControlViewModel
@@ -30,14 +31,32 @@ struct SingleView: View {
             Text(title ?? control.name)
                 .lineLimit(1)
             Spacer()
-            PowerToggleView(control: control, model: model)
-                .frame(width: 1, alignment: .trailing)
+            
+            if control.allow_direction {
+                Button(action: {}) {
+                    Image(systemName: "arrow.up.square.fill")
+                }
+                .frame(width: 30, alignment: .center)
+                .foregroundColor(.gray)
+
+                Button(action: {}) {
+                    Image(systemName: "arrow.down.square.fill")
+                }
+                .frame(width: 30, alignment: .center)
+                .foregroundColor(.gray)
+
+ 
+            } else {
+                PowerToggleView(control: control, model: model)
+                    .frame(width: 1, alignment: .trailing)
+            }
+
         }
         .padding(.top, 4)
         .padding(.bottom, 4)
         .listRowBackground(control.row_background())
-        .disabled(!control.allow_on)
-        .opacity(control.allow_on ? 1 : 0.5)
+        .disabled(!(control.allow_on || control.allow_direction))
+        .opacity((control.allow_on || control.allow_direction) ? 1 : 0.5)
     }
 }
 
@@ -92,9 +111,9 @@ struct ControlListView: View {
 
             SingleViewWithNavigation(
                 control: ControlViewModel(
-                    with: controls.filter { c in c.on && c.allow_on },
+                    with: controls.filter { c in (c.on && c.allow_on) || c.allow_direction },
                     name: "On",
-                    icon: "💡"
+                    icon: ""
                 ),
                 model: model
             )
