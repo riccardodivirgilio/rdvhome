@@ -16,6 +16,7 @@ struct ControlModel: Codable {
 
     var id: String
     var name: String
+    var alias: Set<String>
     var icon: String
     var ordering: Int
     var allow_on: Bool
@@ -36,6 +37,7 @@ class ControlViewModel: Identifiable, ObservableObject {
 
     var id: String
     @Published var name: String
+    @Published var alias: Set<String> = []
     @Published var icon: String = "💡"
     @Published var ordering: Int = 1000
     @Published var allow_on: Bool = false
@@ -44,6 +46,7 @@ class ControlViewModel: Identifiable, ObservableObject {
     @Published var hue: Double = 0
     @Published var brightness: Double = 0
     @Published var saturation: Double = 0
+
     
     var color: Color {
         get {
@@ -81,6 +84,7 @@ class ControlViewModel: Identifiable, ObservableObject {
     init(with control: ControlModel) {
         self.id = control.id
         self.name = control.name
+        self.alias = control.alias
         self.icon = control.icon
         self.ordering = control.ordering
         self.allow_on = control.allow_on
@@ -94,6 +98,7 @@ class ControlViewModel: Identifiable, ObservableObject {
     init(with controls: [ControlViewModel], name: String = "", icon: String = "", ordering: Int = 0) {
         self.id = controls.map { c in c.id }.joined(separator: "~")
         self.name = name
+        self.alias = []
         self.icon = icon
         self.ordering = ordering
         self.allow_on = !controls.filter { c in c.allow_on }.isEmpty

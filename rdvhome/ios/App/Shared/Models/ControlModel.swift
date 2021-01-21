@@ -63,7 +63,7 @@ class ControlListModel: ObservableObject {
                 else {
                     return
                 }
-                
+                                
                 DispatchQueue.main.async {
                     self.controls[control.id] = ControlViewModel(with: control)
                 }
@@ -98,7 +98,6 @@ class ControlListModel: ObservableObject {
             c in
             let mode = c.on ? "on" : "off"
             return "/switch/\(c.id)/set?mode=\(mode)"
-            
         },
         debounce: debounce)
     }

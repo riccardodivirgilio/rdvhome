@@ -12,4 +12,4 @@ class Controller(BaseController):
         except aiohttp.ClientConnectionError:
             state = None
 
-        return {key: dict(on=bool(state), allow_on=bool(state)) for key in self.power.keys()}
+        return {key: dict(on=bool(state), allow_on=False) for key in self.power.keys()}

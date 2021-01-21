@@ -180,8 +180,7 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default", "living"],
             ),
-            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.235"),
-
+            tv(id="tv", name="TV", icon="📺", alias=["living"], ipaddress="192.168.1.235"),
             light(
                 id="led_tv",
                 name="TV Led",
@@ -215,13 +214,6 @@ def run_rdv_command_line():
                 gpio_status=7,
             ),
             light(
-                id="led_bathroom_entrance",
-                name="Bathroom Entrance",
-                icon="🚽",
-                alias=["bathroom"],
-                philips_id=5,
-            ),
-            light(
                 id="led_bedroom",
                 name="Bedroom Led",
                 icon="🛏",
@@ -237,6 +229,13 @@ def run_rdv_command_line():
                 alias=["bedroom"],
                 gpio_relay=21,
                 gpio_status=3,
+            ),
+            light(
+                id="led_bathroom_entrance",
+                name="Bathroom Entrance",
+                icon="🚽",
+                alias=["bathroom"],
+                philips_id=5,
             ),
             light(
                 id="led_bathroom_bedroom",
