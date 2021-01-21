@@ -9,6 +9,7 @@
 import SwiftUI
 
 
+
 struct SingleView: View {
     var title: String?
     @ObservedObject var control: ControlViewModel
@@ -33,27 +34,34 @@ struct SingleView: View {
             Spacer()
             
             if control.allow_direction {
-                Button(action: {}) {
+                Button(action: {
+                    
+                    control.up = !control.up
+                    control.down = false
+                    
+                }) {
                     Image(systemName: "arrow.up.square.fill")
                 }
-                .frame(width: 30, alignment: .center)
-                .foregroundColor(.gray)
+                .frame(width: 40, alignment: .center)
+                .foregroundColor(control.up ? .white : .gray)
 
-                Button(action: {}) {
+                Button(action: {
+                    control.up = false
+                    control.down = !control.down
+                }) {
                     Image(systemName: "arrow.down.square.fill")
                 }
                 .frame(width: 30, alignment: .center)
-                .foregroundColor(.gray)
+                .foregroundColor(control.down ? .white : .gray)
 
- 
             } else {
                 PowerToggleView(control: control, model: model)
                     .frame(width: 1, alignment: .trailing)
             }
 
         }
-        .padding(.top, 4)
-        .padding(.bottom, 4)
+        .padding(.top, control.allow_direction ? 10 : 4)
+        .padding(.bottom, control.allow_direction ? 9 : 4)
         .listRowBackground(control.row_background())
         .disabled(!(control.allow_on || control.allow_direction))
         .opacity((control.allow_on || control.allow_direction) ? 1 : 0.5)
@@ -113,7 +121,7 @@ struct ControlListView: View {
                 control: ControlViewModel(
                     with: controls.filter { c in (c.on && c.allow_on) || c.allow_direction },
                     name: "On",
-                    icon: ""
+                    icon: "💡"
                 ),
                 model: model
             )

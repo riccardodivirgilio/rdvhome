@@ -23,7 +23,8 @@ struct ControlModel: Codable {
     var allow_direction: Bool
     var allow_hue: Bool
     var on: Bool
-    
+    var up: Bool
+    var down: Bool
     var hue: Double
     var brightness: Double
     var saturation: Double
@@ -45,6 +46,8 @@ class ControlViewModel: Identifiable, ObservableObject {
     @Published var allow_hue: Bool = false
     @Published var allow_direction: Bool = false
     @Published var on: Bool = false
+    @Published var up: Bool = false
+    @Published var down: Bool = false
     @Published var hue: Double = 0
     @Published var brightness: Double = 0
     @Published var saturation: Double = 0
@@ -93,6 +96,8 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.allow_hue = control.allow_hue
         self.allow_direction = control.allow_direction
         self.on = control.on
+        self.up = control.up
+        self.down = control.down
         self.hue = control.hue
         self.brightness = control.brightness
         self.saturation = control.saturation
@@ -108,6 +113,8 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.allow_hue = !controls.filter { c in c.allow_hue }.isEmpty
         self.allow_direction = !controls.filter { c in c.allow_direction }.isEmpty
         self.on = !controls.filter { c in c.on }.isEmpty
+        self.up = !controls.filter { c in c.up }.isEmpty
+        self.down = !controls.filter { c in c.down }.isEmpty
         
         if controls.count > 0 {
             self.color = Color(
