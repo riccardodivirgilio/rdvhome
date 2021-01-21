@@ -20,6 +20,7 @@ struct ControlModel: Codable {
     var icon: String
     var ordering: Int
     var allow_on: Bool
+    var allow_direction: Bool
     var allow_hue: Bool
     var on: Bool
     
@@ -42,6 +43,7 @@ class ControlViewModel: Identifiable, ObservableObject {
     @Published var ordering: Int = 1000
     @Published var allow_on: Bool = false
     @Published var allow_hue: Bool = false
+    @Published var allow_direction: Bool = false
     @Published var on: Bool = false
     @Published var hue: Double = 0
     @Published var brightness: Double = 0
@@ -89,6 +91,7 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.ordering = control.ordering
         self.allow_on = control.allow_on
         self.allow_hue = control.allow_hue
+        self.allow_direction = control.allow_direction
         self.on = control.on
         self.hue = control.hue
         self.brightness = control.brightness
@@ -103,6 +106,7 @@ class ControlViewModel: Identifiable, ObservableObject {
         self.ordering = ordering
         self.allow_on = !controls.filter { c in c.allow_on }.isEmpty
         self.allow_hue = !controls.filter { c in c.allow_hue }.isEmpty
+        self.allow_direction = !controls.filter { c in c.allow_direction }.isEmpty
         self.on = !controls.filter { c in c.on }.isEmpty
         
         if controls.count > 0 {
