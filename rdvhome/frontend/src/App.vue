@@ -50,7 +50,6 @@ import btn       from './components/btn';
 import slider    from './components/slider';
 import updown    from './components/updown';
 import home      from './components/home';
-import switches  from './data/switches';
 
 import debounce  from './utils/debounce';
 
@@ -73,7 +72,7 @@ export default {
   },
   data: function() {
     return {
-      switches: switches,
+      switches: {},
       reconnect: 0,
       connected: false,
       reconnect_limit: 4
