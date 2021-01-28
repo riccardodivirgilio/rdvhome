@@ -5,7 +5,11 @@
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
-          <control v-for="item in switches"  :key="item.id" :item=item :backend=self></control>
+          <control 
+            v-for="item in switches" 
+            :key="item.id" 
+            :item="item" 
+            :backend="backend"/>
         </div>
       </div>
     </div><!-- /.container -->
@@ -51,7 +55,7 @@ export default {
     }
   },
   computed: {
-    self: function() {return this},
+    backend: function() {return this},
     colored_switches: function() {
       return values(this.switches)
         .filter(item => item.allow_hue)
