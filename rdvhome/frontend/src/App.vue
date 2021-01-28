@@ -5,6 +5,7 @@
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
+          <control :item="aggregated_control" :backend="backend"/>
           <control 
             v-for="item in switches" 
             :key="item.id" 
@@ -36,8 +37,35 @@ import values    from 'rfuncs/functions/values'
 import merge     from 'rfuncs/functions/merge'
 import scan      from 'rfuncs/functions/scan'
 import map       from 'rfuncs/functions/map'
+import filter    from 'rfuncs/functions/filter'
+import any       from 'rfuncs/functions/any'
+import length    from 'rfuncs/functions/length'
 
 import {hsb_to_css_with_lightness, hsl_to_css} from './utils/color';
+
+function mean(array) {
+  return array.reduce((a, b) => a + b, 0) / length(array)
+}
+
+function make_aggregated_control(switches, defaults) {
+
+  const allow_hue = filter(c => c.allow_hue, switches)
+
+  return {
+    'id': map(c => c.id, switches).join('~'),
+    'name': switches ? 'On' : 'Off',
+    'allow_hue': any(allow_hue),
+    'allow_on': any(switches, c => c.allow_on),
+    'allow_direction': any(switches, c => c.allow_direction),
+    'on': any(switches, c => c.on),
+    'up': any(switches, c => c.up),
+    'down': any(switches, c => c.down),
+    'hue': mean(map(c => c.hue, allow_hue)),
+    'saturation': mean(map(c => c.saturation, allow_hue)),
+    'brightness': mean(map(c => c.brightness, allow_hue)),
+    ...defaults
+  }
+}
 
 export default {
   name: 'app',
@@ -56,6 +84,14 @@ export default {
   },
   computed: {
     backend: function() {return this},
+
+    aggregated_control: function() {
+      return make_aggregated_control(
+        filter(c => c.on, values(this.switches)),
+        {icon: '💡'}
+      )
+    },
+
     colored_switches: function() {
       return values(this.switches)
         .filter(item => item.allow_hue)

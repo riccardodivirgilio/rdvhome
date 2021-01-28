@@ -1,12 +1,12 @@
 <template>
 
-  <a :id="item.id" class="list-item" :class="{on: item.on, off: item.off}" :style="{order: item.ordering}">
-    <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
-      <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
+  <a :id="item.id" class="list-item" :class="{on: item.on, off: ! item.on}" :style="{order: item.ordering}">
+    <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.hue, saturation: item.allow_hue ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
+      <btn :item="item" name='advanced_options' :disabled="! item.on || ! item.allow_hue">
         <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
         <div v-else>{{ item.icon }}</div>
       </btn>
-      <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="backend.toggle_hsb"/>
+      <slider v-if="item.on && item.allow_hue" :item="item" name='brightness' :onchange="backend.toggle_hsb"/>
       <div class="title">{{ item.name }} </div>
       <div class="controls">
         <updown :item="item" :onchange="backend.toggle_direction" v-if='item.allow_direction' name='up'/>
