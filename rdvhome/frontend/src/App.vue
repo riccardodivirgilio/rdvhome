@@ -247,21 +247,23 @@ export default {
   --item-size: 50px;
   --item-padding: 15px;
   --btn-width: 70px;
-  --primary-color: 0, 0, 0;
-  --background-color: 255, 255, 255;
   --text-color: 0, 0, 0;
+
+  --primary-color: 255, 255, 255;
+  --background-color: 0, 0, 0;
   --border-color: rgba(var(--primary-color), 0.3);
-  --lightness: 100%;
-  --lightness-high: 90%;
+  --lightness: 0%;
+  --lightness-high: 10%;
+
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --primary-color: 255, 255, 255;
-    --background-color: 0, 0, 0;
+    --primary-color: 0, 0, 0;
+    --background-color: 255, 255, 255;
     --border-color: rgba(var(--primary-color), 0.3);
-    --lightness: 0%;
-    --lightness-high: 10%;
+    --lightness: 100%;
+    --lightness-high: 90%;
   }
 }
 
