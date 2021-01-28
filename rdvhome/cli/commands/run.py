@@ -33,25 +33,6 @@ class Command(SimpleCommand):
 
             aiohttp_autoreload.start()
 
-            with open(
-                module_path("rdvhome", "frontend", "src", "data", "switches.js"), "wb"
-            ) as f:
-
-                data = "export default %s" % dumps(
-                    {
-                        s.id: dict(
-                            id=s.id,
-                            name=s.name,
-                            icon=s.icon,
-                            ordering=s.ordering,
-                        )
-                        for s in switches
-                    },
-                    indent=4,
-                )
-
-                f.write(data.encode("utf-8"))
-
         run_all(
             # switches.subscribe(log),
             (switches.watch(), switches.start(), controllers.watch(), controllers.start(),)
