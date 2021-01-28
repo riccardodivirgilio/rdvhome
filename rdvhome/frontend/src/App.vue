@@ -223,7 +223,6 @@ export default {
   --item-size: 50px;
   --item-padding: 15px;
   --btn-width: 70px;
-  --text-color: 0, 0, 0;
 
   --primary-color: 255, 255, 255;
   --background-color: 0, 0, 0;
@@ -251,7 +250,7 @@ export default {
 
 a {
   text-decoration: none;
-  color: red;
+  color: rgb(var(--primary-color));
 }
 
 html, body,
@@ -267,7 +266,7 @@ html, body,
   display: flex;
   flex-direction: column;
   background: rgb(var(--background-color));
-  color: rgb(var(--text-color));
+  color: rgb(var(--primary-color));
   position:relative;
 
   width:100vw;
@@ -317,7 +316,6 @@ html, body,
   display: flex;
   flex-direction: column;
   min-height: var(--item-size);
-  color: rgb(var(--primary-color));
   flex-shrink: 0;
 }
 
