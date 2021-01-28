@@ -9,7 +9,7 @@
 
 <script>
 
-import abstract from './toggle';
+import abstract from '@/components/toggle';
 
 export default {
   name: 'slider',

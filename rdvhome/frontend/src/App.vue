@@ -5,28 +5,7 @@
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
       <div class="panel-switch">
         <div id="toggles" class="list-container" >
-          <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}">
-            <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
-              <btn :item="item" name='advanced_options' :disabled="item.off || ! item.allow_hue">
-                <div v-if="item.advanced_options && item.on && item.allow_hue" style="padding-top:3px">&times;</div>
-                <div v-else>{{ item.icon }}</div>
-              </btn>
-              <slider v-if="item.on && item.allow_brightness" :item="item" name='brightness' :onchange="toggle_hsb"/>
-              <div class="title">{{ item.name }} </div>
-              <div class="controls">
-                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='up'/>
-                <updown :item="item" :onchange="toggle_direction" v-if='item.allow_direction' name='down'/>
-                <toggle :item="item" :onchange="toggle" v-if='item.allow_on' name='on'/>
-              </div>
-            </div>
-            <div v-if="item.on && item.advanced_options && item.allow_hue" class="line slider-hue">
-              <slider :item="item" name='hue' :onchange="toggle_hsb"/>
-            </div>
-            <div v-if="item.on && item.advanced_options && item.allow_saturation" class="line slider-saturation" :style="{background:
-              'linear-gradient(to right, white 0%, '+hsl_to_css({hue: item.hue, saturation: 1, lightness:1})+' 100%)'}">
-              <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
-            </div>
-          </a>
+          <control v-for="item in switches"  :key="item.id" :item=item :backend=self></control>
         </div>
       </div>
     </div><!-- /.container -->
@@ -44,14 +23,10 @@
 
 <script>
 
-import loading   from './components/loading';
-import toggle    from './components/toggle';
-import btn       from './components/btn';
-import slider    from './components/slider';
-import updown    from './components/updown';
-import home      from './components/home';
-
-import debounce  from './utils/debounce';
+import loading   from '@/components/loading';
+import home      from '@/components/home';
+import control   from '@/components/control';
+import debounce  from '@/utils/debounce';
 
 import values    from 'rfuncs/functions/values'
 import merge     from 'rfuncs/functions/merge'
@@ -64,11 +39,8 @@ export default {
   name: 'app',
   components: {
     loading,
-    toggle,
-    slider,
-    updown,
     home,
-    btn
+    control,
   },
   data: function() {
     return {
@@ -79,6 +51,7 @@ export default {
     }
   },
   computed: {
+    self: function() {return this},
     colored_switches: function() {
       return values(this.switches)
         .filter(item => item.allow_hue)
@@ -118,7 +91,6 @@ export default {
   methods: {
     hsl_to_css: hsl_to_css,
     updateSwitch: function (data) {
-
       this.switches[data.id] = merge(
           {advanced_options: false},
           this.switches[data.id] || {},

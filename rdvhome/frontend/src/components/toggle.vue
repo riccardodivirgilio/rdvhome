@@ -9,7 +9,7 @@
 
 <script>
 
-import {hsb_to_css_with_lightness} from '../utils/color';
+import {hsb_to_css_with_lightness} from '@/utils/color';
 
 export default {
   name: 'toggle',
