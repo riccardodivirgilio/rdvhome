@@ -131,13 +131,12 @@ def validate(
     elif not mode in ("-", None):
         raise HTTPBadRequest(reason="InvalidMode")
 
-
 @url("/", name="home")
 async def view_home(request):
-    return FileResponse(module_path("rdvhome", "frontend", "index.html"))
+    return FileResponse(module_path("rdvhome", "frontend", "dist", "index.html"))
 
-
-app.router.add_static("/dist", module_path("rdvhome", "frontend", "dist"))
+app.router.add_static("/css", module_path("rdvhome", "frontend", "dist", "css"))
+app.router.add_static("/js", module_path("rdvhome", "frontend", "dist", "js"))
 
 
 @url("/homekit", name="homekit")
