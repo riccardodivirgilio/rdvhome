@@ -114,7 +114,7 @@ def run_rdv_command_line():
         RASPBERRY_RELAY1=RELAY1,
         RASPBERRY_RELAY2=RELAY2,
         RASPBERRY_INPUT=INPUT,
-        INSTALL_DEPENDENCIES=True,
+        INSTALL_DEPENDENCIES=False,
         DEBUG=not has_gpio(),  # raspberry is production.
         SWITCHES=[
             philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
