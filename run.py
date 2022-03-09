@@ -230,6 +230,13 @@ def run_rdv_command_line():
                 gpio_status=3,
             ),
             light(
+                id="lamp_bedroom",
+                name="Bedroom Hipster Lamp",
+                icon="💡",
+                philips_id=9,
+                alias=["bedroom"],
+            ),
+            light(
                 id="led_bathroom_entrance",
                 name="Bathroom Entrance",
                 icon="🚽",
@@ -265,13 +272,7 @@ def run_rdv_command_line():
                 philips_id=7,
                 alias=["default", "studio"],
             ),
-            light(
-                id="lamp_hipster_room",
-                name="Studio Hipster Lamp",
-                icon="💡",
-                philips_id=9,
-                alias=["default", "studio"],
-            ),
+
             window(
                 id="window_kitchen",
                 name="Kitchen Window",
