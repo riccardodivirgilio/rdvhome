@@ -421,19 +421,15 @@ html, body,
   ##Screen = B/w 768px to 1024px
 */
 
+
+
 @media (min-width: 600px) {
 
-  html, body, 
-  .page,
-  .container,
-  .panel-switch,
-  .panel-home {
-    height: 100%;
-    overflow: hidden;
-  }
 
   .container {
     flex-direction: row;
+    height: 100vh;
+    overflow: hidden;
   }
 
   .panel-switch {
@@ -441,10 +437,14 @@ html, body,
     border-right: 2px solid var(--border-color);
     overflow-y: scroll;
   }
+  .panel-home {
+    justify-content: center;
+  }
 
   .panel-home svg {
     width: 100%
   }
+
 
 }
 
