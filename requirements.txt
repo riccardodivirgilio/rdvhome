@@ -1,0 +1,15 @@
+aiohttp==3.7.3
+aiofiles==0.3.2
+aiohttp-autoreload==0.0.1
+aioreactive==0.5.0
+asyncio==3.4.3
+colour==0.1.5
+django
+six
+yarl==1.6.3
+base36==0.1.1
+pyqrcode
+hap-python==2.8.4
+python-rpy==1.0.17
+websockets==8.1
+zeroconf==0.26.3
