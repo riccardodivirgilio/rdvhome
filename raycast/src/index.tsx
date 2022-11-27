@@ -2,6 +2,14 @@ import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { useFetch, Response } from "@raycast/utils";
 import { useState } from "react";
 import { URLSearchParams } from "node:url";
+import { showHUD, Clipboard } from "@raycast/api";
+
+export async function run_toggle(toggle: RemoteSwitch) {
+
+  fetch(get_api('switch/' +toggle.id+ ( toggle.on ? '/off' : '/on')));
+
+  await showHUD(`Switched ${toggle.on ? 'off' : 'on'} ${toggle.name}`);
+}
 
 function get_api(path: string) {
   return "http://rdvhome.local:8500/" + path;
@@ -23,7 +31,7 @@ export default function Command() {
   );
 }
 
-function SearchListItem({ toggle }: { toggle: SearchResult }) {
+function SearchListItem({ toggle }: { toggle: RemoteSwitch }) {
   return (
     <List.Item
       id={toggle.id}
@@ -34,7 +42,7 @@ function SearchListItem({ toggle }: { toggle: SearchResult }) {
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser title="Open in Browser" url="http://rdvhome.local:8500/toggle" />
+            <Action title={`Switch ${toggle.name} ${toggle.on ? 'off' : 'on'}`} onAction={() => run_toggle(toggle)} />
           </ActionPanel.Section>
           <ActionPanel.Section>
             <Action.CopyToClipboard
@@ -61,7 +69,7 @@ async function parseFetchResponse(response: Response) {
     throw new Error("message" in json ? json.reason : response.statusText);
   }
 
-  return Object.values(json.switches);
+  return Object.values(json.switches).filter(toggle => toggle.allow_visibility);
 }
 
 interface RemoteSwitch {
@@ -74,4 +82,5 @@ interface RemoteSwitch {
   saturation?: number;
   on?: bool;
   alias: [string];
+  allow_visibility?: bool
 }
