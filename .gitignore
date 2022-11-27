@@ -1,6 +1,7 @@
 
 *.pyc
 .DS_Store
+raycast/node_modules/
 rdvhome/data/
 rdvhome/frontend/node_modules/
 rdvhome/frontend/builds/
