@@ -2,11 +2,13 @@ import { ActionPanel, Action, List, Icon } from "@raycast/api"
 import { useFetch } from "@raycast/utils"
 import { showHUD } from "@raycast/api"
 
+import { useState } from "react"
+
 //https://github.com/raycast/extensions/blob/main/examples/todo-list/src/index.tsx
 
-export async function run_toggle(toggle) {
-  fetch(get_api("switch/" + toggle.id + (toggle.on ? "/off" : "/on")))
-
+export async function run_toggle(toggle, setToggles) {
+  await fetch(get_api("switch/" + toggle.id + (toggle.on ? "/off" : "/on")))
+  await updateState(setToggles)
   await showHUD(`Switched ${toggle.on ? "off" : "on"} ${toggle.name}`)
 }
 
@@ -14,34 +16,46 @@ function get_api(path) {
   return "http://rdvhome.local:8500/" + path
 }
 
+/** Parse the response from the fetch query into something we can display */
+async function updateState(setToggles) {
+
+  const json = await (await fetch(get_api("switch"))).json()
+
+  if ("reason" in json) {
+    throw new Error(json.reason)
+  }
+
+  setToggles(Object.values(json.switches).filter(toggle => toggle.allow_visibility))
+}
 
 
 export default function Command() {
 
-  const { data, isLoading } = useFetch(get_api("switch"), {
-    parseResponse: r => parseFetchResponse(r)
-  })
 
-  const on = data.filter(t => t.on)
-  const off = data.filter(t => ! t.on)
+  const [toggles, setToggles] = useState([]);
+
+  updateState(setToggles);
+
+  const on = toggles.filter(t => t.on)
+  const off = toggles.filter(t => ! t.on)
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Search lights...">
+    <List searchBarPlaceholder="Search lights...">
       <List.Section title="On" subtitle={on.length + ""}>
         {on.map(toggle => (
-          <SearchListItem key={toggle.name} toggle={toggle} />
+          <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
       <List.Section title="Off" subtitle={off.length + ""}>
         {off.map(toggle => (
-          <SearchListItem key={toggle.name} toggle={toggle} />
+          <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
     </List>
   )
 }
 
-function SearchListItem({ toggle }) {
+function SearchListItem({ toggle, setToggles }) {
   return (
     <List.Item
       id={toggle.id}
@@ -54,7 +68,7 @@ function SearchListItem({ toggle }) {
           <ActionPanel.Section>
             <Action
               title={`Switch ${toggle.name} ${toggle.on ? "off" : "on"}`}
-              onAction={() => run_toggle(toggle)}
+              onAction={() => run_toggle(toggle, setToggles)}
             />
           </ActionPanel.Section>
           <ActionPanel.Section>
@@ -68,15 +82,4 @@ function SearchListItem({ toggle }) {
       }
     />
   )
-}
-
-/** Parse the response from the fetch query into something we can display */
-async function parseFetchResponse(response) {
-  const json = await response.json()
-
-  if (!response.ok || "reason" in json) {
-    throw new Error("message" in json ? json.reason : response.statusText)
-  }
-
-  return Object.values(json.switches).filter(toggle => toggle.allow_visibility)
 }
