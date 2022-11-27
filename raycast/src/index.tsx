@@ -1,50 +1,45 @@
-import { ActionPanel, Action, List } from "@raycast/api";
+import { ActionPanel, Action, List, Icon } from "@raycast/api";
 import { useFetch, Response } from "@raycast/utils";
 import { useState } from "react";
 import { URLSearchParams } from "node:url";
 
+function get_api(path: string) {
+  return "http://rdvhome.local:8500/" + path;
+}
+
 export default function Command() {
-  const [searchText, setSearchText] = useState("");
-  const { data, isLoading } = useFetch(
-    "https://api.npms.io/v2/search?" +
-      // send the search query to the API
-      new URLSearchParams({ q: searchText.length === 0 ? "@raycast/api" : searchText }),
-    {
-      parseResponse: parseFetchResponse,
-    }
-  );
+  const { data, isLoading } = useFetch(get_api("switch"), {
+    parseResponse: parseFetchResponse,
+  });
 
   return (
-    <List
-      isLoading={isLoading}
-      onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Search npm packages..."
-      throttle
-    >
-      <List.Section title="Results" subtitle={data?.length + ""}>
-        {data?.map((searchResult) => (
-          <SearchListItem key={searchResult.name} searchResult={searchResult} />
+    <List isLoading={isLoading} searchBarPlaceholder="Search lights...">
+      <List.Section title="Switches" subtitle={data?.length + ""}>
+        {data?.map((toggle) => (
+          <SearchListItem key={toggle.name} toggle={toggle} />
         ))}
       </List.Section>
     </List>
   );
 }
 
-function SearchListItem({ searchResult }: { searchResult: SearchResult }) {
+function SearchListItem({ toggle }: { toggle: SearchResult }) {
   return (
     <List.Item
-      title={searchResult.name}
-      subtitle={searchResult.description}
-      accessoryTitle={searchResult.username}
+      id={toggle.id}
+      title={toggle.name}
+      subtitle={toggle.icon}
+      accessories={toggle.alias.map((a) => ({ text: a }))}
+      icon={toggle.on ? Icon.CheckCircle : Icon.Circle}
       actions={
         <ActionPanel>
           <ActionPanel.Section>
-            <Action.OpenInBrowser title="Open in Browser" url={searchResult.url} />
+            <Action.OpenInBrowser title="Open in Browser" url="http://rdvhome.local:8500/toggle" />
           </ActionPanel.Section>
           <ActionPanel.Section>
             <Action.CopyToClipboard
               title="Copy Install Command"
-              content={`npm install ${searchResult.name}`}
+              content={`npm install ${toggle.name}`}
               shortcut={{ modifiers: ["cmd"], key: "." }}
             />
           </ActionPanel.Section>
@@ -58,34 +53,25 @@ function SearchListItem({ searchResult }: { searchResult: SearchResult }) {
 async function parseFetchResponse(response: Response) {
   const json = (await response.json()) as
     | {
-        results: {
-          package: {
-            name: string;
-            description?: string;
-            publisher?: { username: string };
-            links: { npm: string };
-          };
-        }[];
+        switches: { [key: string]: RemoteSwitch };
       }
-    | { code: string; message: string };
+    | { status: integer; reason: string };
 
-  if (!response.ok || "message" in json) {
-    throw new Error("message" in json ? json.message : response.statusText);
+  if (!response.ok || "reason" in json) {
+    throw new Error("message" in json ? json.reason : response.statusText);
   }
 
-  return json.results.map((result) => {
-    return {
-      name: result.package.name,
-      description: result.package.description,
-      username: result.package.publisher?.username,
-      url: result.package.links.npm,
-    } as SearchResult;
-  });
+  return Object.values(json.switches);
 }
 
-interface SearchResult {
+interface RemoteSwitch {
+  id: string;
   name: string;
-  description?: string;
-  username?: string;
-  url: string;
+  kind: string;
+  icon: string;
+  hue?: number;
+  brightness?: number;
+  saturation?: number;
+  on?: bool;
+  alias: [string];
 }
