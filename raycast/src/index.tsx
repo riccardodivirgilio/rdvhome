@@ -4,6 +4,8 @@ import { useState } from "react";
 import { URLSearchParams } from "node:url";
 import { showHUD, Clipboard } from "@raycast/api";
 
+//https://github.com/raycast/extensions/blob/main/examples/todo-list/src/index.tsx
+
 export async function run_toggle(toggle: RemoteSwitch) {
 
   fetch(get_api('switch/' +toggle.id+ ( toggle.on ? '/off' : '/on')));
