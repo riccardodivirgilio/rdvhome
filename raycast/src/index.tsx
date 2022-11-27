@@ -14,15 +14,26 @@ function get_api(path) {
   return "http://rdvhome.local:8500/" + path
 }
 
+
+
 export default function Command() {
+
   const { data, isLoading } = useFetch(get_api("switch"), {
-    parseResponse: parseFetchResponse
+    parseResponse: r => parseFetchResponse(r)
   })
+
+  const on = data.filter(t => t.on)
+  const off = data.filter(t => ! t.on)
 
   return (
     <List isLoading={isLoading} searchBarPlaceholder="Search lights...">
-      <List.Section title="Switches" subtitle={data?.length + ""}>
-        {data?.map(toggle => (
+      <List.Section title="On" subtitle={on.length + ""}>
+        {on.map(toggle => (
+          <SearchListItem key={toggle.name} toggle={toggle} />
+        ))}
+      </List.Section>
+      <List.Section title="Off" subtitle={off.length + ""}>
+        {off.map(toggle => (
           <SearchListItem key={toggle.name} toggle={toggle} />
         ))}
       </List.Section>
