@@ -38,18 +38,24 @@ export default function Command() {
 
   useEffect(() => updateState(setToggles), []); // Or [] if effect doesn't need props or state
 
-  const on = toggles.filter((t) => t.on);
-  const off = toggles.filter((t) => !t.on);
+  const on = toggles.filter((t) => t.kind == 'switch' && t.on);
+  const off = toggles.filter((t) => t.kind == 'switch' && !t.on);
+  const controls = toggles.filter((t) => t.kind != 'switch');
 
   return (
     <List isLoading={toggles.length == 0} searchBarPlaceholder="Search lights...">
-      <List.Section title="On" subtitle={on.length + ""}>
+      <List.Section title="On" subtitle={on.length}>
         {on.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
-      <List.Section title="Off" subtitle={off.length + ""}>
+      <List.Section title="Off" subtitle={off.length}>
         {off.map((toggle) => (
+          <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
+        ))}
+      </List.Section>
+      <List.Section title="Controls" subtitle={controls.length}>
+        {controls.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
