@@ -48,6 +48,7 @@ function get_api(path) {
 
 /** Parse the response from the fetch query into something we can display */
 async function updateState(setToggles) {
+
   const json = await (await fetch(get_api("switch"))).json();
 
   if ("reason" in json) {
@@ -65,7 +66,13 @@ const is_controls = (t) => t.kind != "switch";
 export default function Command() {
   const [toggles, setToggles] = useState([]);
 
-  useEffect(() => updateState(setToggles), []); // Or [] if effect doesn't need props or state
+  useEffect(() => {
+
+    updateState(setToggles);
+    //setInterval(() => updateState(setToggles), 1000);
+
+  }, []); // Or [] if effect doesn't need props or state
+
 
   const on = toggles.filter(is_on);
   const off = toggles.filter(is_off);
