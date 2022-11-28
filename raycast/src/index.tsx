@@ -6,34 +6,41 @@ import { useState, useEffect } from "react";
 
 //https://github.com/raycast/extensions/blob/main/examples/todo-list/src/index.tsx
 
+function hue_to_rgb(h, s = 1, v = 1) {
+  let r, g, b, i, f, p, q, t;
 
-function hue_to_rgb(h, s = 1, v=1) {
-    var r, g, b, i, f, p, q, t;
+  i = Math.floor(h * 6);
+  f = h * 6 - i;
+  p = v * (1 - s);
+  q = v * (1 - f * s);
+  t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+    case 0:
+      (r = v), (g = t), (b = p);
+      break;
+    case 1:
+      (r = q), (g = v), (b = p);
+      break;
+    case 2:
+      (r = p), (g = v), (b = t);
+      break;
+    case 3:
+      (r = p), (g = q), (b = v);
+      break;
+    case 4:
+      (r = t), (g = p), (b = v);
+      break;
+    case 5:
+      (r = v), (g = p), (b = q);
+      break;
+  }
 
-    i = Math.floor(h * 6);
-    f = h * 6 - i;
-    p = v * (1 - s);
-    q = v * (1 - f * s);
-    t = v * (1 - (1 - f) * s);
-    switch (i % 6) {
-        case 0: r = v, g = t, b = p; break;
-        case 1: r = q, g = v, b = p; break;
-        case 2: r = p, g = v, b = t; break;
-        case 3: r = p, g = q, b = v; break;
-        case 4: r = t, g = p, b = v; break;
-        case 5: r = v, g = p, b = q; break;
-    }
+  r = Math.round(r * 255);
+  g = Math.round(g * 255);
+  b = Math.round(b * 255);
 
-    r = Math.round(r * 255)
-    g = Math.round(g * 255)
-    b = Math.round(b * 255)
-
-    return `rgb(${r}, ${g}, ${b})`
-
+  return `rgb(${r}, ${g}, ${b})`;
 }
-
-
-
 
 function get_api(path) {
   return "http://rdvhome.local:8500/" + path;
@@ -50,10 +57,10 @@ async function updateState(setToggles) {
   await setToggles(Object.values(json.switches || []).filter((toggle) => toggle.allow_visibility));
 }
 
-  const is_on = (t) => t.kind == 'switch' && t.allow_on && t.on
-  const is_off = (t) => t.kind == 'switch' && t.allow_on && !t.on
-  const is_windows = (t) => t.kind == 'switch' && t.allow_direction
-  const is_controls = (t) => t.kind != 'switch'
+const is_on = (t) => t.kind == "switch" && t.allow_on && t.on;
+const is_off = (t) => t.kind == "switch" && t.allow_on && !t.on;
+const is_windows = (t) => t.kind == "switch" && t.allow_direction;
+const is_controls = (t) => t.kind != "switch";
 
 export default function Command() {
   const [toggles, setToggles] = useState([]);
@@ -103,37 +110,40 @@ export async function run_api(endpoint, message, setToggles) {
   await toast.hide();
 }
 
-function ToggleAction({endpoint, message, title, setToggles, icon}) {
-  return <Action
-          title={title || message}
-          onAction={() => run_api(
-            endpoint, message || title, setToggles
-          )}
-          icon={icon}
-        />
+function ToggleAction({ endpoint, message, title, setToggles, icon, shortcut }) {
+  return (
+    <Action
+      title={title || message}
+      onAction={() => run_api(endpoint, message || title, setToggles)}
+      icon={icon}
+      shortcut={shortcut}
+    />
+  );
 }
 
-
-function* GenerateToggleCapabilities({toggle, setToggles}) {
-
+function* GenerateToggleCapabilities({ toggle, setToggles }) {
   if (toggle.allow_on) {
-    yield  <ActionPanel.Section>
+    yield (
+      <ActionPanel.Section>
         <ToggleAction
           message={`Switch ${toggle.name} ${toggle.on ? "off" : "on"}`}
           endpoint={`switch/${toggle.id}/${toggle.on ? "off" : "on"}`}
           setToggles={setToggles}
         />
       </ActionPanel.Section>
+    );
   }
 
   if (toggle.allow_direction) {
-    yield  <ActionPanel.Section>
+    yield (
+      <ActionPanel.Section>
         <ToggleAction
           title="Up"
           message={`Switch ${toggle.name} Up`}
           endpoint={`switch/${toggle.id}/up`}
           setToggles={setToggles}
           icon={Icon.ArrowUpCircle}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "arrowUp" }}
         />
         <ToggleAction
           title="Stop"
@@ -148,46 +158,57 @@ function* GenerateToggleCapabilities({toggle, setToggles}) {
           endpoint={`switch/${toggle.id}/down`}
           setToggles={setToggles}
           icon={Icon.ArrowDownCircle}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "arrowDown" }}
         />
       </ActionPanel.Section>
+    );
   }
 
   if (toggle.allow_hue) {
-    yield  <ActionPanel.Section title="Change color">
-
-        {[[1, 'Red'], [0.857143, 'Purple'], [0.714286, 'Blue'], [0.571429, 'Celeste'], [0.428571, 'Slate green'], [0.285714, 'Green'], [0.142857, 'Yellow']].map(([h, name]) => (
-        <ToggleAction
-          title={name}
-          message={`Switch ${toggle.name} ${name}`}
-          endpoint={`switch/${toggle.id}/on/${Math.round(h * 100)}/100/-`}
-          setToggles={setToggles}
-          icon={{
-            source: Icon.CircleProgress100,
-            tintColor: hue_to_rgb(h),
-          }}
-        />
+    yield (
+      <ActionPanel.Section title="Change color">
+        {[
+          [Math.random(), "Random", "r"],
+          [1, "Red", "1"],
+          [0.857143, "Purple", "2"],
+          [0.714286, "Blue", "3"],
+          [0.571429, "Celeste", "4"],
+          [0.428571, "Slate green", "5"],
+          [0.285714, "Green", "6"],
+          [0.142857, "Yellow", "7"],
+        ].map(([h, name, key]) => (
+          <ToggleAction
+            title={name}
+            message={`Switch ${toggle.name} ${name}`}
+            endpoint={`switch/${toggle.id}/on/${Math.round(h * 100)}/100/-`}
+            setToggles={setToggles}
+            icon={{
+              source: Icon.CircleProgress100,
+              tintColor: hue_to_rgb(h),
+            }}
+            shortcut={{ modifiers: ["cmd", "shift"], key: key }}
+          />
         ))}
       </ActionPanel.Section>
+    );
   }
-
-
 }
 
 function get_icon(toggle) {
-    if (toggle.up) {
-      return Icon.ArrowUpCircle
-    }
-    if (toggle.down) {
-       return Icon.ArrowDownCircle
-    }
-    if (toggle.allow_direction) {
-       return Icon.Stop
-    }
+  if (toggle.up) {
+    return Icon.ArrowUpCircle;
+  }
+  if (toggle.down) {
+    return Icon.ArrowDownCircle;
+  }
+  if (toggle.allow_direction) {
+    return Icon.Stop;
+  }
 
-    if (toggle.on) {
-      return Icon.CircleProgress100
-    }
-    return Icon.Circle
+  if (toggle.on) {
+    return Icon.CircleProgress100;
+  }
+  return Icon.Circle;
 }
 
 function SearchListItem({ toggle, setToggles }) {
@@ -199,13 +220,9 @@ function SearchListItem({ toggle, setToggles }) {
       accessories={toggle.alias.map((a) => ({ text: a }))}
       icon={{
         source: get_icon(toggle),
-        tintColor: (toggle.on && toggle.hue) ? hue_to_rgb(toggle.hue) : null,
+        tintColor: toggle.on && toggle.hue ? hue_to_rgb(toggle.hue) : null,
       }}
-      actions={
-        <ActionPanel>
-          {[...GenerateToggleCapabilities({toggle, setToggles})]}
-        </ActionPanel>
-      }
+      actions={<ActionPanel>{[...GenerateToggleCapabilities({ toggle, setToggles })]}</ActionPanel>}
     />
   );
 }
