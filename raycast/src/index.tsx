@@ -32,17 +32,8 @@ function hue_to_rgb(h, s = 1, v=1) {
 
 }
 
-export async function run_toggle(toggle, setToggles) {
-  const toast = await showToast({
-    style: Toast.Style.Animated,
-    title: `Switched ${toggle.on ? "off" : "on"} ${toggle.name}`,
-  });
 
-  await fetch(get_api("switch/" + toggle.id + (toggle.on ? "/off" : "/on")));
-  await updateState(setToggles);
 
-  await toast.hide();
-}
 
 function get_api(path) {
   return "http://rdvhome.local:8500/" + path;
@@ -59,14 +50,20 @@ async function updateState(setToggles) {
   await setToggles(Object.values(json.switches || []).filter((toggle) => toggle.allow_visibility));
 }
 
+  const is_on = (t) => t.kind == 'switch' && t.allow_on && t.on
+  const is_off = (t) => t.kind == 'switch' && t.allow_on && !t.on
+  const is_windows = (t) => t.kind == 'switch' && t.allow_direction
+  const is_controls = (t) => t.kind != 'switch'
+
 export default function Command() {
   const [toggles, setToggles] = useState([]);
 
   useEffect(() => updateState(setToggles), []); // Or [] if effect doesn't need props or state
 
-  const on = toggles.filter((t) => t.kind == 'switch' && t.on);
-  const off = toggles.filter((t) => t.kind == 'switch' && !t.on);
-  const controls = toggles.filter((t) => t.kind != 'switch');
+  const on = toggles.filter(is_on);
+  const off = toggles.filter(is_off);
+  const windows = toggles.filter(is_windows);
+  const controls = toggles.filter(is_controls);
 
   return (
     <List isLoading={toggles.length == 0} searchBarPlaceholder="Search lights...">
@@ -80,6 +77,11 @@ export default function Command() {
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
+      <List.Section title="Windows" subtitle={controls.length}>
+        {windows.map((toggle) => (
+          <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
+        ))}
+      </List.Section>
       <List.Section title="Controls" subtitle={controls.length}>
         {controls.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
@@ -87,6 +89,105 @@ export default function Command() {
       </List.Section>
     </List>
   );
+}
+
+export async function run_api(endpoint, message, setToggles) {
+  const toast = await showToast({
+    style: Toast.Style.Animated,
+    title: message,
+  });
+
+  await fetch(get_api(endpoint));
+  await updateState(setToggles);
+
+  await toast.hide();
+}
+
+function ToggleAction({endpoint, message, title, setToggles, icon}) {
+  return <Action
+          title={title || message}
+          onAction={() => run_api(
+            endpoint, message || title, setToggles
+          )}
+          icon={icon}
+        />
+}
+
+
+function* GenerateToggleCapabilities({toggle, setToggles}) {
+
+  if (toggle.allow_on) {
+    yield  <ActionPanel.Section>
+        <ToggleAction
+          message={`Switch ${toggle.name} ${toggle.on ? "off" : "on"}`}
+          endpoint={`switch/${toggle.id}/${toggle.on ? "off" : "on"}`}
+          setToggles={setToggles}
+        />
+      </ActionPanel.Section>
+  }
+
+  if (toggle.allow_direction) {
+    yield  <ActionPanel.Section>
+        <ToggleAction
+          title="Up"
+          message={`Switch ${toggle.name} Up`}
+          endpoint={`switch/${toggle.id}/up`}
+          setToggles={setToggles}
+          icon={Icon.ArrowUpCircle}
+        />
+        <ToggleAction
+          title="Stop"
+          message={`Switch ${toggle.name} stop`}
+          endpoint={`switch/${toggle.id}/stop`}
+          setToggles={setToggles}
+          icon={Icon.Stop}
+        />
+        <ToggleAction
+          title="Down"
+          message={`Switch ${toggle.name} Down`}
+          endpoint={`switch/${toggle.id}/down`}
+          setToggles={setToggles}
+          icon={Icon.ArrowDownCircle}
+        />
+      </ActionPanel.Section>
+  }
+
+  if (toggle.allow_hue) {
+    yield  <ActionPanel.Section title="Change color">
+
+        {[[1, 'Red'], [0.857143, 'Purple'], [0.714286, 'Blue'], [0.571429, 'Celeste'], [0.428571, 'Slate green'], [0.285714, 'Green'], [0.142857, 'Yellow']].map(([h, name]) => (
+        <ToggleAction
+          title={name}
+          message={`Switch ${toggle.name} ${name}`}
+          endpoint={`switch/${toggle.id}/on/${Math.round(h * 100)}/100/-`}
+          setToggles={setToggles}
+          icon={{
+            source: Icon.CircleProgress100,
+            tintColor: hue_to_rgb(h),
+          }}
+        />
+        ))}
+      </ActionPanel.Section>
+  }
+
+
+}
+
+function get_icon(toggle) {
+    if (toggle.up) {
+      return Icon.ArrowUpCircle
+    }
+    if (toggle.down) {
+       return Icon.ArrowDownCircle
+    }
+    if (toggle.allow_direction) {
+       return Icon.Stop
+    }
+
+    if (toggle.on) {
+      return Icon.CircleProgress100
+    }
+    return Icon.Circle
 }
 
 function SearchListItem({ toggle, setToggles }) {
@@ -97,24 +198,12 @@ function SearchListItem({ toggle, setToggles }) {
       subtitle={toggle.icon}
       accessories={toggle.alias.map((a) => ({ text: a }))}
       icon={{
-        source: toggle.on ? Icon.CircleProgress100 : Icon.Circle,
+        source: get_icon(toggle),
         tintColor: (toggle.on && toggle.hue) ? hue_to_rgb(toggle.hue) : null,
       }}
       actions={
         <ActionPanel>
-          <ActionPanel.Section>
-            <Action
-              title={`Switch ${toggle.name} ${toggle.on ? "off" : "on"}`}
-              onAction={() => run_toggle(toggle, setToggles)}
-            />
-          </ActionPanel.Section>
-          <ActionPanel.Section>
-            <Action.CopyToClipboard
-              title="Copy Install Command"
-              content={`npm install ${toggle.name}`}
-              shortcut={{ modifiers: ["cmd"], key: "." }}
-            />
-          </ActionPanel.Section>
+          {[...GenerateToggleCapabilities({toggle, setToggles})]}
         </ActionPanel>
       }
     />
