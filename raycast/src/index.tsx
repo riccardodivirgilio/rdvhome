@@ -151,6 +151,7 @@ function* GenerateToggleCapabilities({ toggle, setToggles }) {
           endpoint={`switch/${toggle.id}/stop`}
           setToggles={setToggles}
           icon={Icon.Stop}
+          shortcut={{ modifiers: ["cmd", "shift"], key: "enter" }}
         />
         <ToggleAction
           title="Down"
