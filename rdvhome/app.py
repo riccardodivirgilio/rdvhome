@@ -190,7 +190,7 @@ async def view_status_list(request):
 
 
 @url(
-    "/switch/{number:[a-zA-Z-0-9_-]+}/{mode:(-|on|off)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}",
+    "/switch/{number:[a-zA-Z-0-9_-]+}/{mode::(-|on|off|up|down|stop)}/{hue:(-|[0-9]+)}/{saturation:(-|[0-9]+)}/{brightness:(-|[0-9]+)}",
     name="hsb",
 )
 async def view_status_list(request):
