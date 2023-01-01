@@ -65,10 +65,8 @@ class HomekitSwitch(Accessory):
         )
 
     async def on_event(self, event):
-        try:
+        if self.event_name in event:
             self.switch_service.set_value(event[self.event_name])
-        except KeyError:
-            pass
 
 
 class Switch(EventStream):
