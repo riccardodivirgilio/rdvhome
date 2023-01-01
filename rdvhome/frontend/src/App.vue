@@ -3,7 +3,7 @@
     <div class="container">
       <home class="panel-home" @toggle="home_toggle($event)" :switches="switches"/>
       <pre class="panel-debug" v-if="false">{{ switches }}</pre>
-      <div class="panel-switch">
+      <div ref="panel-switch" class="panel-switch">
         <div id="toggles" class="list-container" >
           <a :id="item.id" v-for="item in switches" class="list-item" :class="{on: item.on, off: item.off}" :key="item.id" :style="{order: item.ordering}" v-show="item.allow_visibility">
             <div class="line" :style="{backgroundColor: hsl_to_css({hue: item.allow_hue ? item.hue : 1, saturation: item.allow_saturation ? 1 : 0, lightness: item.on ? 'var(--lightness-high)' : 'var(--lightness)'})}">
@@ -31,8 +31,8 @@
       </div>
     </div><!-- /.container -->
     <div class="panel-loading" v-if="switches.length == 0 || ! connected">
-      <loading :class="{active: reconnect < reconnect_limit}"></loading>
-      <div class="connection" v-if="reconnect < reconnect_limit">
+      <loading :class="{active: connecting}"></loading>
+      <div class="connection" v-if="connecting">
         Connection in progress...
       </div>
       <div class="connection" v-else>
@@ -64,7 +64,7 @@ import {hsb_to_css_with_lightness, hsl_to_css} from './utils/color';
 
 
 function unixtime() {
-  return new Date().getTime()
+  return new Date().getTime() / 1000
 }
 
 export default {
@@ -82,6 +82,7 @@ export default {
       switches: switches,
       reconnect: 0,
       connected: false,
+      connecting: false,
       reconnect_limit: 4,
       last_update: null
     }
@@ -125,6 +126,26 @@ export default {
   },
   methods: {
     hsl_to_css: hsl_to_css,
+
+
+    checkConnection: function() {
+
+      if (this.connecting) {
+        console.log('already connecting')
+      } else if (! this.connected) {
+        console.log('checkConnection: connect',)
+
+        this.connect(true)
+      } else if (this.ws.readyState > 1) {
+        console.log('checkConnection: connect',)
+        this.connect(true)
+      } else if (! this.last_update || (this.last_update + 5 <= unixtime())) {
+        console.log('after 5 seconds: /switch', this.last_update, unixtime())
+        this.last_update = unixtime()
+        this.ws.send('/switch');
+      } 
+    },
+
     updateSwitch: function (data) {
 
       this.switches[data.id] = merge(
@@ -200,8 +221,9 @@ export default {
         this.reconnect += 1;
       }
 
-      this.connected = false;
-      this.ws        = null;
+      this.connected  = false;
+      this.connecting = true;
+      this.ws         = null;
 
       console.log("Attempting to connect to ws number " + this.reconnect)
 
@@ -217,6 +239,7 @@ export default {
             console.log('Connection Error');
             console.log(e)
             this.connected = false;
+            this.connecting = false;
             setTimeout(() => {this.connect()}, 1000);
         };
 
@@ -225,6 +248,7 @@ export default {
             console.log(e)
             this.reconnect = 0;
             this.connected = true;
+            this.connecting = false;
             this.ws.send('/switch');
         };
 
@@ -232,6 +256,7 @@ export default {
             console.log('WebSocket Client Disconnected');
             console.log(e)
             this.connected = false;
+            this.connecting = false;
             setTimeout(() => {this.connect()}, 1000);
         };
 
@@ -246,9 +271,13 @@ export default {
       }
     }
   },
-
-  created: function() {
+  mounted() {
     this.connect()
+
+    document.addEventListener('visibilitychange', () => this.checkConnection());
+    document.addEventListener('click', () => this.checkConnection());
+    this.$refs['panel-switch'].addEventListener('scroll', () => this.checkConnection());
+
   }
 }
 </script>
