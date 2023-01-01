@@ -74,6 +74,7 @@ class Command(SimpleCommand):
     def local_files(self, **context):
         yield '/etc/systemd/system/gpioserver.service', service('python3 -m gpioserver %s' % " ".join(generate_restpio_arguments()), **context)
         yield '/etc/systemd/system/lights.service', service('python3 /home/pi/rdvhome/run.py run', **context)
+        yield '/etc/systemd/system/homekit.service', service('python3 /home/pi/rdvhome/run.py homekit', **context)
 
     def local_commands(self,  **context):
 
@@ -86,7 +87,7 @@ class Command(SimpleCommand):
         #    yield 'python3 -m pip install %s --user' % req.read().replace('\n', ' ')
 
         yield "sudo systemctl daemon-reload"
-        yield "sudo systemctl restart lights.service"
+        yield "sudo systemctl restart lights.service homekit.service"
         yield "sudo systemctl stop gpioserver.service"
 
     def handle(self, *args): 
