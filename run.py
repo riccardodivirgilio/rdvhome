@@ -183,6 +183,8 @@ def run_rdv_command_line():
                 ipaddress = '192.168.1.144'
             ),
 
+
+
             light(
                 id="spotlight_entrance",
                 name="Entrance Light",
@@ -191,6 +193,14 @@ def run_rdv_command_line():
                 gpio_relay=18,
                 gpio_status=7,
             ),
+            light(
+                id="lamp_room",
+                name="Computer lamp",
+                icon="🖥️",
+                philips_id=7,
+                alias=["default"],
+            ),
+
             light(
                 id="led_bathroom_entrance",
                 name="Bathroom Entrance",
@@ -235,13 +245,6 @@ def run_rdv_command_line():
                 name="Studio Led",
                 icon="💡",
                 philips_id=8,
-                alias=["default"],
-            ),
-            light(
-                id="lamp_room",
-                name="Studio Lamp",
-                icon="💡",
-                philips_id=7,
                 alias=["default"],
             ),
             light(
