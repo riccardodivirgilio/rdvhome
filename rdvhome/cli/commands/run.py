@@ -82,11 +82,13 @@ class Command(SimpleCommand):
 
         # code borrowed from pyhap
         try:
-            
-            
-            driver.add_job(driver.async_start())
+
             driver.accessory.setup_message()
             print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
+
+
+            driver.add_job(driver._do_start)
+            #driver.add_job(driver.async_start())
             web.run_app(app, port=port)
         except KeyboardInterrupt:
             driver.loop.call_soon_threadsafe(

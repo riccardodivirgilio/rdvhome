@@ -9,7 +9,7 @@ six
 yarl==1.6.3
 base36==0.1.1
 pyqrcode
-hap-python==4.5.0
+hap-python==2.8.4
 python-rpy==1.0.17
 websockets==8.1
 zeroconf==0.47.1
