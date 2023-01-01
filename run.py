@@ -62,10 +62,6 @@ def run_rdv_command_line():
     @to_data
     def nanoleaf(**opts):
         yield "class_path", "rdvhome.switches.nanoleaf.NanoleafControl"
-
-        yield "access_token", "lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1"
-        yield "ipaddress", "192.168.1.115"
-
         yield from opts.items()
 
 
@@ -175,6 +171,16 @@ def run_rdv_command_line():
                 name="TV Light Panel",
                 icon="📺",
                 alias=["default", 'nanoleaf'],
+                access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
+                ipaddress = '192.168.1.115'
+            ),
+            nanoleaf(
+                id="nanoleaf_exa",
+                name="TV Light Panel new",
+                icon="📺",
+                alias=["default", 'nanoleaf'],
+                access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
+                ipaddress = '192.168.1.144'
             ),
 
             light(
