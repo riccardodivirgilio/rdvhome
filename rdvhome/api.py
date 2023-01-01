@@ -5,10 +5,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 from rpy.functions.datastructures import data
 
 from rdvhome.switches import switches
-
+import datetime
 
 def api_response(status=200, **opts):
-    return data(opts, status=status, success=status == 200)
+    return data(opts, status=status, success=status == 200, unixtime = datetime.datetime.utcnow().timestamp())
 
 
 async def status(number=None, **opts):
