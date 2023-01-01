@@ -78,11 +78,14 @@ class Command(SimpleCommand):
         # so that it can gracefully stop the accessory, server and advertising.
         signal.signal(signal.SIGTERM, driver.signal_handler)
 
+
+
         # code borrowed from pyhap
         try:
             
             
             driver.add_job(driver.async_start())
+            driver.accessory.setup_message()
             print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
             web.run_app(app, port=port)
         except KeyboardInterrupt:
