@@ -76,51 +76,51 @@ export default {
         "ordering": 11,
         "allow_visibility": true
     },
+    "lamp_room": {
+        "id": "lamp_room",
+        "name": "Computer lamp",
+        "icon": "\ud83d\udda5\ufe0f",
+        "ordering": 12,
+        "allow_visibility": true
+    },
     "led_bathroom_entrance": {
         "id": "led_bathroom_entrance",
         "name": "Bathroom Entrance",
         "icon": "\ud83d\udebd",
-        "ordering": 12,
+        "ordering": 13,
         "allow_visibility": true
     },
     "led_bedroom": {
         "id": "led_bedroom",
         "name": "Bedroom Led",
         "icon": "\ud83d\udecf",
-        "ordering": 13,
+        "ordering": 14,
         "allow_visibility": true
     },
     "spotlight_bedroom": {
         "id": "spotlight_bedroom",
         "name": "Bedroom Light",
         "icon": "\ud83d\udecf",
-        "ordering": 14,
+        "ordering": 15,
         "allow_visibility": true
     },
     "led_bathroom_bedroom": {
         "id": "led_bathroom_bedroom",
         "name": "Bathroom Bedroom",
         "icon": "\ud83d\udebd",
-        "ordering": 15,
+        "ordering": 16,
         "allow_visibility": true
     },
     "spotlight_room": {
         "id": "spotlight_room",
         "name": "Studio Light",
         "icon": "\ud83d\udcda",
-        "ordering": 16,
+        "ordering": 17,
         "allow_visibility": true
     },
     "led_room": {
         "id": "led_room",
         "name": "Studio Led",
-        "icon": "\ud83d\udca1",
-        "ordering": 17,
-        "allow_visibility": true
-    },
-    "lamp_room": {
-        "id": "lamp_room",
-        "name": "Studio Lamp",
         "icon": "\ud83d\udca1",
         "ordering": 18,
         "allow_visibility": true
