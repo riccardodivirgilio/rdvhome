@@ -28,13 +28,17 @@ class RaspberryGPIO(object):
             self.GPIO.add_event_detect(n, self.GPIO.RISING, callback=callback, **opts)
 
     async def setup_output(self, n):
+        console.log('setup output', n)
         self.GPIO.setup(n, self.GPIO.OUT)
         self.GPIO.output(n, self.GPIO.HIGH)
 
     async def input(self, n):
+        console.log('input', n)
         return self.GPIO.input(n)
 
     async def output(self, n, high=True):
+
+        console.log('output', n, high)
         self.GPIO.output(n, high and self.GPIO.HIGH or self.GPIO.LOW)
 
 
