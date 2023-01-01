@@ -79,21 +79,8 @@ class Command(SimpleCommand):
         signal.signal(signal.SIGTERM, driver.signal_handler)
 
 
+        driver.accessory.setup_message()
+        #print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
 
-        # code borrowed from pyhap
-        try:
-
-            driver.accessory.setup_message()
-            print("TO CONNECT TO HOMEKIT USE: %s" % driver.state.pincode.decode())
-
-
-            driver.add_job(driver._do_start)
-            #driver.add_job(driver.async_start())
-            web.run_app(app, port=port)
-        except KeyboardInterrupt:
-            driver.loop.call_soon_threadsafe(
-                driver.loop.create_task, driver.async_stop()
-            )
-            driver.loop.run_forever()
-        finally:
-            driver.loop.close()
+        driver.add_job(web._run_app(app, port=port))
+        driver.start()
