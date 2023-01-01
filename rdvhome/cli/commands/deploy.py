@@ -66,7 +66,7 @@ class Command(SimpleCommand):
 
     def commands(self, **context):
 
-        yield 'rsync -a %(local)s %(username)s@%(host)s:%(project)s --exclude=node_modules/* --exclude=.git/* --size-only --delete' % context
+        yield 'rsync -a %(local)s %(username)s@%(host)s:%(project)s --exclude=node_modules/* --exclude=.git/* --delete' % context
 
         for cmd in self.local_commands(**context):
             yield ('ssh %(username)s@%(host)s ' + cmd) % context
