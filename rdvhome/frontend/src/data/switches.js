@@ -62,207 +62,214 @@ export default {
         "ordering": 9,
         "allow_visibility": true
     },
+    "nanoleaf_exa": {
+        "id": "nanoleaf_exa",
+        "name": "TV Light Panel new",
+        "icon": "\ud83d\udcfa",
+        "ordering": 10,
+        "allow_visibility": true
+    },
     "spotlight_entrance": {
         "id": "spotlight_entrance",
         "name": "Entrance Light",
         "icon": "\ud83d\udeaa",
-        "ordering": 10,
+        "ordering": 11,
         "allow_visibility": true
     },
     "led_bathroom_entrance": {
         "id": "led_bathroom_entrance",
         "name": "Bathroom Entrance",
         "icon": "\ud83d\udebd",
-        "ordering": 11,
+        "ordering": 12,
         "allow_visibility": true
     },
     "led_bedroom": {
         "id": "led_bedroom",
         "name": "Bedroom Led",
         "icon": "\ud83d\udecf",
-        "ordering": 12,
+        "ordering": 13,
         "allow_visibility": true
     },
     "spotlight_bedroom": {
         "id": "spotlight_bedroom",
         "name": "Bedroom Light",
         "icon": "\ud83d\udecf",
-        "ordering": 13,
+        "ordering": 14,
         "allow_visibility": true
     },
     "led_bathroom_bedroom": {
         "id": "led_bathroom_bedroom",
         "name": "Bathroom Bedroom",
         "icon": "\ud83d\udebd",
-        "ordering": 14,
+        "ordering": 15,
         "allow_visibility": true
     },
     "spotlight_room": {
         "id": "spotlight_room",
         "name": "Studio Light",
         "icon": "\ud83d\udcda",
-        "ordering": 15,
+        "ordering": 16,
         "allow_visibility": true
     },
     "led_room": {
         "id": "led_room",
         "name": "Studio Led",
         "icon": "\ud83d\udca1",
-        "ordering": 16,
+        "ordering": 17,
         "allow_visibility": true
     },
     "lamp_room": {
         "id": "lamp_room",
         "name": "Studio Lamp",
         "icon": "\ud83d\udca1",
-        "ordering": 17,
+        "ordering": 18,
         "allow_visibility": true
     },
     "lamp_hipster_room": {
         "id": "lamp_hipster_room",
         "name": "Studio Hipster Lamp",
         "icon": "\ud83d\udca1",
-        "ordering": 18,
+        "ordering": 19,
         "allow_visibility": true
     },
     "window_kitchen": {
         "id": "window_kitchen",
         "name": "Kitchen Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 19,
+        "ordering": 20,
         "allow_visibility": true
     },
     "window_living_room": {
         "id": "window_living_room",
         "name": "Living Room Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 20,
+        "ordering": 21,
         "allow_visibility": true
     },
     "window_tv": {
         "id": "window_tv",
         "name": "TV Window",
         "icon": "\u2600\ufe0f",
-        "ordering": 21,
+        "ordering": 22,
         "allow_visibility": true
     },
     "random": {
         "id": "random",
         "name": "Random",
         "icon": "\u2753",
-        "ordering": 22,
+        "ordering": 23,
         "allow_visibility": true
     },
     "hloop": {
         "id": "hloop",
         "name": "Random Loop",
         "icon": "\ud83e\udd13",
-        "ordering": 23,
+        "ordering": 24,
         "allow_visibility": true
     },
     "natural": {
         "id": "natural",
         "name": "Naturale",
         "icon": "\ud83c\udf1e",
-        "ordering": 24,
+        "ordering": 25,
         "allow_visibility": true
     },
     "disco": {
         "id": "disco",
         "name": "Disco",
         "icon": "\ud83c\udf10",
-        "ordering": 25,
+        "ordering": 26,
         "allow_visibility": true
     },
     "nanoleaf_forest": {
         "id": "nanoleaf_forest",
         "name": "Forest",
         "icon": "\ud83c\udf32",
-        "ordering": 26,
+        "ordering": 27,
         "allow_visibility": true
     },
     "nanoleaf_inner_peace": {
         "id": "nanoleaf_inner_peace",
         "name": "Inner Peace",
         "icon": "\ud83c\udf89",
-        "ordering": 27,
+        "ordering": 28,
         "allow_visibility": true
     },
     "nanoleaf_meteor_shower": {
         "id": "nanoleaf_meteor_shower",
         "name": "Meteor Shower",
         "icon": "\ud83c\udf89",
-        "ordering": 28,
+        "ordering": 29,
         "allow_visibility": true
     },
     "nanoleaf_nemo": {
         "id": "nanoleaf_nemo",
         "name": "Nemo",
         "icon": "\ud83d\udc1f",
-        "ordering": 29,
+        "ordering": 30,
         "allow_visibility": true
     },
     "nanoleaf_northern_lights": {
         "id": "nanoleaf_northern_lights",
         "name": "Northern Lights",
         "icon": "\ud83c\udf89",
-        "ordering": 30,
+        "ordering": 31,
         "allow_visibility": true
     },
     "nanoleaf_paint_splatter": {
         "id": "nanoleaf_paint_splatter",
         "name": "Paint Splatter",
         "icon": "\ud83c\udf89",
-        "ordering": 31,
+        "ordering": 32,
         "allow_visibility": true
     },
     "nanoleaf_pulse_pop_beats": {
         "id": "nanoleaf_pulse_pop_beats",
         "name": "Pulse Pop Beats",
         "icon": "\ud83c\udf89",
-        "ordering": 32,
+        "ordering": 33,
         "allow_visibility": true
     },
     "nanoleaf_rhythmic_northern_lights": {
         "id": "nanoleaf_rhythmic_northern_lights",
         "name": "Rhythmic Northern Lights",
         "icon": "\ud83c\udf89",
-        "ordering": 33,
+        "ordering": 34,
         "allow_visibility": true
     },
     "nanoleaf_ripple": {
         "id": "nanoleaf_ripple",
         "name": "Ripple",
         "icon": "\ud83c\udf89",
-        "ordering": 34,
+        "ordering": 35,
         "allow_visibility": true
     },
     "nanoleaf_romantic": {
         "id": "nanoleaf_romantic",
         "name": "Romantic",
         "icon": "\u2764\ufe0f",
-        "ordering": 35,
+        "ordering": 36,
         "allow_visibility": true
     },
     "nanoleaf_snowfall": {
         "id": "nanoleaf_snowfall",
         "name": "Snowfall",
         "icon": "\u26c4",
-        "ordering": 36,
+        "ordering": 37,
         "allow_visibility": true
     },
     "nanoleaf_sound_bar": {
         "id": "nanoleaf_sound_bar",
         "name": "Sound Bar",
         "icon": "\ud83c\udf89",
-        "ordering": 37,
+        "ordering": 38,
         "allow_visibility": true
     },
     "nanoleaf_streaking_notes": {
         "id": "nanoleaf_streaking_notes",
         "name": "Streaking Notes",
         "icon": "\ud83c\udf89",
-        "ordering": 38,
+        "ordering": 39,
         "allow_visibility": true
     }
 }
