@@ -81,7 +81,7 @@ class Command(SimpleCommand):
             yield "'echo %s | base64 --decode > /tmp/tempfile'" % (b64encode(content))
             yield 'sudo cp /tmp/tempfile %s' % path
 
-        yield 'python3 -m pip install -r /home/pi/rdvhome/requirements.txt --user'
+        yield 'python3 -m pip install -r /home/pi/rdvhome/rdvhome/requirements.txt --user'
         yield "sudo systemctl daemon-reload"
         yield "sudo systemctl restart lights.service"
         yield "sudo systemctl stop gpioserver.service"
