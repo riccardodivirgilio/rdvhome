@@ -62,6 +62,11 @@ import map       from 'rfuncs/functions/map'
 
 import {hsb_to_css_with_lightness, hsl_to_css} from './utils/color';
 
+
+function unixtime() {
+  return new Date().getTime()
+}
+
 export default {
   name: 'app',
   components: {
@@ -77,7 +82,8 @@ export default {
       switches: switches,
       reconnect: 0,
       connected: false,
-      reconnect_limit: 4
+      reconnect_limit: 4,
+      last_update: null
     }
   },
   computed: {
@@ -232,9 +238,9 @@ export default {
         this.ws.onmessage = (e) => {
             if (typeof e.data === 'string') {
               const data = JSON.parse(e.data)
-              console.log('Incoming:')
-              console.log(data)
+              console.log('Incoming:', data)
               this.updateSwitch(data)
+              this.last_update = unixtime()
             }
         };
       }
