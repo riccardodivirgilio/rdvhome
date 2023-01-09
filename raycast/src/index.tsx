@@ -48,8 +48,9 @@ function get_api(path) {
 
 /** Parse the response from the fetch query into something we can display */
 async function updateState(setToggles) {
-
+  console.log(get_api('switch'))
   const json = await (await fetch(get_api("switch"))).json();
+  console.log(json)
 
   if ("reason" in json) {
     throw new Error(json.reason);
@@ -81,22 +82,22 @@ export default function Command() {
 
   return (
     <List isLoading={toggles.length == 0} searchBarPlaceholder="Search lights...">
-      <List.Section title="On" subtitle={on.length}>
+      <List.Section title="On" subtitle={`${on.length}`}>
         {on.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
-      <List.Section title="Off" subtitle={off.length}>
+      <List.Section title="Off" subtitle={`${off.length}`}>
         {off.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
-      <List.Section title="Windows" subtitle={controls.length}>
+      <List.Section title="Windows" subtitle={`${controls.length}`}>
         {windows.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}
       </List.Section>
-      <List.Section title="Controls" subtitle={controls.length}>
+      <List.Section title="Controls" subtitle={`${controls.length}`}>
         {controls.map((toggle) => (
           <SearchListItem key={toggle.name} toggle={toggle} setToggles={setToggles} />
         ))}

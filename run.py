@@ -174,14 +174,14 @@ def run_rdv_command_line():
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
                 ipaddress = '192.168.1.115'
             ),
-            nanoleaf(
-                id="nanoleaf_exa",
-                name="TV Light Panel new",
-                icon="📺",
-                alias=["default", 'nanoleaf'],
-                access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
-                ipaddress = '192.168.1.144'
-            ),
+            #nanoleaf(
+            #    id="nanoleaf_exa",
+            #    name="TV Light Panel new",
+            #    icon="📺",
+            #    alias=["default", 'nanoleaf'],
+            #    access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
+            #    ipaddress = '192.168.1.144'
+            #),
 
 
 
