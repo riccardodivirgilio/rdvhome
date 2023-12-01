@@ -3,6 +3,7 @@ import { useFetch } from "@raycast/utils";
 import { showToast, Toast } from "@raycast/api";
 
 import { useState, useEffect } from "react";
+import fetch from 'node-fetch';
 
 //https://github.com/raycast/extensions/blob/main/examples/todo-list/src/index.tsx
 
@@ -48,9 +49,7 @@ function get_api(path) {
 
 /** Parse the response from the fetch query into something we can display */
 async function updateState(setToggles) {
-  console.log(get_api('switch'))
   const json = await (await fetch(get_api("switch"))).json();
-  console.log(json)
 
   if ("reason" in json) {
     throw new Error(json.reason);
