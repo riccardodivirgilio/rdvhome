@@ -7,8 +7,8 @@ from aioreactive.core import subscribe as _subscribe
 
 
 class EventStream(AsyncStream):
-    def subscribe(self, func):
-        return subscribe(self, func)
+    async def subscribe(self, func):
+        return await subscribe(self, func)
 
     async def start(self):
         pass
