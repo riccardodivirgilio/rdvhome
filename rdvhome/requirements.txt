@@ -6,7 +6,6 @@ asyncio==3.4.3
 colour==0.1.5
 django
 six
-yarl==1.6.3
 base36==0.1.1
 pyqrcode
 hap-python==4.6.0
