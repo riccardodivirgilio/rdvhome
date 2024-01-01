@@ -48,6 +48,7 @@ async def server_error(request, handler):
             if not django_settings.configured:
                 django_settings.configure(global_settings)
                 django_settings.USE_I18N = False
+                django_settings.SECRET_KEY = "hello"
 
             from django.views.debug import ExceptionReporter
 
