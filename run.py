@@ -55,7 +55,7 @@ def run_rdv_command_line():
         yield "class_path", "rdvhome.switches.philips.PhilipsPoolControl"
 
         yield "access_token", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-        yield "ipaddress", "192.168.1.179"
+        yield "ipaddress", "192.168.67.179"
 
         yield from opts.items()
 
@@ -147,7 +147,7 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
             ),
-            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.1.235"),
+            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.67.235"),
 
             light(
                 id="led_tv",
@@ -172,7 +172,7 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
-                ipaddress = '192.168.1.115'
+                ipaddress = '192.168.67.115'
             ),
             #nanoleaf(
             #    id="nanoleaf_exa",
@@ -180,7 +180,7 @@ def run_rdv_command_line():
             #    icon="📺",
             #    alias=["default", 'nanoleaf'],
             #    access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
-            #    ipaddress = '192.168.1.144'
+            #    ipaddress = '192.168.67.144'
             #),
 
 
