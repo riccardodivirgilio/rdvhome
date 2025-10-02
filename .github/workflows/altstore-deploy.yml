@@ -48,16 +48,19 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             AD_HOC_CODE_SIGNING_ALLOWED=YES
 
+          # Create dist directory in repo root
+          cd ../..
+          mkdir -p dist
+
           # Export IPA
+          cd native/RDVHome
           mkdir -p build/Payload
           cp -r build/RDVHome.xcarchive/Products/Applications/RDVHome.app build/Payload/
           cd build
           zip -r RDVHome.ipa Payload
-          cd ../..
 
-          # Move IPA to root for easier access
-          mkdir -p ../../dist
-          cp build/RDVHome.ipa ../../dist/RDVHome.ipa
+          # Move IPA to dist directory
+          mv RDVHome.ipa ../../../dist/RDVHome.ipa
 
       - name: Generate AltStore source JSON
         run: |
