@@ -14,11 +14,11 @@
       "category": "utilities",
       "versions": [
         {
-          "version": "1.0.2",
-          "date": "$(date -u +%Y-%m-%d)",
-          "downloadURL": "https://github.com/riccardodivirgilio/rdvhome/releases/download/v1.0.2/RDVHome.ipa",
+          "version": "2025.10.02.1714",
+          "date": "2025-10-02",
+          "downloadURL": "https://github.com/riccardodivirgilio/rdvhome/releases/download/v2025.10.02.1714/RDVHome.ipa",
           "localizedDescription": "Latest version of RDVHome",
-          "size": $(stat -f%z dist/RDVHome.ipa),
+          "size": 71675,
           "minOSVersion": "15.0"
         }
       ],
