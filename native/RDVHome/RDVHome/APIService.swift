@@ -8,8 +8,8 @@ import Foundation
 class APIService: ObservableObject {
     static let shared = APIService()
 
-    private let wsURL = "ws://localhost:8500/websocket"
-    //private let wsURL = "ws://rdvhome.local:8500/websocket"
+    //private let wsURL = "ws://localhost:8500/websocket"
+    private let wsURL = "ws://rdvhome.local:8500/websocket"
 
     @Published var switches: [HomeSwitch] = []
     @Published var isConnected = false
