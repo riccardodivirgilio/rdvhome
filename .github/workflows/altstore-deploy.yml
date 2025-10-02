@@ -33,10 +33,11 @@ jobs:
           echo "build_number=$GITHUB_RUN_NUMBER" >> $GITHUB_OUTPUT
 
       - name: Update version in project
-        run: |
-          # Update version in Xcode project
-          sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = ${{ steps.version.outputs.version }}/" native/RDVHome/RDVHome.xcodeproj/project.pbxproj
-          sed -i '' "s/CURRENT_PROJECT_VERSION = [^;]*/CURRENT_PROJECT_VERSION = ${{ steps.version.outputs.build_number }}/" native/RDVHome/RDVHome.xcodeproj/project.pbxproj
+        uses: yanamura/ios-bump-version@v1
+        with:
+          version: ${{ steps.version.outputs.version }}
+          build-number: ${{ steps.version.outputs.build_number }}
+          project-path: native/RDVHome
 
       - name: Build IPA
         run: |
