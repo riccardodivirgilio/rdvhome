@@ -121,6 +121,7 @@ def run_rdv_command_line():
                 icon="🍽",
                 philips_id=6,
                 alias=["default"],
+                zone="Kitchen",
             ),
             light(
                 id="spotlight_kitchen",
@@ -129,6 +130,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=24,
                 gpio_status=17,
+                zone="Kitchen",
             ),
             light(
                 id="spotlight_living_room",
@@ -146,6 +148,7 @@ def run_rdv_command_line():
                 gpio_relay=20,
                 gpio_status=4,
                 alias=["default"],
+                zone="Living Room",
             ),
             tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.67.235"),
 
@@ -157,6 +160,7 @@ def run_rdv_command_line():
                 gpio_relay=20,
                 gpio_status=4,
                 alias=["default"],
+                zone="Living Room",
             ),
             light(
                 id="spotlight_tv",
@@ -199,6 +203,7 @@ def run_rdv_command_line():
                 icon="🖥️",
                 philips_id=7,
                 alias=["default"],
+                zone="Studio",
             ),
 
             light(
@@ -216,6 +221,7 @@ def run_rdv_command_line():
                 gpio_relay=14,
                 gpio_status=8,
                 alias=[],
+                zone="Bedroom",
             ),
             light(
                 id="spotlight_bedroom",
@@ -231,6 +237,7 @@ def run_rdv_command_line():
                 icon="🚽",
                 philips_id=4,
                 alias=[],
+                zone="Bathroom",
             ),
             light(
                 id="spotlight_room",
@@ -246,6 +253,7 @@ def run_rdv_command_line():
                 icon="💡",
                 philips_id=8,
                 alias=["default"],
+                zone="Studio",
             ),
             light(
                 id="lamp_hipster_room",

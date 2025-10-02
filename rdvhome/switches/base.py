@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from __future__ import absolute_import, print_function, unicode_literals
 
 import six
@@ -9,7 +7,6 @@ from rpy.functions.asyncio import run_all, wait_all
 from rpy.functions.datastructures import data
 from rpy.functions.decorators import to_data
 from rpy.functions.functional import iterate
-
 from rdvhome.switches.events import EventStream
 from rdvhome.utils.colors import to_color
 
@@ -33,14 +30,11 @@ def capabilities(
 
 
 class HomekitSwitch(Accessory):
-
     category = CATEGORY_SWITCH
 
     def __init__(self, driver, switch, event_name = 'on'):
-
         self.switch = switch
         self.event_name = event_name
-
         super().__init__(
             driver=driver,
             display_name=self.switch_name(),
@@ -70,21 +64,19 @@ class HomekitSwitch(Accessory):
 
 
 class Switch(EventStream):
-
     kind = "switch"
     default_aliases = ["all"]
     default_capabilities = capabilities(on=True)
-
     homekit_class = HomekitSwitch
 
-    def __init__(self, id, name=None, alias=(), ordering=None, icon=None):
+    def __init__(self, id, name=None, alias=(), ordering=None, icon=None, zone=None):
         self.id = id
         self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
+        self.zone = zone
         self.capabilities = data(self.default_capabilities)
-
         super().__init__()
 
     def create_homekit_accessory(self, driver):
@@ -94,26 +86,21 @@ class Switch(EventStream):
     @to_data
     def serialize(self, on=None, color=None, intensity=None, full=True, **opts):
         yield "id", self.id
-
         if full:
             yield "name", self.name
             yield "kind", self.kind
             yield "icon", self.icon
             yield "alias", self.alias
             yield "ordering", self.ordering
-
+            yield "zone", self.zone
             yield from self.capabilities.items()
-
         if on is not None:
             yield "on", bool(on)
             yield "off", not bool(on)
-
         if color is not None:
             yield from to_color(color).serialize().items()
-
         if intensity is not None:
             yield "intensity", intensity
-
         yield from opts.items()
 
     async def send(self, **opts):
@@ -143,13 +130,10 @@ class SwitchList(object):
         return await wait_all(switch.start() for switch in self)
 
     def get_switches(self):
-
         if callable(self._switches):
             self._switches = self._switches()
-
         if not isinstance(self._switches, dict):
             self._switches = {s.id: s for s in iterate(self._switches)}
-
         return self._switches
 
     def set_switches(self, values):
