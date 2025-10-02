@@ -34,9 +34,9 @@ jobs:
 
       - name: Update version in project
         run: |
-          cd native/RDVHome
-          xcrun agvtool new-marketing-version ${{ steps.version.outputs.version }}
-          xcrun agvtool new-version -all ${{ steps.version.outputs.build_number }}
+          # Update version in Xcode project
+          sed -i '' "s/MARKETING_VERSION = [^;]*/MARKETING_VERSION = ${{ steps.version.outputs.version }}/" native/RDVHome/RDVHome.xcodeproj/project.pbxproj
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [^;]*/CURRENT_PROJECT_VERSION = ${{ steps.version.outputs.build_number }}/" native/RDVHome/RDVHome.xcodeproj/project.pbxproj
 
       - name: Build IPA
         run: |
