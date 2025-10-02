@@ -1,0 +1,142 @@
+name: Build and Deploy to AltStore
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest-stable
+
+    - name: Get version info
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+        else
+          VERSION="1.0.${GITHUB_RUN_NUMBER}"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "build_number=$GITHUB_RUN_NUMBER" >> $GITHUB_OUTPUT
+
+    - name: Update version in project
+      run: |
+        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ steps.version.outputs.version }}" "native/RDVHome/RDVHome/Info.plist" 2>/dev/null || true
+        /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ steps.version.outputs.build_number }}" "native/RDVHome/RDVHome/Info.plist" 2>/dev/null || true
+
+    - name: Build IPA
+      run: |
+        cd native/RDVHome
+
+        # Build for device
+        xcodebuild -project RDVHome.xcodeproj \
+          -scheme RDVHome \
+          -configuration Release \
+          -sdk iphoneos \
+          -archivePath "$PWD/build/RDVHome.xcarchive" \
+          archive \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES
+
+        # Export IPA
+        mkdir -p build/Payload
+        cp -r build/RDVHome.xcarchive/Products/Applications/RDVHome.app build/Payload/
+        cd build
+        zip -r RDVHome.ipa Payload
+        cd ../..
+
+        # Move IPA to root for easier access
+        mkdir -p ../../dist
+        cp build/RDVHome.ipa ../../dist/RDVHome.ipa
+
+    - name: Generate AltStore source JSON
+      run: |
+        cat > dist/apps.json << 'EOF'
+        {
+          "name": "RDVHome",
+          "identifier": "com.rdv.altstore",
+          "sourceURL": "https://raw.githubusercontent.com/${{ github.repository }}/master/dist/apps.json",
+          "apps": [
+            {
+              "name": "RDVHome",
+              "bundleIdentifier": "com.rdv.RDVHome",
+              "developerName": "RDV",
+              "subtitle": "Home Automation Controller",
+              "localizedDescription": "Control your home automation devices from your iOS device.",
+              "iconURL": "https://raw.githubusercontent.com/${{ github.repository }}/master/dist/icon.png",
+              "tintColor": "#007AFF",
+              "category": "utilities",
+              "versions": [
+                {
+                  "version": "${{ steps.version.outputs.version }}",
+                  "date": "$(date -u +%Y-%m-%d)",
+                  "downloadURL": "https://github.com/${{ github.repository }}/releases/download/v${{ steps.version.outputs.version }}/RDVHome.ipa",
+                  "localizedDescription": "Latest version of RDVHome",
+                  "size": $(stat -f%z dist/RDVHome.ipa),
+                  "minOSVersion": "15.0"
+                }
+              ],
+              "appPermissions": {
+                "entitlements": [
+                  {
+                    "name": "network-client"
+                  }
+                ],
+                "privacy": [
+                  {
+                    "name": "LocalNetwork",
+                    "usageDescription": "RDVHome needs access to your local network to communicate with home automation devices."
+                  }
+                ]
+              }
+            }
+          ],
+          "news": []
+        }
+        EOF
+
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/RDVHome.ipa
+          dist/apps.json
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: RDVHome-${{ steps.version.outputs.version }}
+        path: |
+          dist/RDVHome.ipa
+          dist/apps.json
+        retention-days: 90
+
+    - name: Commit and push apps.json to master
+      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add dist/apps.json
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update AltStore apps.json [skip ci]"
+        git push origin HEAD:master || git push origin HEAD:main
