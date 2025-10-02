@@ -1,6 +1,10 @@
 name: Build and Deploy to AltStore
 
 on:
+  push:
+    branches:
+      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -18,30 +22,32 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Create CalVer tag and push
+      - name: Get version from Xcode project
         id: version
         run: |
-          TAG="v$(date -u +%Y.%m.%d.%H%M)"
+          # Extract version from project.pbxproj
+          VERSION=$(grep -m 1 'MARKETING_VERSION' native/RDVHome/RDVHome.xcodeproj/project.pbxproj | sed 's/.*MARKETING_VERSION = \(.*\);/\1/' | tr -d ' ')
+          BUILD_NUMBER=$(grep -m 1 'CURRENT_PROJECT_VERSION' native/RDVHome/RDVHome.xcodeproj/project.pbxproj | sed 's/.*CURRENT_PROJECT_VERSION = \(.*\);/\1/' | tr -d ' ')
+
+          echo "📦 Version: $VERSION"
+          echo "🔢 Build Number: $BUILD_NUMBER"
+
+          # Create tag with version
+          TAG="v${VERSION}"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
+          git tag -a "$TAG" -m "Release $TAG" || true
+          git push origin "$TAG" || true
 
-          VERSION="${TAG#v}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=$TAG" >> $GITHUB_OUTPUT
-          echo "build_number=$GITHUB_RUN_NUMBER" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Update version in project
-        uses: yanamura/ios-bump-version@v1
-        with:
-          version: ${{ steps.version.outputs.version }}
-          build-number: ${{ steps.version.outputs.build_number }}
-          project-path: native/RDVHome
-
-      - name: Build IPA
+      - name: Build IPA version ${{ steps.version.outputs.version }}
         run: |
           cd native/RDVHome
+
+          echo "🔨 Building IPA for version ${{ steps.version.outputs.version }}..."
 
           # Build for device
           xcodebuild -project RDVHome.xcodeproj \
@@ -69,10 +75,14 @@ jobs:
           # Move IPA to dist directory
           mv RDVHome.ipa ../../../dist/RDVHome.ipa
 
+          echo "✅ IPA built successfully"
+
       - name: Generate AltStore source JSON
         run: |
           IPA_SIZE=$(stat -f%z dist/RDVHome.ipa)
           CURRENT_DATE=$(date -u +%Y-%m-%d)
+
+          echo "📝 Generating AltStore JSON for version ${{ steps.version.outputs.version }} (${IPA_SIZE} bytes)"
 
           cat > dist/apps.json << EOF
           {
