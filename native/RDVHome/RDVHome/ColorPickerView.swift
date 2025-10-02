@@ -45,7 +45,8 @@ struct ColorPickerView: View {
                             }
 
                             Slider(value: $selectedHue, in: 0...1)
-                                .accentColor(Color(hue: selectedHue, saturation: 1.0, brightness: 1.0))
+                                .accentColor(
+                                    Color(hue: selectedHue, saturation: 1.0, brightness: 1.0))
                         }
 
                         // Saturation Slider
@@ -116,21 +117,33 @@ struct ColorPickerView: View {
             }
             .navigationTitle(switchItem.name ?? "Color Picker")
             #if !os(macOS)
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
                 #if os(macOS)
-                ToolbarItem(placement: .automatic) {
-                    Button("Done") {
-                        dismiss()
+                    ToolbarItem(placement: .automatic) {
+                        Button("Done") {
+                            APIService.shared.setColor(
+                                id: switchItem.id,
+                                hue: selectedHue,
+                                saturation: selectedSaturation,
+                                brightness: selectedBrightness
+                            )
+                            dismiss()
+                        }
                     }
-                }
                 #else
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            APIService.shared.setColor(
+                                id: switchItem.id,
+                                hue: selectedHue,
+                                saturation: selectedSaturation,
+                                brightness: selectedBrightness
+                            )
+                            dismiss()
+                        }
                     }
-                }
                 #endif
             }
         }

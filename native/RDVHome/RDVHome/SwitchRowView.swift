@@ -30,21 +30,27 @@ struct SwitchRowView: View {
                     WindowControls(switchItem: switchItem)
                 } else if switchItem.allowOn == true {
                     // On/Off toggle
-                    Toggle("", isOn: Binding(
-                        get: { switchItem.isOn },
-                        set: { _ in
-                            APIService.shared.toggleSwitch(
-                                id: switchItem.id,
-                                currentState: switchItem.isOn
-                            )
-                        }
-                    ))
+                    Toggle(
+                        "",
+                        isOn: Binding(
+                            get: { switchItem.isOn },
+                            set: { _ in
+                                APIService.shared.toggleSwitch(
+                                    id: switchItem.id,
+                                    currentState: switchItem.isOn
+                                )
+                            }
+                        )
+                    )
+                    .toggleStyle(.switch)
                     .labelsHidden()
                 }
             }
 
             // Color indicator and picker for color-capable switches
-            if switchItem.allowHue == true || switchItem.allowSaturation == true || switchItem.allowBrightness == true {
+            if switchItem.allowHue == true || switchItem.allowSaturation == true
+                || switchItem.allowBrightness == true
+            {
                 HStack(spacing: 12) {
                     // Color preview circle
                     Circle()

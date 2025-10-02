@@ -1,14 +1,15 @@
-import Foundation
 import Combine
+import Foundation
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 class APIService: ObservableObject {
     static let shared = APIService()
 
     private let wsURL = "ws://localhost:8500/websocket"
+    //private let wsURL = "ws://rdvhome.local:8500/websocket"
 
     @Published var switches: [HomeSwitch] = []
     @Published var isConnected = false
@@ -30,7 +31,9 @@ class APIService: ObservableObject {
 
     private func setupAppStateObserver() {
         #if canImport(UIKit)
-        appStateObserver = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+            appStateObserver = NotificationCenter.default.publisher(
+                for: UIApplication.willEnterForegroundNotification
+            )
             .sink { [weak self] _ in
                 guard let self = self else { return }
                 self.reconnectAttempts = 0
@@ -77,7 +80,9 @@ class APIService: ObservableObject {
         }
 
         reconnectAttempts += 1
-        print("Attempting to connect to WebSocket (attempt \(reconnectAttempts)/\(maxReconnectAttempts))")
+        print(
+            "Attempting to connect to WebSocket (attempt \(reconnectAttempts)/\(maxReconnectAttempts))"
+        )
 
         webSocketTask = URLSession.shared.webSocketTask(with: url)
         webSocketTask?.resume()
@@ -203,65 +208,48 @@ class APIService: ObservableObject {
         print("---")
 
         guard let data = text.data(using: .utf8),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let switchId = json["id"] as? String else {
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let switchId = json["id"] as? String
+        else {
             print("⚠️ Failed to parse JSON or missing 'id' field")
             return
         }
 
         // Update or create switch in dictionary
-        if var existingSwitch = switchesById[switchId] {
-            // Merge fields
-            if let name = json["name"] as? String { existingSwitch.name = name }
-            if let kind = json["kind"] as? String { existingSwitch.kind = kind }
-            if let icon = json["icon"] as? String { existingSwitch.icon = icon }
-            if let alias = json["alias"] as? [String] { existingSwitch.alias = alias }
-            if let ordering = json["ordering"] as? Int { existingSwitch.ordering = ordering }
-            if json["zone"] != nil {
-                existingSwitch.zone = json["zone"] as? String
-            }
-            if let allowOn = json["allow_on"] as? Bool { existingSwitch.allowOn = allowOn }
-            if let allowHue = json["allow_hue"] as? Bool { existingSwitch.allowHue = allowHue }
-            if let allowSaturation = json["allow_saturation"] as? Bool { existingSwitch.allowSaturation = allowSaturation }
-            if let allowBrightness = json["allow_brightness"] as? Bool { existingSwitch.allowBrightness = allowBrightness }
-            if let allowDirection = json["allow_direction"] as? Bool { existingSwitch.allowDirection = allowDirection }
-            if let allowVisibility = json["allow_visibility"] as? Bool { existingSwitch.allowVisibility = allowVisibility }
-            if let on = json["on"] as? Bool { existingSwitch.on = on }
-            if let off = json["off"] as? Bool { existingSwitch.off = off }
-            if let hue = json["hue"] as? Double { existingSwitch.hue = hue }
-            if let saturation = json["saturation"] as? Double { existingSwitch.saturation = saturation }
-            if let brightness = json["brightness"] as? Double { existingSwitch.brightness = brightness }
-            if let up = json["up"] as? Bool { existingSwitch.up = up }
-            if let down = json["down"] as? Bool { existingSwitch.down = down }
+        var switchToUpdate = switchesById[switchId] ?? HomeSwitch(id: switchId)
 
-            switchesById[switchId] = existingSwitch
-        } else {
-            // Create new switch with only ID, all other fields optional
-            var newSwitch = HomeSwitch(id: switchId)
-            if let name = json["name"] as? String { newSwitch.name = name }
-            if let kind = json["kind"] as? String { newSwitch.kind = kind }
-            if let icon = json["icon"] as? String { newSwitch.icon = icon }
-            if let alias = json["alias"] as? [String] { newSwitch.alias = alias }
-            if let ordering = json["ordering"] as? Int { newSwitch.ordering = ordering }
-            if json["zone"] != nil {
-                newSwitch.zone = json["zone"] as? String
-            }
-            if let allowOn = json["allow_on"] as? Bool { newSwitch.allowOn = allowOn }
-            if let allowHue = json["allow_hue"] as? Bool { newSwitch.allowHue = allowHue }
-            if let allowSaturation = json["allow_saturation"] as? Bool { newSwitch.allowSaturation = allowSaturation }
-            if let allowBrightness = json["allow_brightness"] as? Bool { newSwitch.allowBrightness = allowBrightness }
-            if let allowDirection = json["allow_direction"] as? Bool { newSwitch.allowDirection = allowDirection }
-            if let allowVisibility = json["allow_visibility"] as? Bool { newSwitch.allowVisibility = allowVisibility }
-            if let on = json["on"] as? Bool { newSwitch.on = on }
-            if let off = json["off"] as? Bool { newSwitch.off = off }
-            if let hue = json["hue"] as? Double { newSwitch.hue = hue }
-            if let saturation = json["saturation"] as? Double { newSwitch.saturation = saturation }
-            if let brightness = json["brightness"] as? Double { newSwitch.brightness = brightness }
-            if let up = json["up"] as? Bool { newSwitch.up = up }
-            if let down = json["down"] as? Bool { newSwitch.down = down }
-
-            switchesById[switchId] = newSwitch
+        // Merge fields
+        if let name = json["name"] as? String { switchToUpdate.name = name }
+        if let kind = json["kind"] as? String { switchToUpdate.kind = kind }
+        if let icon = json["icon"] as? String { switchToUpdate.icon = icon }
+        if let alias = json["alias"] as? [String] { switchToUpdate.alias = alias }
+        if let ordering = json["ordering"] as? Int { switchToUpdate.ordering = ordering }
+        if json["zone"] != nil {
+            switchToUpdate.zone = json["zone"] as? String
         }
+        if let allowOn = json["allow_on"] as? Bool { switchToUpdate.allowOn = allowOn }
+        if let allowHue = json["allow_hue"] as? Bool { switchToUpdate.allowHue = allowHue }
+        if let allowSaturation = json["allow_saturation"] as? Bool {
+            switchToUpdate.allowSaturation = allowSaturation
+        }
+        if let allowBrightness = json["allow_brightness"] as? Bool {
+            switchToUpdate.allowBrightness = allowBrightness
+        }
+        if let allowDirection = json["allow_direction"] as? Bool {
+            switchToUpdate.allowDirection = allowDirection
+        }
+        if let allowVisibility = json["allow_visibility"] as? Bool {
+            switchToUpdate.allowVisibility = allowVisibility
+        }
+        if let on = json["on"] as? Bool { switchToUpdate.on = on }
+        if let off = json["off"] as? Bool { switchToUpdate.off = off }
+        if let hue = json["hue"] as? Double { switchToUpdate.hue = hue }
+        if let saturation = json["saturation"] as? Double { switchToUpdate.saturation = saturation }
+        if let brightness = json["brightness"] as? Double { switchToUpdate.brightness = brightness }
+        if let up = json["up"] as? Bool { switchToUpdate.up = up }
+        if let down = json["down"] as? Bool { switchToUpdate.down = down }
+
+        switchesById[switchId] = switchToUpdate
 
         // Update published array
         updateSwitchesArray()
@@ -280,6 +268,7 @@ class APIService: ObservableObject {
             print("Cannot send message: not connected")
             return
         }
+        print("✉️ Send message: \(message)")
         let message = URLSessionWebSocketTask.Message.string(message)
         task.send(message) { error in
             if let error = error {
@@ -298,7 +287,7 @@ class APIService: ObservableObject {
         let h = Int(hue * 100)
         let s = Int(saturation * 100)
         let b = Int(brightness * 100)
-        let message = "/switch/\(id)/set?mode=on&hue=\(h)&saturation=\(s)&brightness=\(b)"
+        let message = "/switch/\(id)/set?hue=\(h)&saturation=\(s)&brightness=\(b)"
         sendMessage(message)
     }
 
