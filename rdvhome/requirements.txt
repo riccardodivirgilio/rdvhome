@@ -1,4 +1,4 @@
-aiohttp==3.8.3
+aiohttp==3.13.5
 aiofiles==23.2.1
 aiohttp-autoreload==0.0.1
 aioreactive==0.5.0

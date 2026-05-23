@@ -81,7 +81,7 @@ class Command(SimpleCommand):
             yield "'echo %s | base64 --decode > /tmp/tempfile'" % (b64encode(content))
             yield 'sudo cp /tmp/tempfile %s' % path
 
-        yield 'python3 -m pip install -r /home/pi/rdvhome/rdvhome/requirements.txt --user'
+        yield 'python3 -m pip install -r /home/pi/rdvhome/rdvhome/requirements.txt --user --break-system-packages'
         #with open(module_path('rdvhome', 'requirements.txt'), 'r') as req:
         #    yield 'python3 -m pip install %s --user' % req.read().replace('\n', ' ')
 
