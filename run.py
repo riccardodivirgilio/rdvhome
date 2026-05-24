@@ -122,7 +122,7 @@ def run_rdv_command_line():
                 philips_id=6,
                 alias=["default"],
                 zone="Kitchen",
-                room="Scene",
+                room="Living",
             ),
             light(
                 id="spotlight_kitchen",
@@ -132,7 +132,7 @@ def run_rdv_command_line():
                 gpio_relay=24,
                 gpio_status=17,
                 zone="Kitchen",
-                room="Scene",
+                room="Living",
             ),
             light(
                 id="spotlight_living_room",
@@ -203,7 +203,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=18,
                 gpio_status=7,
-                room="Scene",
+                room="Living",
             ),
             light(
                 id="lamp_room",

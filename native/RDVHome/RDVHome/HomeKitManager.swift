@@ -28,7 +28,7 @@ class HomeKitManager: NSObject, ObservableObject {
 
         let roomAssignment = APIService.shared.roomAssignment
         guard !roomAssignment.isEmpty else {
-            syncLog = ["No switches loaded yet — refresh and try again."]
+            syncLog = ["No room data available — deploy the latest server to the Pi and refresh."]
             return
         }
 
