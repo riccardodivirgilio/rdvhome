@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Home Assistant runtime files
+ha_config/home-assistant_v2.db
+ha_config/home-assistant.log
+ha_config/home-assistant.log.*
+ha_config/deps/
+ha_config/tts/
+ha_config/secrets.yaml
