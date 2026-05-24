@@ -8,7 +8,7 @@ django
 six
 base36==0.1.1
 pyqrcode
-hap-python==4.6.0
+hap-python==5.0.0
 python-rpy==1.1.0
 websockets==8.1
 zeroconf==0.47.1

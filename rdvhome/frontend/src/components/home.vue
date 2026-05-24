@@ -739,6 +739,10 @@
                 <polygon class="st0" points="492.6,578.6 481.8,591.7 481.8,564.1" />
                 <line class="st0" x1="45.4" y1="504.8" x2="28.4" y2="474.8" />
             </g>
+            <a href="/qrcode" target="_blank">
+                <rect x="1220" y="1018" width="110" height="34" rx="6" fill="rgba(128,128,128,0.12)" stroke="rgba(128,128,128,0.3)" stroke-width="1"/>
+                <text x="1275" y="1040" text-anchor="middle" font-size="13" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" fill="currentColor">HomeKit QR</text>
+            </a>
         </svg>
     </div>
 </template>
