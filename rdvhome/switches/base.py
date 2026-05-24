@@ -69,13 +69,14 @@ class Switch(EventStream):
     default_capabilities = capabilities(on=True)
     homekit_class = HomekitSwitch
 
-    def __init__(self, id, name=None, alias=(), ordering=None, icon=None, zone=None):
+    def __init__(self, id, name=None, alias=(), ordering=None, icon=None, zone=None, room=None):
         self.id = id
         self.name = name or id
         self.alias = frozenset(iterate(self.id, alias, self.default_aliases, self.kind))
         self.ordering = ordering
         self.icon = icon
         self.zone = zone
+        self.room = room
         self.capabilities = data(self.default_capabilities)
         super().__init__()
 
@@ -93,6 +94,7 @@ class Switch(EventStream):
             yield "alias", self.alias
             yield "ordering", self.ordering
             yield "zone", self.zone
+            yield "room", self.room
             yield from self.capabilities.items()
         if on is not None:
             yield "on", bool(on)

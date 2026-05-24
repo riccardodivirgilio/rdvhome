@@ -53,6 +53,9 @@ struct ContentView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         RefreshButton()
                     }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        HomeKitSyncButton()
+                    }
                 }
         }
         .onAppear {
@@ -216,6 +219,52 @@ struct SwitchListView: View {
         #endif
     }
 }
+
+#if os(iOS)
+struct HomeKitSyncButton: View {
+    @StateObject private var hk = HomeKitManager.shared
+    @State private var showLog = false
+
+    var body: some View {
+        Button {
+            hk.syncLog = []
+            hk.syncDone = false
+            showLog = true
+            hk.sync()
+        } label: {
+            Label("Sync HomeKit", systemImage: "house.and.flag")
+        }
+        .sheet(isPresented: $showLog) {
+            HomeKitSyncLogView()
+        }
+    }
+}
+
+struct HomeKitSyncLogView: View {
+    @StateObject private var hk = HomeKitManager.shared
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(hk.syncLog, id: \.self) { line in
+                Text(line)
+                    .font(.system(.caption, design: .monospaced))
+            }
+            .navigationTitle("HomeKit Sync")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if hk.syncing {
+                        ProgressView()
+                    } else {
+                        Button("Done") { dismiss() }
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 #Preview {
     ContentView()

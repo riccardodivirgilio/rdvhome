@@ -23,6 +23,7 @@ struct HomeSwitch: Codable, Identifiable {
     var alias: [String]?
     var ordering: Int?
     var zone: String?
+    var room: String?
     var allowOn: Bool?
     var allowHue: Bool?
     var allowSaturation: Bool?
@@ -40,7 +41,7 @@ struct HomeSwitch: Codable, Identifiable {
     var down: Bool?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, kind, icon, alias, ordering, zone
+        case id, name, kind, icon, alias, ordering, zone, room
         case allowOn = "allow_on"
         case allowHue = "allow_hue"
         case allowSaturation = "allow_saturation"

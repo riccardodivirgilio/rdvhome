@@ -14,6 +14,8 @@
 		RDV00009 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = RDV00010 /* Models.swift */; };
 		RDV00011 /* SwitchRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RDV00012 /* SwitchRowView.swift */; };
 		RDV00013 /* ColorPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RDV00014 /* ColorPickerView.swift */; };
+		RDV00033 /* HomeKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = RDV00034 /* HomeKitManager.swift */; };
+		RDV00030 /* HomeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = RDV00031 /* HomeKit.framework */; platformFilters = (ios, ); };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,9 @@
 		RDV00012 /* SwitchRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchRowView.swift; sourceTree = "<group>"; };
 		RDV00014 /* ColorPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerView.swift; sourceTree = "<group>"; };
 		RDV00015 /* RDVHome.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RDVHome.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		RDV00031 /* HomeKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HomeKit.framework; path = System/Library/Frameworks/HomeKit.framework; sourceTree = SDKROOT; };
+		RDV00032 /* RDVHome.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RDVHome.entitlements; sourceTree = "<group>"; };
+		RDV00034 /* HomeKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeKitManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				RDV00030 /* HomeKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,6 +62,8 @@
 				RDV00008 /* APIService.swift */,
 				RDV00010 /* Models.swift */,
 				RDV00006 /* Assets.xcassets */,
+				RDV00032 /* RDVHome.entitlements */,
+				RDV00034 /* HomeKitManager.swift */,
 			);
 			path = RDVHome;
 			sourceTree = "<group>";
@@ -143,6 +151,7 @@
 				RDV00009 /* Models.swift in Sources */,
 				RDV00011 /* SwitchRowView.swift in Sources */,
 				RDV00013 /* ColorPickerView.swift in Sources */,
+				RDV00033 /* HomeKitManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +288,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RDVHome/RDVHome.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -286,6 +296,7 @@
 				DEVELOPMENT_TEAM = 7PQL352JXT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHomeKitUsageDescription = "RDVHome needs access to HomeKit to show and control your lights.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -310,6 +321,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RDVHome/RDVHome.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -317,6 +329,7 @@
 				DEVELOPMENT_TEAM = 7PQL352JXT;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHomeKitUsageDescription = "RDVHome needs access to HomeKit to show and control your lights.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

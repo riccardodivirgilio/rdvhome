@@ -113,7 +113,7 @@ def run_rdv_command_line():
         INSTALL_DEPENDENCIES=False,
         DEBUG=not has_gpio(),  # raspberry is production.
         SWITCHES=[
-            philips_control(id="philips_pool", name="Philips Pool", icon="💡"),
+            philips_control(id="philips_pool", name="Philips Pool", icon="💡", room="Scene"),
 
             light(
                 id="led_kitchen",
@@ -122,6 +122,7 @@ def run_rdv_command_line():
                 philips_id=6,
                 alias=["default"],
                 zone="Kitchen",
+                room="Scene",
             ),
             light(
                 id="spotlight_kitchen",
@@ -131,6 +132,7 @@ def run_rdv_command_line():
                 gpio_relay=24,
                 gpio_status=17,
                 zone="Kitchen",
+                room="Scene",
             ),
             light(
                 id="spotlight_living_room",
@@ -139,6 +141,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=23,
                 gpio_status=2,
+                room="Living",
             ),
             light(
                 id="led_living_room",
@@ -149,8 +152,9 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
                 zone="Living Room",
+                room="Living",
             ),
-            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.67.235"),
+            tv(id="tv", name="TV", icon="📺", alias=[], ipaddress="192.168.67.235", room="Living"),
 
             light(
                 id="led_tv",
@@ -161,6 +165,7 @@ def run_rdv_command_line():
                 gpio_status=4,
                 alias=["default"],
                 zone="Living Room",
+                room="Living",
             ),
             light(
                 id="spotlight_tv",
@@ -169,6 +174,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=15,
                 gpio_status=25,
+                room="Living",
             ),
             nanoleaf(
                 id="nanoleaf_tv",
@@ -176,7 +182,8 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
-                ipaddress = '192.168.67.115'
+                ipaddress = '192.168.67.115',
+                room="Living",
             ),
             #nanoleaf(
             #    id="nanoleaf_exa",
@@ -196,6 +203,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=18,
                 gpio_status=7,
+                room="Scene",
             ),
             light(
                 id="lamp_room",
@@ -204,6 +212,7 @@ def run_rdv_command_line():
                 philips_id=7,
                 alias=["default"],
                 zone="Studio",
+                room="Studio",
             ),
 
             light(
@@ -212,6 +221,7 @@ def run_rdv_command_line():
                 icon="🚽",
                 alias=[],
                 philips_id=5,
+                room="Bathrooms",
             ),
             light(
                 id="led_bedroom",
@@ -222,6 +232,7 @@ def run_rdv_command_line():
                 gpio_status=8,
                 alias=[],
                 zone="Bedroom",
+                room="Bedroom",
             ),
             light(
                 id="spotlight_bedroom",
@@ -230,6 +241,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=21,
                 gpio_status=3,
+                room="Bedroom",
             ),
             light(
                 id="led_bathroom_bedroom",
@@ -238,6 +250,7 @@ def run_rdv_command_line():
                 philips_id=4,
                 alias=[],
                 zone="Bathroom",
+                room="Bathrooms",
             ),
             light(
                 id="spotlight_room",
@@ -246,6 +259,7 @@ def run_rdv_command_line():
                 alias=[],
                 gpio_relay=16,
                 gpio_status=12,
+                room="Studio",
             ),
             light(
                 id="led_room",
@@ -254,6 +268,7 @@ def run_rdv_command_line():
                 philips_id=8,
                 alias=["default"],
                 zone="Studio",
+                room="Studio",
             ),
             light(
                 id="lamp_hipster_room",
@@ -261,7 +276,8 @@ def run_rdv_command_line():
                 icon="💡",
                 philips_id=9,
                 alias=["default"],
-                supports_hue=False
+                supports_hue=False,
+                room="Studio",
             ),
             window(
                 id="window_kitchen",
@@ -269,6 +285,7 @@ def run_rdv_command_line():
                 gpio_power=5,
                 gpio_direction=6,
                 icon="☀️",
+                room="Windows",
             ),
             window(
                 id="window_living_room",
@@ -276,6 +293,7 @@ def run_rdv_command_line():
                 gpio_power=9,
                 gpio_direction=13,
                 icon="☀️",
+                room="Windows",
             ),
             window(
                 id="window_tv",
@@ -283,16 +301,18 @@ def run_rdv_command_line():
                 gpio_power=11,
                 gpio_direction=27,
                 icon="☀️",
+                room="Windows",
             ),
 
 
-            control(id="random", name="Random", icon="❓", effect = 'Color Burst'),
+            control(id="random", name="Random", icon="❓", effect = 'Color Burst', room="Scene"),
             control(
                 id="hloop",
                 name="Random Loop",
                 icon="🤓",
                 timeout=timeout(5, 10),
                 colors=perturbation,
+                room="Scene",
             ),
 
             control(
@@ -301,7 +321,8 @@ def run_rdv_command_line():
                 icon="🌞",
                 colors=to_color({"hue": 0.13, "saturation": 0.6}),
                 automatic_on="default",
-                effect = 'Flames'
+                effect = 'Flames',
+                room="Scene",
             ),
             control(
                 id="disco",
@@ -309,7 +330,8 @@ def run_rdv_command_line():
                 icon="🌐",
                 timeout=timeout(0.3, 1.2),
                 automatic_on=["default", "nanoleaf"],
-                effect = 'Fireworks'
+                effect = 'Fireworks',
+                room="Scene",
             ),
             *(
                 control(
@@ -318,7 +340,8 @@ def run_rdv_command_line():
                     icon = i,
                     automatic_on = ['nanoleaf'],
                     effect = effect,
-                    colors = color
+                    colors = color,
+                    room = 'Scene',
                 )
                 for i, effect, color in (
                     ('🌲', 'Forest', partial(perturbation, color = {'hue': 0.297, 'saturation': 0.6}, factor = 0.15)),
