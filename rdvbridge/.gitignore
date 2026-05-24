@@ -4,9 +4,14 @@ __pycache__/
 .env
 
 # Home Assistant runtime files
+ha_config/.cache/
+ha_config/.storage/
+ha_config/.ha_run.lock
+ha_config/.HA_VERSION
 ha_config/home-assistant_v2.db
 ha_config/home-assistant.log
 ha_config/home-assistant.log.*
 ha_config/deps/
 ha_config/tts/
+ha_config/www/
 ha_config/secrets.yaml

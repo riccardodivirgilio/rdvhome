@@ -1,0 +1,22 @@
+# Motor-driven roller blinds via two GPIO relays each:
+#   gpio_power:     active-LOW (HIGH=off, LOW=motor on)
+#   gpio_direction: HIGH=up,  LOW=down
+# Auto-stops after 13s (up) / 12s (down) via async timer in the integration.
+
+- platform: rdv_window
+  name: Kitchen Window
+  unique_id: window_kitchen
+  gpio_power: 5
+  gpio_direction: 6
+
+- platform: rdv_window
+  name: Living Room Window
+  unique_id: window_living_room
+  gpio_power: 9
+  gpio_direction: 13
+
+- platform: rdv_window
+  name: TV Window
+  unique_id: window_tv
+  gpio_power: 11
+  gpio_direction: 27

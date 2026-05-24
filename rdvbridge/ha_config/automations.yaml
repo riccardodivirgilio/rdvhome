@@ -1,0 +1,100 @@
+# Sync physical wall switch state to Hue entities for hybrid lights.
+# When someone flips the physical switch, the GPIO status pin changes,
+# HA polls it and updates the relay entity. These automations then mirror
+# that state change to the paired Hue light so everything stays in sync.
+
+- id: sync_led_kitchen_hue
+  alias: "Sync Kitchen LED relay → Hue"
+  trigger:
+    - platform: state
+      entity_id: light.kitchen_led_relay
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: light.kitchen_led_relay
+              state: "on"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hue_kitchen_led
+        - conditions:
+            - condition: state
+              entity_id: light.kitchen_led_relay
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: light.hue_kitchen_led
+
+- id: sync_led_living_room_hue
+  alias: "Sync Living Room LED relay → Hue"
+  trigger:
+    - platform: state
+      entity_id: light.living_room_led_relay
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: light.living_room_led_relay
+              state: "on"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hue_living_room_led
+        - conditions:
+            - condition: state
+              entity_id: light.living_room_led_relay
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: light.hue_living_room_led
+
+- id: sync_led_tv_hue
+  alias: "Sync TV LED relay → Hue"
+  trigger:
+    - platform: state
+      entity_id: light.tv_led_relay
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: light.tv_led_relay
+              state: "on"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hue_tv_led
+        - conditions:
+            - condition: state
+              entity_id: light.tv_led_relay
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: light.hue_tv_led
+
+- id: sync_led_bedroom_hue
+  alias: "Sync Bedroom LED relay → Hue"
+  trigger:
+    - platform: state
+      entity_id: light.bedroom_led_relay
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: light.bedroom_led_relay
+              state: "on"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hue_bedroom_led
+        - conditions:
+            - condition: state
+              entity_id: light.bedroom_led_relay
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: light.hue_bedroom_led

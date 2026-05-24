@@ -1,0 +1,10 @@
+{
+  "domain": "rdv_window",
+  "name": "RDV GPIO Window Cover",
+  "version": "1.0.0",
+  "documentation": "https://github.com/rdv/rdvbridge",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "local_push"
+}

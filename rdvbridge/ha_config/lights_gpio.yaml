@@ -1,0 +1,55 @@
+# GPIO-only spotlight lights (pulse-toggle relay)
+# These are the physical spotlights controlled via RPi GPIO relays.
+
+- platform: rdv_gpio
+  name: Kitchen Light
+  unique_id: spotlight_kitchen
+  gpio_relay: 24
+  gpio_status: 17
+
+- platform: rdv_gpio
+  name: Living Room Light
+  unique_id: spotlight_living_room
+  gpio_relay: 23
+  gpio_status: 2
+
+- platform: rdv_gpio
+  name: TV Light
+  unique_id: spotlight_tv
+  gpio_relay: 15
+  gpio_status: 25
+
+- platform: rdv_gpio
+  name: Entrance Light
+  unique_id: spotlight_entrance
+  gpio_relay: 18
+  gpio_status: 7
+
+- platform: rdv_gpio
+  name: Bedroom Light
+  unique_id: spotlight_bedroom
+  gpio_relay: 21
+  gpio_status: 3
+
+- platform: rdv_gpio
+  name: Studio Light
+  unique_id: spotlight_room
+  gpio_relay: 16
+  gpio_status: 12
+
+# These are the GPIO halves of hybrid lights.
+# They are hidden (entity_category: diagnostic would work, but we use template lights
+# as the user-facing entities instead — see lights_template.yaml).
+# Prefixed with "relay_" so they don't clutter the UI.
+
+- platform: rdv_gpio
+  name: Living Room LED Relay
+  unique_id: relay_led_living_room
+  gpio_relay: 20
+  gpio_status: 4
+
+- platform: rdv_gpio
+  name: Bedroom LED Relay
+  unique_id: relay_led_bedroom
+  gpio_relay: 14
+  gpio_status: 8

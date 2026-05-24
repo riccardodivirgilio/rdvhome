@@ -1,0 +1,122 @@
+- light:
+    name: Living Room Led
+    unique_id: led_living_room
+    state: >
+      {{ 'on' if states('light.living_room_led_relay') == 'on'
+              or states('light.living_room_1') == 'on' else 'off' }}
+    level: "{{ state_attr('light.living_room_1', 'brightness') | int(0) }}"
+    hs: "{{ state_attr('light.living_room_1', 'hs_color') or [0, 0] }}"
+    turn_on:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_1
+    turn_off:
+      - action: light.turn_off
+        target:
+          entity_id:
+            - light.living_room_led_relay
+            - light.living_room_1
+    set_hs:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_1
+        data:
+          hs_color: "{{ hs }}"
+          brightness: "{{ (brightness | int) if brightness is defined else omit }}"
+    set_level:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_1
+        data:
+          brightness: "{{ brightness | int }}"
+
+- light:
+    name: TV Led
+    unique_id: led_tv
+    state: >
+      {{ 'on' if states('light.living_room_led_relay') == 'on'
+              or states('light.living_room_2') == 'on' else 'off' }}
+    level: "{{ state_attr('light.living_room_2', 'brightness') | int(0) }}"
+    hs: "{{ state_attr('light.living_room_2', 'hs_color') or [0, 0] }}"
+    turn_on:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_2
+    turn_off:
+      - action: light.turn_off
+        target:
+          entity_id:
+            - light.living_room_led_relay
+            - light.living_room_2
+    set_hs:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_2
+        data:
+          hs_color: "{{ hs }}"
+          brightness: "{{ (brightness | int) if brightness is defined else omit }}"
+    set_level:
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.living_room_2
+        data:
+          brightness: "{{ brightness | int }}"
+
+- light:
+    name: Bedroom Led
+    unique_id: led_bedroom
+    state: >
+      {{ 'on' if states('light.bedroom_led_relay') == 'on'
+              or states('light.bedroom') == 'on' else 'off' }}
+    level: "{{ state_attr('light.bedroom', 'brightness') | int(0) }}"
+    hs: "{{ state_attr('light.bedroom', 'hs_color') or [0, 0] }}"
+    turn_on:
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom
+    turn_off:
+      - action: light.turn_off
+        target:
+          entity_id:
+            - light.bedroom_led_relay
+            - light.bedroom
+    set_hs:
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom
+        data:
+          hs_color: "{{ hs }}"
+          brightness: "{{ (brightness | int) if brightness is defined else omit }}"
+    set_level:
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom_led_relay
+      - action: light.turn_on
+        target:
+          entity_id: light.bedroom
+        data:
+          brightness: "{{ brightness | int }}"

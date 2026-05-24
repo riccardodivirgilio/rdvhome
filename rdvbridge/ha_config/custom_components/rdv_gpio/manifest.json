@@ -1,0 +1,10 @@
+{
+  "domain": "rdv_gpio",
+  "name": "RDV GPIO Lights",
+  "version": "1.0.0",
+  "documentation": "https://github.com/rdv/rdvbridge",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "local_polling"
+}

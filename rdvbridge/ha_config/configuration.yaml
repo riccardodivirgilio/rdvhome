@@ -1,0 +1,27 @@
+homeassistant:
+  name: RDV Home
+  latitude: !secret latitude
+  longitude: !secret longitude
+  unit_system: metric
+  time_zone: Europe/Rome
+  country: IT
+
+default_config:
+
+http:
+  server_port: 8123
+
+light: !include lights_gpio.yaml
+
+template: !include lights_template.yaml
+
+cover: !include covers_windows.yaml
+
+automation: !include automations.yaml
+
+panel_custom:
+  - name: rdvhome-panel
+    sidebar_title: RDV Home
+    sidebar_icon: mdi:floor-plan
+    url_path: rdvhome
+    js_url: /local/rdvhome.js
