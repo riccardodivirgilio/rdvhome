@@ -17,6 +17,18 @@ class APIService: ObservableObject {
     @Published var errorMessage: String?
 
     private var switchesById: [String: HomeSwitch] = [:]
+
+    // All switches (including non-visible controls) mapped name → room.
+    // Used by HomeKitManager to assign accessories to rooms.
+    var roomAssignment: [String: String] {
+        var result: [String: String] = [:]
+        for sw in switchesById.values {
+            if let name = sw.name, let room = sw.room {
+                result[name] = room
+            }
+        }
+        return result
+    }
     private var webSocketTask: URLSessionWebSocketTask?
     private var reconnectAttempts = 0
     private let maxReconnectAttempts = 3
@@ -226,6 +238,9 @@ class APIService: ObservableObject {
         if let ordering = json["ordering"] as? Int { switchToUpdate.ordering = ordering }
         if json["zone"] != nil {
             switchToUpdate.zone = json["zone"] as? String
+        }
+        if json["room"] != nil {
+            switchToUpdate.room = json["room"] as? String
         }
         if let allowOn = json["allow_on"] as? Bool { switchToUpdate.allowOn = allowOn }
         if let allowHue = json["allow_hue"] as? Bool { switchToUpdate.allowHue = allowHue }

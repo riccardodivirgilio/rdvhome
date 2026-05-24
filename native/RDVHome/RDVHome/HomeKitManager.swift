@@ -26,15 +26,7 @@ class HomeKitManager: NSObject, ObservableObject {
             return
         }
 
-        // Build name→room map from API switches
-        let switches = APIService.shared.switches
-        var roomAssignment: [String: String] = [:]
-        for sw in switches {
-            if let name = sw.name, let room = sw.room {
-                roomAssignment[name] = room
-            }
-        }
-
+        let roomAssignment = APIService.shared.roomAssignment
         guard !roomAssignment.isEmpty else {
             syncLog = ["No switches loaded yet — refresh and try again."]
             return
