@@ -14,22 +14,20 @@ from rdvhome.utils import json
 
 async def send_commands(tv_addr, keys):
     try:
-        websocket = await websockets.connect(
+        async with websockets.connect(
             "ws://%s:%d/api/v2/channels/samsung.remote.control" % (tv_addr, 8001)
-        )
-        async for message in websocket:
-            parsed = json.loads(message)
-            if parsed["event"] == "ms.channel.connect":
-                for key in iterate(keys):
-                    cmd = (
-                        '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"%s","Option":"false","TypeOfRemote":"SendRemoteKey"}}'
-                        % key
-                    )
-                    await websocket.send(cmd)
-                break
+        ) as websocket:
+            async for message in websocket:
+                parsed = json.loads(message)
+                if parsed["event"] == "ms.channel.connect":
+                    for key in iterate(keys):
+                        cmd = (
+                            '{"method":"ms.remote.control","params":{"Cmd":"Click","DataOfCmd":"%s","Option":"false","TypeOfRemote":"SendRemoteKey"}}'
+                            % key
+                        )
+                        await websocket.send(cmd)
+                    break
 
-    except asyncio.CancelledError:
-        await websocket.close()
     except asyncio.TimeoutError:
         pass
     except Exception as e:
@@ -53,7 +51,7 @@ class SamsungSmartTV(Switch):
     async def _check_on(self, timeout=1):
         try:
             async with aiohttp.ClientSession(
-                read_timeout=timeout, conn_timeout=timeout
+                timeout=aiohttp.ClientTimeout(total=timeout, connect=timeout)
             ) as session:
                 async with session.get(
                     "http://%s:8001/api/v2/" % self.ipaddress

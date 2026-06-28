@@ -178,21 +178,22 @@ def run_rdv_command_line():
             ),
             nanoleaf(
                 id="nanoleaf_tv",
-                name="TV Light Panel",
+                name="TV Desk Light",
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
                 ipaddress = '192.168.67.115',
                 room="Living",
             ),
-            #nanoleaf(
-            #    id="nanoleaf_exa",
-            #    name="TV Light Panel new",
-            #    icon="📺",
-            #    alias=["default", 'nanoleaf'],
-            #    access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
-            #    ipaddress = '192.168.67.144'
-            #),
+            nanoleaf(
+                id="nanoleaf_exa",
+                name="TV Mirror Light",
+                icon="📺",
+                alias=["default", 'nanoleaf'],
+                access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
+                ipaddress = '192.168.67.22',
+                room="Living",
+            ),
 
 
 
