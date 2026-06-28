@@ -2,10 +2,13 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import aiohttp
+
 from rpy.functions.datastructures import data
 
 from rdvhome.switches.base import capabilities
 from rdvhome.switches.philips import RemoteBase, debounce, remove_none
+from rdvhome.utils import json
 from rdvhome.utils.colors import (
     HSB, color_to_homekit, color_to_nanoleaf, color_to_philips, color_to_homekit,
     homekit_to_color, philips_to_color, to_color
@@ -14,6 +17,10 @@ from rdvhome.utils.colors import (
 
 class NanoleafControl(RemoteBase):
 
+    def __init__(self, id, effects=None, **opts):
+        self.effects = data(effects or {})
+        super().__init__(id, **opts)
+
     @property
     def default_capabilities(self):
         return capabilities(
@@ -21,16 +28,36 @@ class NanoleafControl(RemoteBase):
             hue=True,
             saturation=True,
             brightness=True,
+            effects=self.effects,
         )
 
     def get_api_url(self, path="/"):
         return "http://%s:16021/api/v1/%s%s" % (self.ipaddress, self.access_token, path)
 
+    async def api_request(self, path="", payload=None):
+        # Nanoleaf answers writes with an empty 204 body (and an empty 400 for
+        # an unknown effect), so parse the response only when there is one.
+        url = self.get_api_url(path)
+
+        async with aiohttp.ClientSession() as session:
+            method = session.put(url, json=payload) if payload else session.get(url)
+            async with method as response:
+                text = await response.text()
+                return json.loads(text) if text.strip() else data()
+
     @debounce(1)
     async def get_nanoleaf_status(self):
         state = await self.api_request('/state')
+        effect = await self.api_request('/effects/select')
 
-        return data(on= state.on.value,allow_on= True, hue= state.hue.value / state.hue.max, brightness= state.brightness.value / state.brightness.max, saturation= state.sat.value / state.sat.max)
+        return data(
+            on=state.on.value,
+            allow_on=True,
+            hue=state.hue.value / state.hue.max,
+            brightness=state.brightness.value / state.brightness.max,
+            saturation=state.sat.value / state.sat.max,
+            effect=effect if effect in self.effects else None,
+        )
 
     async def status(self):
         defaults = await self.get_nanoleaf_status()
@@ -51,8 +78,13 @@ class NanoleafControl(RemoteBase):
         if effect:
 
             if isinstance(effect, str):
+                # Scenes broadcast the same effect to every nanoleaf, but each
+                # device exposes a different set, so ignore one we don't have.
+                if self.effects and effect not in self.effects:
+                    return await self.send()
+
                 await self.api_request('/effects', payload = {'select': effect})
-                return await self.send(color = color)
+                return await self.send(on = True, color = color, effect = effect)
 
             else:
                 await self.api_request('/effects', payload = {'write': {
@@ -76,13 +108,15 @@ class NanoleafControl(RemoteBase):
                     },
                     "loop": True
                 }})
-                return await self.send(color = effect)
+                return await self.send(effect = None, on = True, color = effect)
 
         defaults = dict(self._get_state_changes(on, color))
 
         await self.api_request('/state', payload = defaults)
 
-        return await self.send(**remove_none(on=on, color = color))
+        # Setting colour/power leaves the device in solid mode: clear any
+        # previously selected effect so the UI stops highlighting it.
+        return await self.send(effect = None, **remove_none(on=on, color = color))
 
     async def is_on(self):
         return (await self.get_nanoleaf_status()).on

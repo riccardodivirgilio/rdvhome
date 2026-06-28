@@ -118,7 +118,16 @@ class ControlSwitch(Switch):
         else:
             return self.timeout
 
+    def resolve_effect(self, switch):
+        # A scene can map its effect per device (e.g. {'nanoleaf_tv': 'Fireworks',
+        # 'nanoleaf_exa': 'Beatdrop'}) since each nanoleaf exposes a different set.
+        if isinstance(self.effect, dict):
+            return self.effect.get(switch.id) or self.effect.get('default')
+        return self.effect
+
     def create_color_generator(self, switch, i, repetitions = 1):
+
+        effect = self.resolve_effect(switch)
 
         if repetitions > 1:
             yield from zip(*(
@@ -127,16 +136,16 @@ class ControlSwitch(Switch):
             ))
         elif callable(self.colors):
             c = to_color(self.colors(switch = switch, i = i))
-            yield {'color': c, 'effect': self.effect or c}
+            yield {'color': c, 'effect': effect or c}
             for j in itertools.count():
                 c = to_color(self.colors(switch = switch, i = i + j + 1, color = c))
-                yield {'color': c, 'effect': self.effect or c}
+                yield {'color': c, 'effect': effect or c}
         elif is_iterable(self.colors):
             for j in itertools.count():
-                c = self.colors[(i + j) % len(self.colors)] 
-                yield {'color': c, 'effect': self.effect or c}
+                c = self.colors[(i + j) % len(self.colors)]
+                yield {'color': c, 'effect': effect or c}
         else:
             for j in itertools.count():
-                yield {'color': self.colors or random_color(), 'effect': self.effect or self.colors or random_color()}
+                yield {'color': self.colors or random_color(), 'effect': effect or self.colors or random_color()}
 
 

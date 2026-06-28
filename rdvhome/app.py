@@ -102,10 +102,14 @@ def validate(
     saturation=None,
     brightness=None,
     mode=None,
+    effect=None,
     **extra,
 ):
     if number:
         yield "number", number
+
+    if effect:
+        yield "effect", effect
 
     if color:
         try:

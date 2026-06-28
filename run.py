@@ -44,6 +44,12 @@ def timeout(min, max):
     return lambda switch, i: random.random() * (max - min) + min
 
 
+def effects(*names):
+    # Build a {key: label} map of selectable nanoleaf effects. Keys must match
+    # the effect names installed on the device exactly.
+    return {name: name for name in names}
+
+
 def run_rdv_command_line():
 
     control = lambda **opts: dict(
@@ -183,6 +189,12 @@ def run_rdv_command_line():
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
                 ipaddress = '192.168.67.115',
+                effects=effects(
+                    'Color Burst', 'Fireworks', 'Flames', 'Forest', 'Inner Peace',
+                    'Meteor Shower', 'Nemo', 'Northern Lights', 'Paint Splatter',
+                    'Pulse Pop Beats', 'Rhythmic Northern Lights', 'Ripple',
+                    'Romantic', 'Snowfall', 'Sound Bar', 'Streaking Notes',
+                ),
                 room="Living",
             ),
             nanoleaf(
@@ -192,6 +204,12 @@ def run_rdv_command_line():
                 alias=["default", 'nanoleaf'],
                 access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
                 ipaddress = '192.168.67.22',
+                effects=effects(
+                    'Beatdrop', 'Blaze', 'Cocoa Beach', 'Cotton Candy', 'Date Night',
+                    'Hip Hop', 'Hot Sauce', 'Jungle', 'Lightscape', 'Morning Sky',
+                    'Northern Lights', 'Pop Rocks', 'Prism', 'Starlight', 'Sundown',
+                     'Waterfall',
+                ),
                 room="Living",
             ),
 
@@ -322,7 +340,7 @@ def run_rdv_command_line():
                 icon="🌞",
                 colors=to_color({"hue": 0.13, "saturation": 0.6}),
                 automatic_on="default",
-                effect = 'Flames',
+                effect = {'nanoleaf_tv': 'Flames', 'nanoleaf_exa': 'Sundown'},
                 room="Scene",
             ),
             control(
@@ -331,33 +349,33 @@ def run_rdv_command_line():
                 icon="🌐",
                 timeout=timeout(0.3, 1.2),
                 automatic_on=["default", "nanoleaf"],
-                effect = 'Fireworks',
+                effect = {'nanoleaf_tv': 'Fireworks', 'nanoleaf_exa': 'Beatdrop'},
                 room="Scene",
             ),
             *(
                 control(
-                    id = 'nanoleaf_%s' % (effect.lower().replace(' ', '_')),
-                    name = effect,
+                    id = 'nanoleaf_%s' % (name.lower().replace(' ', '_')),
+                    name = name,
                     icon = i,
                     automatic_on = ['nanoleaf'],
                     effect = effect,
                     colors = color,
                     room = 'Scene',
                 )
-                for i, effect, color in (
-                    ('🌲', 'Forest', partial(perturbation, color = {'hue': 0.297, 'saturation': 0.6}, factor = 0.15)),
-                    ('🎉', 'Inner Peace', None),
-                    ('🎉', 'Meteor Shower', None),
-                    ('🐟', 'Nemo', partial(perturbation, color = {'hue': 0.080, 'saturation': 0.90})),
-                    ('🎉', 'Northern Lights', None),
-                    ('🎉', 'Paint Splatter', None),
-                    ('🎉', 'Pulse Pop Beats', None),
-                    ('🎉', 'Rhythmic Northern Lights', None),
-                    ('🎉', 'Ripple', None),
-                    ('❤️', 'Romantic', partial(perturbation, color = {'hue': 0.8446, 'saturation': 1}, factor = 0.15)),
-                    ('⛄', 'Snowfall', partial(perturbation, color = {'hue': 0.5952, 'saturation': 0.50})),
-                    ('🎉', 'Sound Bar', None),
-                    ('🎉', 'Streaking Notes', None),
+                for i, name, effect, color in (
+                    ('🌲', 'Forest', {'nanoleaf_tv': 'Forest', 'nanoleaf_exa': 'Jungle'}, partial(perturbation, color = {'hue': 0.297, 'saturation': 0.6}, factor = 0.15)),
+                    ('🎉', 'Inner Peace', {'nanoleaf_tv': 'Inner Peace', 'nanoleaf_exa': 'Cotton Candy'}, None),
+                    ('🎉', 'Meteor Shower', {'nanoleaf_tv': 'Meteor Shower', 'nanoleaf_exa': 'Waterfall'}, None),
+                    ('🐟', 'Nemo', {'nanoleaf_tv': 'Nemo', 'nanoleaf_exa': 'Sundown'}, partial(perturbation, color = {'hue': 0.080, 'saturation': 0.90})),
+                    ('🎉', 'Northern Lights', {'nanoleaf_tv': 'Northern Lights', 'nanoleaf_exa': 'Northern Lights'}, None),
+                    ('🎉', 'Paint Splatter', {'nanoleaf_tv': 'Paint Splatter', 'nanoleaf_exa': 'Prism'}, None),
+                    ('🎉', 'Pulse Pop Beats', {'nanoleaf_tv': 'Pulse Pop Beats', 'nanoleaf_exa': 'Beatdrop'}, None),
+                    ('🎉', 'Rhythmic Northern Lights', {'nanoleaf_tv': 'Rhythmic Northern Lights', 'nanoleaf_exa': 'Hip Hop'}, None),
+                    ('🎉', 'Ripple', {'nanoleaf_tv': 'Ripple', 'nanoleaf_exa': 'Cocoa Beach'}, None),
+                    ('❤️', 'Romantic', {'nanoleaf_tv': 'Romantic', 'nanoleaf_exa': 'Date Night'}, partial(perturbation, color = {'hue': 0.8446, 'saturation': 1}, factor = 0.15)),
+                    ('⛄', 'Snowfall', {'nanoleaf_tv': 'Snowfall', 'nanoleaf_exa': 'Morning Sky'}, partial(perturbation, color = {'hue': 0.5952, 'saturation': 0.50})),
+                    ('🎉', 'Sound Bar', {'nanoleaf_tv': 'Sound Bar', 'nanoleaf_exa': 'Pop Rocks'}, None),
+                    ('🎉', 'Streaking Notes', {'nanoleaf_tv': 'Streaking Notes', 'nanoleaf_exa': 'Lightscape'}, None),
                 )
             ),
         ],

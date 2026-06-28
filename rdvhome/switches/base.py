@@ -18,6 +18,7 @@ def capabilities(
     brightness=False,
     direction=False,
     visibility=True,
+    effects=None,
 ):
     return data(
         allow_on=on,
@@ -26,6 +27,7 @@ def capabilities(
         allow_brightness=brightness,
         allow_direction=direction,
         allow_visibility=visibility,
+        effects=data(effects or {}),
     )
 
 

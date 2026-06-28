@@ -26,6 +26,11 @@
               'linear-gradient(to right, white 0%, '+hsl_to_css({hue: item.hue, saturation: 1, lightness:1})+' 100%)'}">
               <slider :item="item" name='saturation' :onchange="toggle_hsb"/>
             </div>
+            <div v-if="item.on && item.advanced_options && has_effects(item)" class="line effects">
+              <button v-for="(label, key) in item.effects" :key="key" type="button"
+                class="effect" :class="{active: item.effect == key}"
+                @click.stop.prevent="toggle_effect(item, key)">{{ label }}</button>
+            </div>
           </a>
         </div>
       </div>
@@ -174,6 +179,12 @@ export default {
       this.send_action(item.id, {
         mode: this.format_direction_value(item[direction], direction),
       })
+    },
+    has_effects: function (item) {
+      return item.effects && Object.keys(item.effects).length > 0
+    },
+    toggle_effect: function (item, key) {
+      this.send_action(item.id, {effect: key})
     },
     home_toggle: function (item) {
       this.toggle(item)
@@ -438,6 +449,27 @@ html, body,
     hsl(300, 100%, 50%)  83.3333%,
     hsl(360, 100%, 50%) 100.0000%
   );
+}
+
+.list-item > .line.effects {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px var(--item-padding);
+}
+.list-item > .line.effects > .effect {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  font-size: 0.8em;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: transparent;
+  color: rgb(var(--primary-color));
+  cursor: pointer;
+  transition: background-color 200ms linear, color 200ms linear;
+}
+.list-item > .line.effects > .effect.active {
+  background: rgb(var(--primary-color));
+  color: rgb(var(--background-color));
 }
 
 .panel-loading {
