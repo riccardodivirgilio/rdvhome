@@ -19,7 +19,7 @@ revert to `1.1.1.1`** or NPM upstreams (which resolve `internal.impazzito.it`) b
 
 `nginx-proxy-manager`, `jellyfin`, `radarr`, `sonarr`, `prowlarr`, `bazarr`, `qbittorrent`,
 `filebrowser`, `flaresolverr`, `recyclarr`, `unifi-os-server` (custom app, see below and [[LAN]]),
-`nitter` (custom app, see below).
+`nitter` and `kittygram` (custom apps, see below).
 Deleted: `unifi-controller` (legacy Network app, replaced by UOS 2026-09-14) and `wg-easy`
 (WireGuard).
 
@@ -41,7 +41,7 @@ rows: only the API generates the nginx conf and requests the certificate. Certs 
 **DNS-01 via DigitalOcean**, one per host; copy `meta` from an existing `certificate` row for a
 new one. Each service is a
 proxy host `<svc>.impazzito.it` with a **UniFi static-dns A record → `10.10.6.15`**
-(nas, nginx, files, jellyfin, radarr, sonarr, prowlarr, bazarr, qbittorrent, x).
+(nas, nginx, files, jellyfin, radarr, sonarr, prowlarr, bazarr, qbittorrent, x, ig).
 
 NPM forwards to the host via upstream **`internal.impazzito.it:<port>`** — **not** `localhost`,
 because NPM is containerized (localhost = the container, not the NAS host). So `internal` must
@@ -76,6 +76,27 @@ this runs upstream **`zedeus/nitter`**, pinned to image tag `8142bab1…` (2026-
   token.
 - DNS: UniFi local record `x.impazzito.it` → `10.10.6.15`; public DigitalOcean A record `x` →
   WAN `195.32.7.119` (id `1832246893`, redundant with the `*` wildcard).
+
+## Kittygram — `ig.impazzito.it` (custom app)
+
+Nitter-style Instagram front-end ([codeberg.org/irelephant/kittygram](https://codeberg.org/irelephant/kittygram)).
+Bibliogram is dead and Proxigram is abandoned; Kittygram is the maintained one (v1.2.0, Jul 2026).
+Custom app `kittygram`: image `codeberg.org/irelephant/kittygram`, pinned by digest `sha256:ce7fef13…`
+(built by its Codeberg CI from `main`), plus `valkey/valkey:8-alpine`, which must be named `redis`.
+Host port **`30081`** → container `80`. Public (no NPM access list), NPM proxy host id 18.
+
+- Configured entirely by env vars (`lapis serve docker` profile): `SECRET` (random),
+  `ENABLE_ATOM=true`, `BASE_ATOM_PATH=https://ig.impazzito.it/`. No volumes; its SQLite (API tokens,
+  id cache) lives in the image and resets on redeploy, which is harmless.
+- **No Instagram account needed**; the home IP works anonymously for profiles, posts and reels. Stories
+  aren't supported. Optional session cookies (`web_session` in `config.lua`) would add search and
+  comments.
+- Limit: Instagram rate-limits by IP over an 11-minute window; Kittygram budgets 194 requests per
+  window and pauses when limited. Heavy public use would exhaust it.
+- Profile `/<user>`, post `/p/<code>`, reel `/reel/<code>`, feed `/<user>/atom.xml`.
+- DNS: UniFi local record `ig.impazzito.it` → `10.10.6.15`; public DigitalOcean A record `ig` →
+  `195.32.7.119` (id `1832247763`).
+- Upgrade: pull `:latest`, take its digest, put it in the app's compose, redeploy.
 
 ## Controller — UniFi OS Server (custom app)
 
