@@ -4,29 +4,23 @@ Home UniFi network. Single site, so network names drop the site (`Server`, not `
 
 ## Controller
 
-**Legacy self-hosted UniFi Network Server v10.6** — Docker `ix-unifi-controller-unifi-1`
-(image `goofball222/unifi`) on the NAS `rdvnas`. UI host port `30072`, inform `8080`,
-Mongo `127.0.0.1:27117` (v8, inside the container). This build has **no API keys / Control
-Plane** (UniFi-OS-only). Migrating to **UniFi OS Server** later — see [[NAS]] and note it needs
-a dedicated x86-64 Linux host/VM, not a Docker app; migrate by restoring a `.unf` backup.
-
-Reach it only via SSH tunnel to the NAS:
-
-    ssh -fN -L 18443:127.0.0.1:30072 truenas_admin@10.10.6.15   # then https://127.0.0.1:18443
+**UniFi OS Server 5.1.42 + Network 10.6.101** — TrueNAS custom app `unifi-os-server` on the NAS
+`rdvnas` (details in [[NAS]]). UI **`https://10.10.6.15:11443`** (self-signed cert), inform
+`http://10.10.6.15:8080/inform`. Migrated 2026-09-14 from the legacy Docker Network app by
+restoring a `.unf` in the UOS setup wizard; the legacy app is deleted. Owner is a UI (cloud)
+account. UniFi OS has API keys (Integrations / Control Plane), unlike the legacy build.
 
 ## API access
 
-No API keys, so it's **cookie login** as a dedicated local admin `claude-automation` (created
-directly in Mongo — `invite-admin` needs SMTP, which fails `SmtpUnknownFailed`, leaving invites
-unverified). Creds in `~/.unifi.env` (`UNIFI_RDVHOME*`); helper `~/.unifi-rdv.sh METHOD path [json]`
-auto-opens the tunnel, logs in, sends `X-Csrf-Token`. Endpoints are classic `/api/s/default/...`
-(self-hosted, no `/proxy/network` prefix); DNS records via `/v2/api/site/default/static-dns`.
+UniFi OS paths: login `POST /api/auth/login`, then Network endpoints get a **`/proxy/network`**
+prefix (`/proxy/network/api/s/default/...`, `/proxy/network/v2/api/site/default/static-dns`).
+Send `X-Csrf-Token` on writes.
 
-To make an admin in Mongo (no shell client in the container):
-
-    docker run --rm --network container:ix-unifi-controller-unifi-1 mongo:8.0 \
-      mongosh mongodb://127.0.0.1:27117/ace --eval '...'
-    # ace.admin {name,email,x_shadow=openssl passwd -6} + ace.privilege {admin_id,site_id,role:"admin"}
+**Broken since the migration:** the local admin `claude-automation` (creds in `~/.unifi.env`
+`UNIFI_RDVHOME*`) doesn't exist in UniFi OS — login returns 403
+`AUTHENTICATION_FAILED_INVALID_CREDENTIALS`. The helper `~/.unifi-rdv.sh METHOD path [json]`
+still tunnels to the legacy port `30072` and uses classic paths, so it needs rewriting. The
+simplest fix is a UniFi OS API key (header `X-API-KEY`, no login or CSRF needed).
 
 ## Conventions
 

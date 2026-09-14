@@ -18,8 +18,10 @@ revert to `1.1.1.1`** or NPM upstreams (which resolve `internal.impazzito.it`) b
 ## Apps (TrueNAS, Docker)
 
 `nginx-proxy-manager`, `jellyfin`, `radarr`, `sonarr`, `prowlarr`, `bazarr`, `qbittorrent`,
-`filebrowser`, `flaresolverr`, `recyclarr`, `unifi-controller` (see [[LAN]]). `wg-easy` (WireGuard)
-was deleted.
+`filebrowser`, `flaresolverr`, `recyclarr`, `unifi-os-server` (custom app, see below and [[LAN]]),
+`nitter` (custom app, see below).
+Deleted: `unifi-controller` (legacy Network app, replaced by UOS 2026-09-14) and `wg-easy`
+(WireGuard).
 
 Manage apps through the **middleware**, not `docker restart`:
 
@@ -29,9 +31,17 @@ Manage apps through the **middleware**, not `docker restart`:
 
 ## Reverse proxy (nginx-proxy-manager)
 
-`ix-nginx-proxy-manager-npm-1`, publishes host `:80`/`:443` (admin UI `:30020`). Each service is a
+`ix-nginx-proxy-manager-npm-1`, publishes host `:80`/`:443` (admin UI `:30020`, also
+`https://nginx.impazzito.it`). Single admin user **`nginx@nginx.com`**; creds in `~/.npm.env`
+(`NPM_URL`/`NPM_EMAIL`/`NPM_PASSWORD`) for the REST API (`POST /api/tokens` → Bearer JWT, then
+`/api/nginx/proxy-hosts`). Data is SQLite `/mnt/bolt/apps/nginx-proxy-manager/data/database.sqlite`
+(host has `sqlite3`); a forgotten password can be reset by writing a bcrypt hash (made with the
+container's `/app/node_modules/bcrypt`) into `auth.secret`. Create hosts via the API, not raw DB
+rows: only the API generates the nginx conf and requests the certificate. Certs are Let's Encrypt
+**DNS-01 via DigitalOcean**, one per host; copy `meta` from an existing `certificate` row for a
+new one. Each service is a
 proxy host `<svc>.impazzito.it` with a **UniFi static-dns A record → `10.10.6.15`**
-(nas, nginx, files, jellyfin, radarr, sonarr, prowlarr, bazarr, qbittorrent).
+(nas, nginx, files, jellyfin, radarr, sonarr, prowlarr, bazarr, qbittorrent, x).
 
 NPM forwards to the host via upstream **`internal.impazzito.it:<port>`** — **not** `localhost`,
 because NPM is containerized (localhost = the container, not the NAS host). So `internal` must
@@ -46,17 +56,52 @@ Let's Encrypt cert) but the request **hangs** (bad upstream), *not* a cert error
 Service upstream ports live in each `/data/nginx/proxy_host/<n>.conf` inside the NPM container
 (e.g. jellyfin `internal.impazzito.it:30013`).
 
-## Controller
+## Nitter — `x.impazzito.it` (custom app)
 
-Runs the UniFi Network app (see [[LAN]]). Mongo is v8 at `127.0.0.1:27117` inside the container
-with **no shell client** — use an ephemeral one sharing the netns:
+Self-hosted X/Twitter front-end, the same code as xcancel.com. The xcancel fork is archived, so
+this runs upstream **`zedeus/nitter`**, pinned to image tag `8142bab1…` (2026-08-24), plus
+`redis:7-alpine`. Custom app `nitter`, host port **`30080`** → container `8080`.
 
-    docker run --rm --network container:ix-unifi-controller-unifi-1 mongo:8.0 mongosh mongodb://127.0.0.1:27117/ace ...
+- Files in `/mnt/bolt/apps/nitter/`: `nitter.conf` (hostname `x.impazzito.it`, `https = true`
+  because NPM terminates TLS, `redisHost = "nitter-redis"`, random `hmacKey`), `sessions.jsonl`,
+  `redis/`.
+- **Needs X account sessions** — X killed guest access. `sessions.jsonl` holds one JSON object
+  per line: `{"kind":"cookie","auth_token":"…","ct0":"…","username":"…"}`, taken from a logged-in
+  X browser session or generated with upstream `tools/create_session_browser.py`. Only
+  `auth_token` is really needed: X returns a fresh `ct0` in `Set-Cookie` for
+  `curl -b "auth_token=…" https://x.com/home` (with a browser User-Agent). Redeploy the app after
+  editing the file (`midclt call -j app.redeploy nitter`). The log should say `successfully added
+  N valid account sessions`; with none, pages fail with 429 "Instance has no auth tokens". Use a
+  throwaway account, since X may suspend accounts used this way. Logging out of X invalidates the
+  token.
+- DNS: UniFi local record `x.impazzito.it` → `10.10.6.15`; public DigitalOcean A record `x` →
+  WAN `195.32.7.119` (id `1832246893`, redundant with the `*` wildcard).
 
-## Migration to UniFi OS Server (later)
+## Controller — UniFi OS Server (custom app)
 
-UOS Server can't run as a TrueNAS app — it needs a dedicated Debian/Ubuntu x86-64 host (~4 GB RAM),
-either a **TrueNAS VM** or a mini-PC. Then: install UOS Server (UI at `:11443`) → install Network
-app → restore a `.unf` backup from the current controller → `set-inform` the UXG + AP to the new
-host → decommission the Docker container. Give the new host `10.10.6.15` (or update inform +
-`internal.impazzito.it` + NPM DNS to its IP).
+Migrated 2026-09-14. There's no official TrueNAS app, but the community image
+[`ghcr.io/lemker/unifi-os-server`](https://github.com/lemker/unifi-os-server) repackages the official
+UOS Server for Docker. Installed as TrueNAS **custom app `unifi-os-server`** (compose YAML via
+`app.create` `custom_compose_config_string`), image pinned to **`v1.7.0`** (UOS 5.1.42). Container
+`ix-unifi-os-server-unifi-os-server-1`; it runs systemd, so it needs `cgroup: host`, the
+`/sys/fs/cgroup` rw mount, `NET_ADMIN`/`NET_RAW` and the tmpfs mounts (no `privileged`).
+
+- Env `UOS_SYSTEM_IP=10.10.6.15`. Data under `/mnt/bolt/apps/unifi-os-server/*` (root-owned).
+- Ports: UI **`https://10.10.6.15:11443`** (self-signed cert, HTTPS only), inform `8080`,
+  STUN `3478/udp`, discovery `10003/udp`, speedtest `6789`, syslog `5514/udp`.
+- Same IP + inform port as the old controller, so the UXG and AP re-informed on their own — no
+  `set-inform` needed.
+- Owner is a **UI account** (cloud sign-in). The setup's "Restore From Backup" lists cloud backups
+  of the account's **other consoles (Magliana, Tiberio)** — never pick those; use *upload*.
+- Restoring a `.unf` from a newer Network version works: setup auto-installs the matching Network
+  version first (bundled 10.5.67 → 10.6.101).
+- Mongo is **v3.6** (wire version 6) at `127.0.0.1:27117`, db `ace` — `mongosh`/`mongo:8.0`
+  refuse it; use the legacy shell:
+
+      docker run --rm --network container:ix-unifi-os-server-unifi-os-server-1 mongo:4.4 mongo mongodb://127.0.0.1:27117/ace ...
+
+- Upgrades: bump the image tag in the app's compose and redeploy.
+
+Backups: `.unf` files in `~/Private/unifi-backups/` on the laptop (pre-migration
+`10.6.101_20260914_2303.unf`). The legacy controller app and its data were deleted after the
+migration, so these files are the only way back.
