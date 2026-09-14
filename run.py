@@ -61,7 +61,7 @@ def run_rdv_command_line():
         yield "class_path", "rdvhome.switches.philips.PhilipsPoolControl"
 
         yield "access_token", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-        yield "ipaddress", "192.168.67.179"
+        yield "ipaddress", "philips.impazzito.it"
 
         yield from opts.items()
 
@@ -188,7 +188,7 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
-                ipaddress = '192.168.67.115',
+                ipaddress = 'nanoleaf-pc.impazzito.it',
                 effects=effects(
                     'Color Burst', 'Fireworks', 'Flames', 'Forest', 'Inner Peace',
                     'Meteor Shower', 'Nemo', 'Northern Lights', 'Paint Splatter',
@@ -202,8 +202,8 @@ def run_rdv_command_line():
                 name="TV Mirror Light",
                 icon="📺",
                 alias=["default", 'nanoleaf'],
-                access_token = 'qcAQbeSJDmRXpuNj3qUtnLP2X7ytariY',
-                ipaddress = '192.168.67.22',
+                access_token = 'XIp9FxkONwwxGs0jqWGeNrrhOIB76Rtb',
+                ipaddress = 'nanoleaf-exa.impazzito.it',
                 effects=effects(
                     'Beatdrop', 'Blaze', 'Cocoa Beach', 'Cotton Candy', 'Date Night',
                     'Hip Hop', 'Hot Sauce', 'Jungle', 'Lightscape', 'Morning Sky',
