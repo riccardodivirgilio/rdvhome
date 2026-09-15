@@ -16,8 +16,14 @@ unreachable device IP — check the domains resolve and the device is up).
 
 hostname `rdvhome`, MAC `b8:27:eb:02:d4:4c`, **DHCP** (NetworkManager `auto`). On **IoT**
 `10.10.5.10`, **`lights.impazzito.it`**. SSH `pi@lights.impazzito.it` (key auth). Runs from
-`/home/pi/rdvhome`. Was `rdvhome.local` (mDNS) — now on IoT, mDNS doesn't cross VLANs, so the app
-and clients use the DNS name. It's on the dumb switch on UXG port 2 (see [[LAN]]).
+`/home/pi/rdvhome`. Also **`rdvhome.local`** (mDNS): it still works from other VLANs because the
+UXG reflects mDNS (see [[FIREWALL]]). The Raycast extension and the native app use it. It's on the
+dumb switch on UXG port 2 (see [[LAN]]).
+
+**iPhone + iCloud Private Relay:** Relay resolves `lights.impazzito.it` through public DNS → the
+WAN wildcard `195.32.7.119`, where `:8500` isn't forwarded, so the page loads forever. Use
+`http://rdvhome.local:8500` (Relay never handles `.local` names), or turn Relay off for the
+`RdvHome` Wi-Fi (Settings → Wi-Fi → ⓘ → iCloud Private Relay).
 
 ## Devices (all IoT, fixed IP + local DNS, addressed by domain in run.py)
 
