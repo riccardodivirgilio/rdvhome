@@ -162,17 +162,18 @@ class Light(RemoteBase):
 
         if self.gpio_status:
 
-            status = await self.is_on()
+            powered = await self.is_powered()
 
             while True:
 
-                current = await self.is_on()
+                current = await self.is_powered()
 
-                if not current == status:
+                if not current == powered:
 
-                    status = current
+                    powered = current
 
-                    await self.send(on=status)
+                    # report the combined state (power + zigbee), not the raw pin
+                    await self.status()
 
                 await asyncio.sleep(interval)
 
@@ -203,7 +204,8 @@ class Light(RemoteBase):
         if gpio.is_debug:
             await gpio.store.set(self.gpio_status, not on and 1 or 0)
 
-    async def is_on(self):
+    async def is_powered(self):
+        """Mains power to the light, as sensed by the status pin (relay lights only)."""
 
         if self.gpio_status:
             gpio = await self.setup_gpio()
@@ -211,6 +213,22 @@ class Light(RemoteBase):
 
         status = await self.saved_status()
         return status.on
+
+    async def is_on(self):
+        """What the user sees: powered AND (for hue lights) switched on over zigbee.
+
+        The zigbee state is kept in the saved status by PhilipsPoolControl.update_lights,
+        so a strip that was turned off from the Hue app / HomeKit is no longer reported as on
+        just because its relay is closed.
+        """
+
+        powered = await self.is_powered()
+
+        if self.gpio_status and self.philips_id:
+            status = await self.saved_status()
+            return powered and status.on
+
+        return powered
 
     async def saved_status(self):
         return await self.store.get(self.id, self.philips_default_settings)
@@ -240,7 +258,9 @@ class Light(RemoteBase):
         print("stick", on, color)
 
         if on is not None and self.gpio_relay:
-            if not on == await self.is_on():
+            # compare against mains power, not the combined state: if the strip is powered
+            # but zigbee-off, pulsing the relay here would cut the power instead of turning it on
+            if not on == await self.is_powered():
                 await self.raspberry_switch(on)
 
         if self.philips_id and self.access_token:
@@ -340,9 +360,15 @@ class PhilipsPoolControl(RemoteBase):
                         is_changed = True
                         print("INITIAL_COLOR", light, response.state)
 
-                if not light.gpio_relay and (
-                    not current_on == saved_on or not current_allow_on == saved_allow_on
-                ):
+                if light.gpio_relay:
+                    # relay lights: the pin is the truth for power. Only sync the zigbee
+                    # on/off while the strip is reachable (unreachable just means unpowered).
+                    if response.state.reachable and not current_on == saved_on:
+                        is_changed = True
+
+                        print("DIFFERENT ZIGBEE ON", light)
+
+                elif not current_on == saved_on or not current_allow_on == saved_allow_on:
                     is_changed = True
 
                     print("DIFFERENT ON", light)
