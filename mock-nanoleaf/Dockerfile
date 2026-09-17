@@ -4,7 +4,7 @@ COPY Cargo.toml Cargo.lock ./
 COPY src ./src
 RUN cargo build --release
 
-FROM alpine:3
+FROM scratch
 WORKDIR /app
 COPY --from=build /app/target/release/mock-nanoleaf /app/mock-nanoleaf
 CMD ["/app/mock-nanoleaf"]
