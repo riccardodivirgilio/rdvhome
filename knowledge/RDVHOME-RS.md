@@ -236,12 +236,13 @@ rdvhome-rs/            FROM scratch image, one static binary with the frontend i
   src/home.rs          the house: pins, hue ids, scenes (what run.py was)
   src/device/          Device trait + relay, hue (bridge + light), powered, nanoleaf, tv, window, scene
   src/switch.rs        Switch = id/name/alias... + a Device; Home = the list + the event fan-out
+  src/cli.rs           the commands, parsed by `clap` (run, on, off, pair, test_gpio)
   src/server.rs        http + websocket, one `route()` for both
   src/json.rs          python's json.dumps(indent=4): ascii escapes, float repr
   src/color.rs         the `colour` library maths, color_names.rs is its table
   src/gpio.rs          RealGpio (rppal) / FileGpio (gpio-<n>.json), src/store.rs the json files
   src/hap/             HomeKit accessory protocol, written here (no hap-rs), src/homekit.rs binds it to Home
-parity.py              same requests to :8500 (python) and :8501 (rust), bodies byte for byte
+parity.py              same requests to :8500 (python) and :8501 (rust), bodies byte for byte, websocket events, cli output
 homekit-test.py        a real controller (aiohomekit) pairs with python, rust takes over the pairing
 ```
 
@@ -292,7 +293,7 @@ paired clients, config number, accessories hash).
 - Files are written aside and renamed. Python's fake gpio reads pin files while they are written:
   after a while a `JSONDecodeError` kills **all** its watch loops (`wait_all`), only in DEBUG.
 - HEAD / POST: 500 with the json envelope, never the django page. `/qrcode` is another svg of the same code.
-- CLI list is `off on pair run test_gpio` (`fab`, `refactor`, `sun` not ported, `deploy` is phase 6).
+- The CLI is `clap`: `--help` and the errors are clap's, not argparse's. The list is `off on pair run test_gpio` (`fab`, `refactor`, `sun` not ported, `deploy` is phase 6).
 - Not ported: aiohttp autoreload and writing `frontend/src/data/switches.js` in DEBUG.
 
 ### Found on the way

@@ -268,6 +268,17 @@ def main():
     same_events("scene with random colours", ["/switch/random/on"], listen=2.5, colors=True)
     same_events("all off", ["/switch/default/off", "/switch/nanoleaf/off"], listen=2, colors=True)
 
+    # the command line: same output (python prints its gpio debug lines first)
+    python = ["docker", "compose", "exec", "-T", "app", "uv", "run", "-q", "--no-project", "--with-requirements", "rdvhome/requirements.txt", "python", "run.py"]
+    rust = ["docker", "compose", "exec", "-T", "app-rs", "/rdvhome"]
+    for arguments in (["on", "nanoleaf"], ["off", "nanoleaf"], ["on", "spotlight_kitchen", "led_tv"], ["off", "spotlight_kitchen", "led_tv"], ["on"], ["off", "default"], ["on", "nope"]):
+        a, b = (
+            [l for l in subprocess.run(cmd + arguments, capture_output=True, text=True).stdout.splitlines() if l.startswith(("on:", "off:"))]
+            for cmd in (python, rust)
+        )
+        check("cli %s -> %s" % (" ".join(arguments), a), a == b and len(a) == 1, "rust %s" % b)
+    time.sleep(4)
+
     # the scenes left random colours: paint everything the same
     for path in ("/switch/default/on", "/switch/default/-/10/20/30", "/switch/default/off"):
         same(path, wait=1)
