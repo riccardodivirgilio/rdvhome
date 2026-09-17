@@ -4,8 +4,12 @@
 # The captures are not in git: create them once with `python3 mock-capture.py`
 # (GETs and no-op writes on the real devices), without them the mocks start empty.
 #
-#   docker compose up --build     # app on http://localhost:8500
+#   docker compose up --build     # python app on http://localhost:8500, rust app on :8501
 #   python3 mock-test.py          # checks the mocks (philips :8580, nanoleaf :16021)
+#   python3 parity.py             # checks that the rust app answers like the python one
+#
+# The rust app (rdvhome-rs) has its own pair of mocks: with shared ones the hue
+# poller of one app would see what the other app wrote.
 
 services:
   app:
@@ -19,12 +23,31 @@ services:
       PYTHONUNBUFFERED: "1"
     volumes:
       - .:/app
+      # not the data folder of the repo: parity.py wipes it
+      - app-data:/app/rdvhome/data
       - uv-cache:/root/.cache/uv
     ports:
       - "8500:8500"
     depends_on:
       - mock-philips
       - mock-nanoleaf
+
+  app-rs:
+    build:
+      context: ./rdvhome-rs
+      additional_contexts:
+        frontend: ./rdvhome/frontend/dist
+    environment:
+      RDV_PHILIPS_GATEWAY_HOST: mock-philips-rs
+      RDV_NANOLEAF_PC_HOST: mock-nanoleaf-rs
+      RDV_NANOLEAF_EXA_HOST: mock-nanoleaf-rs
+    volumes:
+      - app-rs-data:/data
+    ports:
+      - "8501:8500"
+    depends_on:
+      - mock-philips-rs
+      - mock-nanoleaf-rs
 
   mock-philips:
     build: ./mock-philips
@@ -44,5 +67,25 @@ services:
     ports:
       - "16021:16021"
 
+  mock-philips-rs:
+    build: ./mock-philips
+    volumes:
+      - ./mock-philips/captures:/app/captures:ro
+    environment:
+      PORT: "80"
+    ports:
+      - "8581:80"
+
+  mock-nanoleaf-rs:
+    build: ./mock-nanoleaf
+    volumes:
+      - ./mock-nanoleaf/captures:/app/captures:ro
+    environment:
+      PORT: "16021"
+    ports:
+      - "16022:16021"
+
 volumes:
   uv-cache:
+  app-data:
+  app-rs-data:

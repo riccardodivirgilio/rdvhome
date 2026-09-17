@@ -22,3 +22,6 @@ yarn-error.log
 mock-*/target/
 mock-*/captures/
 .playwright-mcp/
+# rust app
+rdvhome-rs/target/
+rdvhome-rs/data/
