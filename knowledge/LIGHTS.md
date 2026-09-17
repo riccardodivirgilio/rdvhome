@@ -93,12 +93,30 @@ device logic in `src/device.rs`) that emulate the devices:
 - Assumed, not observed: sat/ct clamping on Hue, integers-only on Nanoleaf, `*_inc` unsupported on
   the Hue mock. Anything not emulated falls back to the most similar static capture.
 
-The captures are **not in git** (gitignored, mounted into the mocks as a volume): on a fresh clone run
-`python3 mock-capture.py` and `python3 mock-capture.py --validation` once, otherwise the mocks start
-empty. `mock-capture.py` (and `--validation`) recorded the raw request/response pairs in
-`mock-*/captures/*.http`, with the same headers aiohttp sends, one request per second. It only does
-GETs, refused requests and PUTs that write back the current value. **Careful**: the bridge accepts
-`bri` on a light that is off, so the `bri: 255` probe really stores 254 (restore it afterwards).
+**Captures.** `mock-capture.py` (and `--validation`) records raw request/response pairs in
+`mock-*/captures/*.http`: the request bytes, a `======== RESPONSE ========` line, the response bytes
+(status line, headers, body). Requests carry the same headers aiohttp 3.8 sends, one per second. It
+only does GETs, requests the devices refuse, and PUTs that write back the current value, so nothing
+visibly changes. The one exception: the bridge accepts `bri` on a light that is off, so the
+`bri: 255` probe really stores 254 — the script writes the old value back right after.
+The captures are **not in git** (gitignored, mounted read-only into the mocks as a volume): on a
+fresh clone run `python3 mock-capture.py` and `python3 mock-capture.py --validation` once, otherwise
+the mocks start empty. A few pairs were recorded by hand and are not reproduced by the script
+(`pc-put-state-off`, `pc-get-state-when-off`, …: a real off/on of the pc panel).
 
-Observed: Hue answers `200` + `[{"success":{…}}]` with `Connection: close` and no
-`Content-Length`; Nanoleaf answers writes with an empty `204`, an unknown effect with an empty `400`.
+**Observed on the real devices** (2026-09-17):
+- Hue answers `200` + `[{"success":{…}}]` with `Connection: close` and no `Content-Length`.
+- Nanoleaf answers writes with an empty `204`. While off, `GET /state` is identical except
+  `"on":{"value":false}` (brightness, hue, `colorMode` are kept) and `/effects/select` still
+  returns the effect, which resumes when it is turned on again.
+- `GET /api/v1/<token>` returns name/model/firmware + `effects` + `state` + `panelLayout`
+  (exa: Shapes NL42 fw 7.1.6, 16 panels; pc: Light Panels NL22 fw 5.2.2).
+
+**Docker details.** Mock images are multi-stage: `rust:1-alpine` builds a static musl binary, the
+runtime stage is `FROM scratch` (~1.3 MB). The `app` container writes `rdvhome/data/` and the
+generated `frontend/src/data/switches.js` into the mounted repo, like a local run. HomeKit starts
+in the container but is not discoverable from outside it. With OrbStack the app is also on
+`https://app.rdvhome.orb.local`. In the web UI a click on a row only expands it: the on/off toggle
+is the inner element of the row.
+
+History: a `--debug` CLI flag was tried first and dropped in favour of the env variables above.
