@@ -6,6 +6,7 @@ from rdvhome.cli.main import execute_from_command_line
 from rdvhome.utils.gpio import has_gpio
 from rpy.functions.decorators import to_data
 from rdvhome.utils.colors import HSB, to_color, random_color
+import os
 import random
 import uuid
 import subprocess
@@ -50,6 +51,13 @@ def effects(*names):
     return {name: name for name in names}
 
 
+# Hosts of the real devices, docker-compose.yml points them to the mock servers.
+# The nanoleaf port is always 16021, the token selects the panel.
+PHILIPS_GATEWAY_HOST = os.environ.get("RDV_PHILIPS_GATEWAY_HOST", "philips.impazzito.it")
+NANOLEAF_PC_HOST = os.environ.get("RDV_NANOLEAF_PC_HOST", "nanoleaf-pc.impazzito.it")
+NANOLEAF_EXA_HOST = os.environ.get("RDV_NANOLEAF_EXA_HOST", "nanoleaf-exa.impazzito.it")
+
+
 def run_rdv_command_line():
 
     control = lambda **opts: dict(
@@ -61,7 +69,7 @@ def run_rdv_command_line():
         yield "class_path", "rdvhome.switches.philips.PhilipsPoolControl"
 
         yield "access_token", "Ro1Y0u6kFH-vgkwdbYWAk8wQNUaXM3ODosHaHG8W"
-        yield "ipaddress", "philips.impazzito.it"
+        yield "ipaddress", PHILIPS_GATEWAY_HOST
 
         yield from opts.items()
 
@@ -188,7 +196,7 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'lWI4Ymlb9WkrELgfnXZBlQyeuXljzaw1',
-                ipaddress = 'nanoleaf-pc.impazzito.it',
+                ipaddress = NANOLEAF_PC_HOST,
                 effects=effects(
                     'Color Burst', 'Fireworks', 'Flames', 'Forest', 'Inner Peace',
                     'Meteor Shower', 'Nemo', 'Northern Lights', 'Paint Splatter',
@@ -203,7 +211,7 @@ def run_rdv_command_line():
                 icon="📺",
                 alias=["default", 'nanoleaf'],
                 access_token = 'XIp9FxkONwwxGs0jqWGeNrrhOIB76Rtb',
-                ipaddress = 'nanoleaf-exa.impazzito.it',
+                ipaddress = NANOLEAF_EXA_HOST,
                 effects=effects(
                     'Beatdrop', 'Blaze', 'Cocoa Beach', 'Cotton Candy', 'Date Night',
                     'Hip Hop', 'Hot Sauce', 'Jungle', 'Lightscape', 'Morning Sky',

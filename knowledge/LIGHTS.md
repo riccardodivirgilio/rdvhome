@@ -60,3 +60,45 @@ maps to which panel.
 3. Within ~30s: `POST http://<ip>:16021/api/v1/new` → `{"auth_token":"…"}`. A poll loop that
    fires `/new` every ~2s catches the window with no timing pressure.
 4. Put the token in the device's `run.py` entry, `./run.sh deploy`.
+
+## Mock servers (test the app without touching the live lights)
+
+    docker compose up --build     # app on localhost:8500, talking only to the mocks
+    python3 mock-test.py          # checks the mocks against the captures (localhost only)
+
+`run.py` reads the device hosts from the environment, defaulting to the real ones:
+`RDV_PHILIPS_GATEWAY_HOST`, `RDV_NANOLEAF_PC_HOST`, `RDV_NANOLEAF_EXA_HOST`. The compose `app`
+service (stock `ghcr.io/astral-sh/uv` image, repo mounted, `uv run --with-requirements … python
+run.py run`) sets them to `mock-philips` / `mock-nanoleaf`. From the host the mocks are on
+`localhost:8580` (philips) and `localhost` (nanoleaf, port is always 16021), e.g.
+`RDV_PHILIPS_GATEWAY_HOST=localhost:8580 RDV_NANOLEAF_PC_HOST=localhost RDV_NANOLEAF_EXA_HOST=localhost ./run.sh run`.
+
+Two small Rust servers (`mock-philips`, `mock-nanoleaf`; only dep `serde_json`; same `src/main.rs`,
+device logic in `src/device.rs`) that emulate the devices:
+
+- **State in memory**, seeded from the captured GETs: a PUT changes it, the next GET reads it back
+  (set blue → reads blue), until the container restarts. Responses reuse the captured headers.
+- **Auth ignored**: any token works. A known nanoleaf token selects pc vs exa, unknown → exa.
+- **Validation like the real devices** (each rule below was observed and is replayed byte for byte):
+  - Hue: always `200` with a list, errors first then successes. `2` invalid json, `3` unknown
+    light, `6` unknown parameter (or `hue` on the plug), `7` invalid value (description really is
+    `invalid value, 70000}, for parameter, hue`), `201` "not modifiable. Device is set to off" for
+    everything but `on`/`bri` while off (`{"on":true,"hue":…}` together works). `bri: 255` is
+    clamped to 254, `{}` → `[]`, unreachable lights still answer success.
+  - Nanoleaf: empty bodies. `204` ok, `422` invalid json, `404` unknown attribute/path, `400` wrong
+    type/shape, value outside min..max, unknown effect (not in that device's `effectsList`) or
+    unknown write command. A refused PUT changes nothing. `{}` gets a broken response with no
+    status line (so does the mock). hue/sat/ct → `colorMode` hs/ct and `"*Solid*"`; an effect →
+    `colorMode: effect`, on.
+- Assumed, not observed: sat/ct clamping on Hue, integers-only on Nanoleaf, `*_inc` unsupported on
+  the Hue mock. Anything not emulated falls back to the most similar static capture.
+
+The captures are **not in git** (gitignored, mounted into the mocks as a volume): on a fresh clone run
+`python3 mock-capture.py` and `python3 mock-capture.py --validation` once, otherwise the mocks start
+empty. `mock-capture.py` (and `--validation`) recorded the raw request/response pairs in
+`mock-*/captures/*.http`, with the same headers aiohttp sends, one request per second. It only does
+GETs, refused requests and PUTs that write back the current value. **Careful**: the bridge accepts
+`bri` on a light that is off, so the `bri: 255` probe really stores 254 (restore it afterwards).
+
+Observed: Hue answers `200` + `[{"success":{…}}]` with `Connection: close` and no
+`Content-Length`; Nanoleaf answers writes with an empty `204`, an unknown effect with an empty `400`.

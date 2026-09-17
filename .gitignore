@@ -18,3 +18,7 @@ yarn-error.log
 *.sln
 .babelrc
 .editorconfig
+# rust mock servers
+mock-*/target/
+mock-*/captures/
+.playwright-mcp/

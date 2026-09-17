@@ -1,0 +1,48 @@
+# The app running against mock servers, so nothing touches the real lights.
+# The mocks emulate the devices from the responses captured by mock-capture.py
+# (see mock-*/captures): state in memory, auth ignored, any token works.
+# The captures are not in git: create them once with `python3 mock-capture.py`
+# (GETs and no-op writes on the real devices), without them the mocks start empty.
+#
+#   docker compose up --build     # app on http://localhost:8500
+#   python3 mock-test.py          # checks the mocks (philips :8580, nanoleaf :16021)
+
+services:
+  app:
+    image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+    working_dir: /app
+    command: uv run --no-project --with-requirements rdvhome/requirements.txt python run.py run
+    environment:
+      RDV_PHILIPS_GATEWAY_HOST: mock-philips
+      RDV_NANOLEAF_PC_HOST: mock-nanoleaf
+      RDV_NANOLEAF_EXA_HOST: mock-nanoleaf
+      PYTHONUNBUFFERED: "1"
+    volumes:
+      - .:/app
+      - uv-cache:/root/.cache/uv
+    ports:
+      - "8500:8500"
+    depends_on:
+      - mock-philips
+      - mock-nanoleaf
+
+  mock-philips:
+    build: ./mock-philips
+    volumes:
+      - ./mock-philips/captures:/app/captures:ro
+    environment:
+      PORT: "80"
+    ports:
+      - "8580:80"
+
+  mock-nanoleaf:
+    build: ./mock-nanoleaf
+    volumes:
+      - ./mock-nanoleaf/captures:/app/captures:ro
+    environment:
+      PORT: "16021"
+    ports:
+      - "16021:16021"
+
+volumes:
+  uv-cache:
