@@ -5,6 +5,7 @@ mod color;
 mod color_names;
 mod device;
 mod gpio;
+mod hap;
 mod home;
 mod homekit;
 mod json;
@@ -44,7 +45,7 @@ async fn switch(on: bool, default: &str) {
         aliases.push(default.to_string());
     }
 
-    let home = home::build();
+    let (home, _) = home::build();
     let mut ids: Vec<String> = Home::apply(&home.filter_any(&aliases), &Command::on(on)).await.keys().cloned().collect();
     ids.sort();
 
@@ -81,8 +82,9 @@ async fn main() {
                 return;
             }
 
-            let home = home::build();
+            let (home, simulated) = home::build();
             home.start();
+            tokio::spawn(homekit::serve(home.clone(), store::data_dir(simulated), simulated));
 
             let stop = async {
                 let mut term = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate()).expect("signal");
@@ -105,10 +107,15 @@ async fn main() {
         "on" if !help("on", "Switch on the lights", " [args ...]") => switch(true, "default").await,
         "off" if !help("off", "Switch off the lights", " [args ...]") => switch(false, "all").await,
         "on" | "off" => {}
-        "pair" => match homekit::pairing() {
-            Some(pairing) => println!("Setup payload: {}", pairing.uri),
-            None => eprintln!("homekit is not available"),
-        },
+        "pair" => {
+            let simulated = gpio::open().is_simulated();
+
+            if let Some(pairing) = homekit::pairing(Some(store::data_dir(simulated))) {
+                println!("Setup payload: {}", pairing.uri);
+                println!("Scan this code with your HomeKit app on your iOS device:\n\n{}\n", pairing.qrcode_text());
+                println!("Or enter this code in your HomeKit app on your iOS device: {}", pairing.paircode);
+            }
+        }
         "test_gpio" => test_gpio().await,
         _ => usage(),
     }

@@ -288,14 +288,14 @@ pub async fn route(home: &Home, method: &str, target: &str) -> Answer {
             None if FRONTEND.get_dir(name.trim_end_matches('/')).is_some() => failure(Failure::Forbidden),
             None => Answer { status: 404, content_type: "application/octet-stream", body: Vec::new() },
         },
-        Route::Homekit => match homekit::pairing() {
+        Route::Homekit => match homekit::pairing(None) {
             Some(pairing) => envelope(
                 200,
                 Map::from_iter([("paircode".to_string(), json!(pairing.paircode)), ("uri".to_string(), json!(pairing.uri))]),
             ),
             None => failure(Failure::Crash),
         },
-        Route::Qrcode => match homekit::pairing() {
+        Route::Qrcode => match homekit::pairing(None) {
             Some(pairing) => Answer { status: 200, content_type: "image/svg+xml", body: pairing.qrcode_svg().into_bytes() },
             None => failure(Failure::Crash),
         },

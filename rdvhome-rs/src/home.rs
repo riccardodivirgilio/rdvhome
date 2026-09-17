@@ -17,6 +17,7 @@ use crate::device::tv::Tv;
 use crate::device::window::Window;
 use crate::device::Device;
 use crate::gpio::{self, Gpio};
+use crate::homekit::Homekit;
 use crate::store::{data_dir, Store};
 use crate::switch::{Description, Home, HomeBuilder};
 
@@ -39,7 +40,17 @@ struct Builder {
 }
 
 fn describe<'a>(id: &'a str, name: &'a str, icon: &'a str, alias: &'a [&'a str], zone: Option<&'a str>, room: &'a str) -> Description<'a> {
-    Description { id, name, icon, alias, zone, room: Some(room) }
+    // in the Home app: the lights are lightbulbs, the windows two switches, the rest
+    // (tv, nanoleaf, scenes) plain switches. Changing this changes what the paired iPhones see.
+    let homekit = match id {
+        "philips_pool" => Homekit::Hidden,
+        "tv" => Homekit::Switch,
+        _ if id.starts_with("nanoleaf") => Homekit::Switch,
+        _ if id.starts_with("window") => Homekit::Window,
+        _ => Homekit::Lightbulb,
+    };
+
+    Description { id, name, icon, alias, zone, room: Some(room), homekit }
 }
 
 impl Builder {
@@ -71,7 +82,7 @@ impl Builder {
         self.scenes.push(scene.clone());
         self.home.add(
             "control",
-            Description { id, name, icon, alias: &[], zone: None, room: Some("Scene") },
+            Description { id, name, icon, alias: &[], zone: None, room: Some("Scene"), homekit: Homekit::Switch },
             Arc::new(SceneDevice(scene)),
         );
     }
@@ -85,8 +96,10 @@ fn around(hue: f64, saturation: f64, factor: f64) -> Colors {
     Colors::Perturb { base: Some(Hsb { hue: Some(hue), saturation: Some(saturation), brightness: None }), factor }
 }
 
-pub fn build() -> Arc<Home> {
+// the house, and if the pins are simulated (not on the raspberry)
+pub fn build() -> (Arc<Home>, bool) {
     let gpio = gpio::open();
+    let simulated = gpio.is_simulated();
     let store = Store::new(data_dir(gpio.is_simulated()), "remote");
     let bridge = HueBridge::new(&host("RDV_PHILIPS_GATEWAY_HOST", "philips.impazzito.it"), PHILIPS_TOKEN, store);
 
@@ -220,5 +233,5 @@ pub fn build() -> Arc<Home> {
         scene.attach(&home);
     }
 
-    home
+    (home, simulated)
 }

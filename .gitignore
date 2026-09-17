@@ -25,3 +25,4 @@ mock-*/captures/
 # rust app
 rdvhome-rs/target/
 rdvhome-rs/data/
+.homekit-test/

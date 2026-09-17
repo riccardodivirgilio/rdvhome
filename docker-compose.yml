@@ -6,7 +6,8 @@
 #
 #   docker compose up --build     # python app on http://localhost:8500, rust app on :8501
 #   python3 mock-test.py          # checks the mocks (philips :8580, nanoleaf :16021)
-#   python3 parity.py             # checks that the rust app answers like the python one
+#   uv run parity.py              # checks that the rust app answers like the python one
+#   uv run homekit-test.py        # checks that the rust app takes over the HomeKit pairing of the python one
 #
 # The rust app (rdvhome-rs) has its own pair of mocks: with shared ones the hue
 # poller of one app would see what the other app wrote.
@@ -48,6 +49,15 @@ services:
     depends_on:
       - mock-philips-rs
       - mock-nanoleaf-rs
+
+  # a HomeKit controller inside the network (mdns works between the containers),
+  # started by homekit-test.py
+  homekit-test:
+    profiles: [test]
+    image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+    volumes:
+      - .:/work
+      - uv-cache:/root/.cache/uv
 
   mock-philips:
     build: ./mock-philips

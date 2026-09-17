@@ -71,6 +71,9 @@ def first_difference(a, b):
 
 
 def same(path, method="GET", wait=0.0, colors=False):
+    # not from scratch: the apps may have saved the same colour differently (what
+    # was asked, 0.1, or what the bridge made of it, 0.09999)
+    colors = colors or ("--keep" in sys.argv and "round")
     (ps, pt, pb), (rs, rt, rb) = fetch(PY, path, method), fetch(RS, path, method)
     name = "%s %s -> %s" % (method, path, ps)
 
@@ -109,8 +112,17 @@ def same_events(name, messages, listen=1.5, colors=False):
     # A poll of the hue bridge can land in the middle (both apps send a status
     # of the light then, python also when the poll crosses a command): compare
     # which events were seen, not how many times, and try again when they differ.
+    random_colors, colors = colors, colors or ("--keep" in sys.argv and "round")
+
+    def polled(event):
+        # With random colours the bridge rounds what it is told (254 steps), so the
+        # next poll often sees "another colour" and sends a status of the light: it
+        # lands inside the listening window or not. Not what is compared here.
+        event = json.loads(event)
+        return random_colors and "name" in event and event["allow_hue"] and not event["effects"]
+
     for attempt in range(3):
-        py, rs = (sorted(set(normalise(e, colors) for e in side)) for side in asyncio.run(both()))
+        py, rs = (sorted(set(normalise(e, colors) for e in side if not polled(e))) for side in asyncio.run(both()))
         if py == rs:
             break
         time.sleep(4)
@@ -229,6 +241,11 @@ def main():
     same("/switch", method="POST")
     same("/nope", method="POST")
     same("/switch", method="HEAD")
+
+    # homekit: every app has its own setup code
+    for path, shape in (("/homekit", r'"paircode": "\d{3}-\d{2}-\d{3}",\s+"uri": "X-HM://[0-9A-Z]{13}",\s+"status": 200'), ("/qrcode", r"<svg ")):
+        (ps, pt, pb), (rs, rt, rb) = fetch(PY, path), fetch(RS, path)
+        check("GET %s -> %s" % (path, ps), (ps, pt) == (rs, rt) and all(re.search(shape, b.decode()) for b in (pb, rb)), "rust %s %s %s" % (rs, rt, rb[:200]))
 
     # frontend
     same("/")

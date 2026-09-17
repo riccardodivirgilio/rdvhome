@@ -10,6 +10,7 @@ use tokio::sync::broadcast;
 
 use crate::device::hue::number;
 use crate::device::{changed, ColorReport, Command, Device, Report};
+use crate::homekit::Homekit;
 use crate::json::dumps;
 
 #[derive(Clone)]
@@ -30,6 +31,7 @@ pub struct Switch {
     pub zone: Option<String>,
     pub room: Option<String>,
     pub device: Arc<dyn Device>,
+    pub homekit: Homekit,
     events: broadcast::Sender<Event>,
 }
 
@@ -120,6 +122,7 @@ pub struct Description<'a> {
     pub alias: &'a [&'a str],
     pub zone: Option<&'a str>,
     pub room: Option<&'a str>,
+    pub homekit: Homekit,
 }
 
 pub struct Home {
@@ -156,6 +159,7 @@ impl HomeBuilder {
             zone: description.zone.map(String::from),
             room: description.room.map(String::from),
             device,
+            homekit: description.homekit,
             events: self.events.clone(),
         }));
     }
