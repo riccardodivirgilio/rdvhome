@@ -8,6 +8,9 @@
 #
 # Usage: uv run parity.py [--keep]
 #   starts from scratch (containers and data volumes are recreated) unless --keep
+#   (--keep is for a quick look: the two apps may have drifted apart, and the
+#   python app in docker loses its watch loops after a while, its fake gpio
+#   reads a pin file while it is being written)
 #
 # Normalised before comparing: "unixtime", the order of "alias" (random in
 # python), random colours of the scenes. Known differences are in KNOWN.

@@ -93,41 +93,85 @@ fn percent_decode(text: &str, plus: bool) -> String {
     String::from_utf8_lossy(&out).into_owned()
 }
 
-// the arguments of a request: the query string, then the path on top of it
+// What a request can say, as it arrives: everything is optional. The query
+// string fills it first, what is in the path goes on top.
 #[derive(Default)]
-struct Args {
-    values: Vec<(String, String)>,
+struct Params {
+    // id or alias, nothing is "everything"
+    number: Option<String>,
+    // on, off, up, down, stop, or "-" for "leave it"
+    mode: Option<String>,
+    // a colour name or #hex...
+    color: Option<String>,
+    // ...or 0..100 each, "-" for "leave it"
+    hue: Option<String>,
+    saturation: Option<String>,
+    brightness: Option<String>,
+    effect: Option<String>,
 }
 
-impl Args {
-    fn from_query(query: &str) -> Args {
-        let mut args = Args::default();
+impl Params {
+    fn from_query(query: &str) -> Params {
+        let mut params = Params::default();
 
         for pair in query.split('&').filter(|p| !p.is_empty()) {
             let (key, value) = pair.split_once('=').unwrap_or((pair, ""));
-            let key = percent_decode(key, true);
+
+            let field = match percent_decode(key, true).as_str() {
+                "number" => &mut params.number,
+                "mode" => &mut params.mode,
+                "color" => &mut params.color,
+                "hue" => &mut params.hue,
+                "saturation" => &mut params.saturation,
+                "brightness" => &mut params.brightness,
+                "effect" => &mut params.effect,
+                _ => continue,
+            };
 
             // the first one wins
-            if args.get(&key).is_none() {
-                args.values.push((key, percent_decode(value, true)));
-            }
+            field.get_or_insert_with(|| percent_decode(value, true));
         }
 
-        args
+        params
     }
 
-    fn set(&mut self, key: &str, value: &str) {
-        self.values.retain(|(k, _)| k != key);
-        self.values.push((key.to_string(), value.to_string()));
-    }
+    // Checked in the order of the old app (colour, components, mode): it decides which error comes out.
+    fn command(&self) -> Result<Command, Failure> {
+        // python truthiness: an empty argument is a missing one
+        fn filled(field: &Option<String>) -> Option<&str> {
+            field.as_deref().filter(|v| !v.is_empty())
+        }
 
-    fn get(&self, key: &str) -> Option<&str> {
-        self.values.iter().find(|(k, _)| k == key).map(|(_, v)| v.as_str())
-    }
+        let mut cmd = Command { effect: filled(&self.effect).map(|e| Effect::Named(e.to_string())), ..Command::default() };
 
-    // python truthiness: a missing and an empty argument are the same
-    fn filled(&self, key: &str) -> Option<&str> {
-        self.get(key).filter(|v| !v.is_empty())
+        if let Some(color) = filled(&self.color) {
+            cmd.color = Some(Hsb::parse(color).map_err(|e| match e {
+                ColorError::Invalid => Failure::BadRequest("InvalidColor"),
+                ColorError::Crash => Failure::Crash,
+            })?);
+        }
+
+        let components = Hsb {
+            hue: component(self.hue.as_deref())?,
+            saturation: component(self.saturation.as_deref())?,
+            brightness: component(self.brightness.as_deref())?,
+        };
+
+        // wins over a colour name
+        if !components.is_empty() {
+            cmd.color = Some(components);
+        }
+
+        match self.mode.as_deref() {
+            Some("on") => cmd.on = Some(true),
+            Some("off") => cmd.on = Some(false),
+            Some("up") => cmd.direction = Some(Direction::Up),
+            Some("down") => cmd.direction = Some(Direction::Down),
+            Some("stop") | Some("-") | None => {}
+            Some(_) => return Err(Failure::BadRequest("InvalidMode")),
+        }
+
+        Ok(cmd)
     }
 }
 
@@ -160,39 +204,6 @@ fn component(spec: Option<&str>) -> Result<Option<f64>, Failure> {
     }
 }
 
-fn command(args: &Args) -> Result<Command, Failure> {
-    let mut cmd = Command { effect: args.filled("effect").map(|e| Effect::Named(e.to_string())), ..Command::default() };
-
-    if let Some(color) = args.filled("color") {
-        cmd.color = Some(Hsb::parse(color).map_err(|e| match e {
-            ColorError::Invalid => Failure::BadRequest("InvalidColor"),
-            ColorError::Crash => Failure::Crash,
-        })?);
-    }
-
-    let components = Hsb {
-        hue: component(args.get("hue"))?,
-        saturation: component(args.get("saturation"))?,
-        brightness: component(args.get("brightness"))?,
-    };
-
-    // wins over a colour name
-    if !components.is_empty() {
-        cmd.color = Some(components);
-    }
-
-    match args.get("mode") {
-        Some("on") => cmd.on = Some(true),
-        Some("off") => cmd.on = Some(false),
-        Some("up") => cmd.direction = Some(Direction::Up),
-        Some("down") => cmd.direction = Some(Direction::Down),
-        Some("stop") | Some("-") | None => {}
-        Some(_) => return Err(Failure::BadRequest("InvalidMode")),
-    }
-
-    Ok(cmd)
-}
-
 fn is_number(segment: &str) -> bool {
     !segment.is_empty() && segment.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
 }
@@ -209,49 +220,64 @@ fn is_component(segment: &str) -> bool {
     segment == "-" || (!segment.is_empty() && segment.bytes().all(|b| b.is_ascii_digit()))
 }
 
-enum Route<'a> {
-    Static(&'a str),
+enum Route {
+    Static(String),
     Homekit,
     Qrcode,
-    Status,
-    Switch,
+    // the state of the switches behind an alias, None is all of them
+    Read { alias: Option<String> },
+    Write { alias: Option<String>, command: Command },
 }
 
-fn resolve<'a>(path: &'a str, segments: &[&'a str], args: &mut Args) -> Option<Route<'a>> {
-    let route = match segments {
-        [""] => Route::Static("index.html"),
-        ["css" | "js", ..] => Route::Static(&path[1..]),
-        ["homekit"] => Route::Homekit,
-        ["qrcode"] => Route::Qrcode,
-        ["switch"] => Route::Status,
-        ["switch", number, rest @ ..] if is_number(number) => {
-            let route = match rest {
-                [] => Route::Status,
-                ["set"] => Route::Switch,
-                ["color", color] if is_color(color) => {
-                    args.set("color", color);
-                    Route::Switch
-                }
-                [mode] if is_mode(mode) => {
-                    args.set("mode", mode);
-                    Route::Switch
-                }
-                [mode, hue, saturation, brightness] if is_mode(mode) && [hue, saturation, brightness].iter().all(|c| is_component(c)) => {
-                    args.set("mode", mode);
-                    args.set("hue", hue);
-                    args.set("saturation", saturation);
-                    args.set("brightness", brightness);
-                    Route::Switch
-                }
-                _ => return None,
-            };
-            args.set("number", number);
-            route
-        }
-        _ => return None,
-    };
+impl Route {
+    // also a read refuses bad parameters, like the old app
+    fn read(params: Params) -> Result<Route, Failure> {
+        params.command()?;
+        Ok(Route::Read { alias: params.number.filter(|n| !n.is_empty()) })
+    }
 
-    Some(route)
+    fn write(params: Params) -> Result<Route, Failure> {
+        Ok(Route::Write { command: params.command()?, alias: params.number.filter(|n| !n.is_empty()) })
+    }
+}
+
+// Every url is a route with what it says in it; what the url does not say comes
+// from the query string. Err(NotFound) is "no such url", the other errors are a
+// bad request to a good url.
+fn resolve(path: &str, query: &str) -> Result<Route, Failure> {
+    let segments: Vec<&str> = path.strip_prefix('/').unwrap_or(path).split('/').collect();
+    let query = Params::from_query(query);
+    let some = |segment: &str| Some(segment.to_string());
+
+    match segments[..] {
+        [""] => Ok(Route::Static("index.html".to_string())),
+        ["css" | "js", ..] => Ok(Route::Static(path[1..].to_string())),
+        ["homekit"] => Ok(Route::Homekit),
+        ["qrcode"] => Ok(Route::Qrcode),
+
+        ["switch"] => Route::read(query),
+        ["switch", number, ..] if !is_number(number) => Err(Failure::NotFound),
+        ["switch", number] => Route::read(Params { number: some(number), ..query }),
+        ["switch", number, "set"] => Route::write(Params { number: some(number), ..query }),
+        ["switch", number, "color", color] if is_color(color) => {
+            Route::write(Params { number: some(number), color: some(color), ..query })
+        }
+        ["switch", number, mode] if is_mode(mode) => Route::write(Params { number: some(number), mode: some(mode), ..query }),
+        ["switch", number, mode, hue, saturation, brightness]
+            if is_mode(mode) && is_component(hue) && is_component(saturation) && is_component(brightness) =>
+        {
+            Route::write(Params {
+                number: some(number),
+                mode: some(mode),
+                hue: some(hue),
+                saturation: some(saturation),
+                brightness: some(brightness),
+                ..query
+            })
+        }
+
+        _ => Err(Failure::NotFound),
+    }
 }
 
 fn content_type(path: &str) -> &'static str {
@@ -270,21 +296,20 @@ fn content_type(path: &str) -> &'static str {
 // method is GET, or WS for what comes from a websocket
 pub async fn route(home: &Home, method: &str, target: &str) -> Answer {
     let (path, query) = target.split_once('?').unwrap_or((target, ""));
-    let path = percent_decode(path, false);
-    let segments: Vec<&str> = path.strip_prefix('/').unwrap_or(&path).split('/').collect();
-    let mut args = Args::from_query(query);
+    let route = resolve(&percent_decode(path, false), query);
 
-    let Some(route) = resolve(&path, &segments, &mut args) else { return failure(Failure::NotFound) };
-
-    // the old app answers 500 to anything that is not a GET (its 405 was handled as a crash)
-    if !matches!(method, "GET" | "WS") {
-        return failure(Failure::Crash);
-    }
+    // the old app answers 500 to anything that is not a GET on a url it knows (its 405 was handled as a crash)
+    let route = match route {
+        Err(Failure::NotFound) => return failure(Failure::NotFound),
+        _ if !matches!(method, "GET" | "WS") => return failure(Failure::Crash),
+        Err(e) => return failure(e),
+        Ok(route) => route,
+    };
 
     match route {
         // like aiohttp: a folder is forbidden, a missing file is an empty 404
-        Route::Static(name) => match FRONTEND.get_file(name) {
-            Some(file) => Answer { status: 200, content_type: content_type(name), body: file.contents().to_vec() },
+        Route::Static(name) => match FRONTEND.get_file(&name) {
+            Some(file) => Answer { status: 200, content_type: content_type(&name), body: file.contents().to_vec() },
             None if FRONTEND.get_dir(name.trim_end_matches('/')).is_some() => failure(Failure::Forbidden),
             None => Answer { status: 404, content_type: "application/octet-stream", body: Vec::new() },
         },
@@ -299,18 +324,8 @@ pub async fn route(home: &Home, method: &str, target: &str) -> Answer {
             Some(pairing) => Answer { status: 200, content_type: "image/svg+xml", body: pairing.qrcode_svg().into_bytes() },
             None => failure(Failure::Crash),
         },
-        Route::Status | Route::Switch => {
-            let cmd = match command(&args) {
-                Ok(cmd) => cmd,
-                Err(e) => return failure(e),
-            };
-            let selected = home.filter(args.filled("number"));
-
-            switches(match route {
-                Route::Switch => Home::apply(&selected, &cmd).await,
-                _ => Home::status(&selected).await,
-            })
-        }
+        Route::Read { alias } => switches(Home::status(&home.filter(alias.as_deref())).await),
+        Route::Write { alias, command } => switches(Home::apply(&home.filter(alias.as_deref()), &command).await),
     }
 }
 

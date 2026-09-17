@@ -39,9 +39,16 @@ impl Store {
         serde_json::from_slice(&std::fs::read(self.file(key)).ok()?).ok()
     }
 
+    // Written aside and renamed: a reader never finds half a file. (The old app
+    // wrote in place, and a status pin read at the wrong moment killed its watch loops.)
     pub fn set<T: Serialize>(&self, key: &str, value: &T) {
-        if let Err(e) = std::fs::write(self.file(key), dumps(value)) {
-            eprintln!("store: cannot write {:?}: {}", self.file(key), e);
+        static COUNTER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+        let file = self.file(key);
+        let aside = file.with_extension(format!("tmp{}", COUNTER.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
+
+        if let Err(e) = std::fs::write(&aside, dumps(value)).and_then(|_| std::fs::rename(&aside, &file)) {
+            eprintln!("store: cannot write {:?}: {}", file, e);
         }
     }
 }
