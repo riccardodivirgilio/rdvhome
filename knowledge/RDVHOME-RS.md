@@ -1,7 +1,8 @@
 # RDVHOME-RS — plan for the Rust rewrite
 
-> **Status: plan, nothing built yet** (2026-09-17). Findings come from reading the Python app and
-> from running it in `docker compose` against the mock servers (see [[LIGHTS]], "Mock servers").
+> **Status: built and verified against the mocks** (2026-09-18), phases 1–5. Left: phase 6, the
+> raspberry (cross build, real pins, deploy), to do with the user there. See "What was built" at
+> the end; the sections before it are the plan as it was written, kept for the findings.
 > The real lights were never touched.
 
 Goal: a new folder `rdvhome-rs/` with a Rust app that is a drop-in replacement for the Python app:
@@ -133,6 +134,8 @@ A partial one (`full=False`) is `id` + the state that changed.
 7. `Light.switch` always sends the zigbee command too, even right after cutting the power.
 8. TV: `switch(on=None)` (a colour request to alias `all`) sets `self.on = None`. Fix: ignore.
 9. `Light.switch` ignores `direction`, `Window.switch` ignores `on`: `/switch/all/off` does not stop windows.
+12. `/switch/all/...` answers **500**: alias `all` includes `philips_pool`, whose `switch()` is
+    `NotImplementedError`. The other devices are switched anyway (gather). **Fix**.
 10. Python `int()` accepts `" 5"`, `"+5"`, `"1_0"` in the query string. Rust: plain digits, known difference.
 11. Python float `repr` vs Rust: same shortest round-trip digits, but exponents differ
     (`1e-05` vs `1e-5`). Needs a small formatter, values here are 0..1 so it is rare.
@@ -225,3 +228,88 @@ Then compare the final state of the two mock pairs. CLI: run `on`/`off`/no-comma
   Check `uname -m` before phase 6; it picks the musl target.
 - `fab`, `refactor`, `sun`: proposed **not** ported. `deploy` ported with a different body.
 - HEAD/POST → 500: proposed to keep the status (JSON envelope), never the Django page.
+
+## What was built (2026-09-18)
+
+```
+rdvhome-rs/            FROM scratch image, one static binary with the frontend inside
+  src/home.rs          the house: pins, hue ids, scenes (what run.py was)
+  src/device/          Device trait + relay, hue (bridge + light), powered, nanoleaf, tv, window, scene
+  src/switch.rs        Switch = id/name/alias... + a Device; Home = the list + the event fan-out
+  src/server.rs        http + websocket, one `route()` for both
+  src/json.rs          python's json.dumps(indent=4): ascii escapes, float repr
+  src/color.rs         the `colour` library maths, color_names.rs is its table
+  src/gpio.rs          RealGpio (rppal) / FileGpio (gpio-<n>.json), src/store.rs the json files
+  src/hap/             HomeKit accessory protocol, written here (no hap-rs), src/homekit.rs binds it to Home
+parity.py              same requests to :8500 (python) and :8501 (rust), bodies byte for byte
+homekit-test.py        a real controller (aiohomekit) pairs with python, rust takes over the pairing
+```
+
+`docker compose up --build` runs both apps, each with its own mocks. `uv run parity.py` and
+`uv run homekit-test.py` are the proof; both green.
+
+### The light / philips separation
+
+As planned: `Relay` is the physical switch (pulse, status pin, its own watch loop, `Arc`-shared
+by the two tv strips, pulses serialised), `HueLight` is the bulb (state fed by `HueBridge`'s poll,
+saved in `remote-<id>.json`), and `Powered(relay, light)` is the only place with the and / or:
+`on = power AND light`, `allow_on = power OR light`, commands to both, changes from either.
+A hue light behind a relay is built with `behind_relay`: unreachable means "no mains", so the
+last zigbee state is kept (what the python `if light.gpio_relay` branch did from outside).
+
+`Report` is what a device answers: `full` or not, `on`, `allow_on` override, colour as
+`Stored` (h, b, s order, numbers as saved) or `Applied` (h, s, b, only what was asked, zero as the
+integer 0), effect, moving. Those two orders and the partial answer of lights are python's, kept.
+
+The router is typed: every url shape builds `Route::Read { alias }` or
+`Route::Write { alias, command }` from a `Params` struct of optionals (query first, path on top).
+
+### HomeKit: drop-in, no re-pairing
+
+hap-rs was not used. `src/hap` implements pair-setup (SRP 3072 / SHA-512), pair-verify, the
+encrypted session, accessories, characteristics, events, pairings, prepare and the `_hap._tcp`
+advertisement (`mdns-sd`). It reads and writes hap-python's `accessory.state` as it is (mac, keys,
+paired clients, config number, accessories hash).
+
+- The accessory database is the same json, id by id (42 accessories; aid from 2, 7 skipped;
+  windows are two switches "Up"/"Down"; nanoleaf, tv and scenes are switches, lights are
+  lightbulbs). A unit test compares it with a dump of hap-python and checks the **same hash**, so
+  the config number does not move and the iPhones see no change.
+- `homekit-test.py`: aiohomekit pairs with the python app, the state file is given to the rust
+  app, the same pairing lists / writes / gets events, then is removed; then a fresh pairing with
+  the rust app alone.
+- On the raspberry: copy `~/.rdvhome/` as it is (or point `RDV_DATA_DIR` to it). The bridge
+  name must stay `RdvHome` (it is when the real pins are found).
+- hap-python makes a new setup code at every start; we save `pincode` and `setup_id` in the same
+  file (python ignores them) so `rdvhome pair` shows the code of the running server.
+
+### Known differences (on purpose)
+
+- `/switch/all/...`: python answers 500 (quirk 12: `philips_pool` raises NotImplementedError,
+  the devices are switched anyway). Rust answers 200 with all of them.
+- `unixtime` is the real time. TV ignores a command without `on`. Query ints: python leniency kept.
+- A poll of the bridge older than the last command is ignored (python could undo a colour for 3 s).
+- Files are written aside and renamed. Python's fake gpio reads pin files while they are written:
+  after a while a `JSONDecodeError` kills **all** its watch loops (`wait_all`), only in DEBUG.
+- HEAD / POST: 500 with the json envelope, never the django page. `/qrcode` is another svg of the same code.
+- CLI list is `off on pair run test_gpio` (`fab`, `refactor`, `sun` not ported, `deploy` is phase 6).
+- Not ported: aiohttp autoreload and writing `frontend/src/data/switches.js` in DEBUG.
+
+### Found on the way
+
+- The committed frontend opens `ws://<host>:8500/websocket`, port hardcoded: served from `:8501`
+  it talks to the **python** app. To click around the rust app it must be on 8500:
+  `docker compose stop app app-rs && docker compose run -d -p 8500:8500 app-rs`. Done once with
+  the browser: relay light, hue strip, nanoleaf, a scene, a window (auto stop) all work.
+- With random colours the bridge rounds to 254 steps, so the next poll often "sees another
+  colour" (both apps): parity ignores those status events in the scene tests.
+
+### Left: phase 6, the raspberry
+
+1. `uname -m` on the pi picks the target (`arm-unknown-linux-musleabihf` for a Pi 1/Zero,
+   `armv7-...` or `aarch64-...` otherwise). The docker build on an Apple Silicon mac already
+   compiles `RealGpio` (rppal) for aarch64-musl, it is just never run.
+2. Stop the python service, start the binary with the same `~/.rdvhome`, port 8500 and 51826.
+   Check one relay with the user watching, then the Home app.
+3. `deploy`: copy one binary + a systemd unit. Rollback is starting the python unit again: the
+   state file stays readable by both.

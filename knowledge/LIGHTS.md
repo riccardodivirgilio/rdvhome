@@ -120,3 +120,5 @@ in the container but is not discoverable from outside it. With OrbStack the app 
 is the inner element of the row.
 
 History: a `--debug` CLI flag was tried first and dropped in favour of the env variables above.
+
+The rust port of the app (`rdvhome-rs/`, second compose service with its own mocks, `parity.py`, `homekit-test.py`) is in [[RDVHOME-RS]].

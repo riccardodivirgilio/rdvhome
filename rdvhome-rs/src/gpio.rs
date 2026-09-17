@@ -73,6 +73,7 @@ impl Gpio for FileGpio {
     }
 
     fn write(&self, pin: u8, high: bool) {
+        println!("[GPIO] output pin={} high={}", pin, high);
         self.store.set(&pin.to_string(), &(high as u8));
 
         if !high {
