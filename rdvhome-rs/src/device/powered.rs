@@ -1,21 +1,19 @@
 // A light behind a physical switch: Powered(relay, hue strip).
 // This is the only place that knows how the two combine:
 //
-//   on        power OR light    whoever can see it is on, is right
+//   on        the mains, read from the status pin
 //   allow_on  power OR light    no mains makes the bulb unreachable, but the
 //                               relay can always bring it back
 //   commands  to both, in sync  power first, so the bulb is there to listen
 //   changes   from either
 //
-// `on` used to be an AND, copied from the python `is_on`. On the house that reads
-// wrong: two strips share one relay (led_tv, led_living_room), so switching one
-// powers both, but the other only learned it was on when the hue poll came back —
-// it showed off for seconds, or for as long as the bridge was offline, while it was
-// visibly lit in the room. The wiring knows the mains is there straight away, so one
-// device reporting on is enough; it takes all of them saying off to be off.
-//
-// The trade-off, on purpose: a strip left powered but switched off from the Hue app
-// reads as on here. Mains is the switch people actually use in this house.
+// `on` is the electricity and nothing else. The status pin is read every 0.3 s, so the
+// answer is always current and it costs no network: two strips share one relay
+// (led_tv, led_living_room) and both follow the same pin, whichever one was asked for.
+// Mixing the zigbee state in here is what broke that — an AND left the strip nobody
+// asked for reading off after a switch on, until the hue poll agreed (for good, while
+// the bridge was away), and an OR left it reading on after a switch off, with no mains
+// to shine. The bulb reports what it knows, the pin says whether the light is on.
 //
 // Colours and effects belong to the light alone.
 
@@ -38,6 +36,7 @@ impl<P: Device, L: Device> Powered<P, L> {
     pub fn new(power: Arc<P>, light: Arc<L>) -> Arc<Self> {
         Arc::new(Powered { power, light, changes: changes(), started: AtomicBool::new(false) })
     }
+
 }
 
 #[async_trait]
@@ -56,7 +55,7 @@ impl<P: Device, L: Device> Device for Powered<P, L> {
         let (power, light) = tokio::join!(self.power.read(), self.light.read());
 
         Report {
-            on: Some(power.on.unwrap_or(false) || light.on.unwrap_or(false)),
+            on: Some(power.on.unwrap_or(false)),
             allow_on: Some(
                 power.allow_on.unwrap_or(self.power.capabilities().on)
                     || light.allow_on.unwrap_or(self.light.capabilities().on),
@@ -76,7 +75,7 @@ impl<P: Device, L: Device> Device for Powered<P, L> {
     }
 
     async fn is_on(&self) -> bool {
-        self.power.is_on().await || self.light.is_on().await
+        self.power.is_on().await
     }
 
     fn changes(&self) -> Option<broadcast::Receiver<()>> {

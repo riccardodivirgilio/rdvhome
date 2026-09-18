@@ -64,7 +64,12 @@ impl Builder {
 
     // a hue strip whose mains goes through a relay
     fn strip(&self, key: &str, id: u32, power: &Arc<Relay>) -> Arc<dyn Device> {
-        Powered::new(power.clone(), self.bridge.light(id, key, HueOptions { behind_relay: true, ..HueOptions::default() }))
+        let light = self.bridge.light(id, key, HueOptions { behind_relay: true, ..HueOptions::default() });
+
+        // the relay switches the mains of every strip on it, so it tells them all
+        power.attach(light.clone());
+
+        Powered::new(power.clone(), light)
     }
 
     fn relay(&self, id: &str, relay: u8, status: u8) -> Arc<Relay> {

@@ -52,6 +52,8 @@ fn label(on: bool) -> &'static str {
 
 pub struct Relay {
     id: String,
+    // the bulbs this relay gives mains to: they all hear on and off, see attach()
+    lights: std::sync::Mutex<Vec<Arc<dyn Device>>>,
     gpio: Arc<dyn Gpio>,
     relay: u8,
     status: u8,
@@ -70,6 +72,7 @@ impl Relay {
 
         Arc::new(Relay {
             id: id.to_string(),
+            lights: std::sync::Mutex::new(Vec::new()),
             gpio,
             relay,
             status,
@@ -77,6 +80,15 @@ impl Relay {
             changes: changes(),
             started: AtomicBool::new(false),
         })
+    }
+
+    // A bulb behind this relay. The mains is shared, so switching the relay for one
+    // switches it for all of them, and the bridge keeps the on/off of a bulb it cannot
+    // reach: a bulb left holding "off" comes back dark when the mains returns and stays
+    // dark, whoever asked. So they all hear the same on and off, and the state itself
+    // still comes from the status pin alone.
+    pub fn attach(&self, light: Arc<dyn Device>) {
+        self.lights.lock().unwrap().push(light);
     }
 
     pub fn is_powered(&self) -> bool {
@@ -136,6 +148,14 @@ impl Device for Relay {
 
     async fn apply(&self, cmd: &Command) -> Report {
         if let Some(on) = cmd.on {
+            // told before the mains moves: the bridge remembers it for a bulb that is
+            // not powered yet, which is what brings it back lit
+            let lights = self.lights.lock().unwrap().clone();
+
+            for light in lights {
+                light.apply(&Command::on(on)).await;
+            }
+
             self.set(on).await;
         }
 

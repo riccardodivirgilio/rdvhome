@@ -187,6 +187,7 @@ impl HueLight {
     async fn sync(&self, state: &Value) {
         let reachable = state["reachable"].as_bool().unwrap_or(false);
         let on = reachable && state["on"].as_bool().unwrap_or(false);
+
         let allow_on = reachable || self.options.behind_relay;
 
         let mut color = state.get("hue").map(|_| {
@@ -272,7 +273,17 @@ impl Device for HueLight {
             request.insert("on".into(), json!(on));
         }
 
-        if let Some(color) = &cmd.color {
+        // The client says "on" and nothing else: the colour it should come back with is
+        // ours to remember. A bulb always powers up bright and warm (philips "safety"
+        // mode, so a light left very dim does not look dead after a power cut), so the
+        // colour has to be sent with the on — waiting to see the bulb turn up wearing the
+        // power-on colour means the whole room is that colour until it joins the mesh back.
+        // only for a bulb that loses its mains: one that never does still wears the
+        // colour it was left with, and re-sending it only lets the bridge round it
+        let restore = self.options.behind_relay && cmd.color.is_none() && cmd.on == Some(true);
+        let color = if restore { Some(self.saved().color()) } else { cmd.color };
+
+        if let Some(color) = &color {
             for (key, value) in ["hue", "sat", "bri"].into_iter().zip(color.scaled(PHILIPS)) {
                 if let Some(value) = value {
                     request.insert(key.into(), json!(value));

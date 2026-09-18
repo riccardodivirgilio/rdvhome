@@ -35,26 +35,6 @@ failures = 0
 # (NotImplementedError). The devices are switched anyway. Rust answers 200.
 KNOWN = {"/switch/all/off": "python 500 (philips_pool)"}
 
-# led_tv and led_living_room hang on the same relay. Python reports them on only when
-# the mains AND the zigbee state say so, so the strip you did not touch stayed off
-# until the next hue poll (and stayed off for good while the bridge was away), though
-# it was lit in the room. Rust ORs the two instead, see powered.rs. Their "on" / "off"
-# is blanked on both sides: everything else about those switches is still compared,
-# but a real regression of that one field on those two would not be caught here.
-POWERED = ("led_tv", "led_living_room")
-
-
-def blank_powered(text):
-    switch, out = None, []
-    for line in text.splitlines(True):
-        found = re.search(r'"id": "([a-z_]+)"', line)
-        if found:
-            switch = found.group(1)
-        if switch in POWERED:
-            line = re.sub(r'"(on|off)": (?:true|false)', r'"\1": "?"', line)
-        out.append(line)
-    return "".join(out)
-
 
 def check(name, ok, detail=""):
     global failures
@@ -74,7 +54,6 @@ def fetch(host, path, method="GET"):
 def normalise(body, colors=False):
     text = body.decode() if isinstance(body, bytes) else body
     text = re.sub(r'"unixtime": [0-9.e+-]+', '"unixtime": 0', text)
-    text = blank_powered(text)
     text = re.sub(
         r'"alias": \[([^\]]*)\]',
         lambda m: '"alias": [%s]' % ", ".join(sorted(a.strip() for a in m.group(1).split(","))),
@@ -129,7 +108,13 @@ async def events(host, messages, listen):
     return received
 
 
-def same_events(name, messages, listen=1.5, colors=False):
+# led_tv and led_living_room hang on the same relay, so switching either one moves the
+# mains of both. Rust tells every bulb on a relay the on/off it was given (python told
+# only the one that was asked, which left the other holding an "off" the bridge kept, so
+# it came back dark and stayed dark). The strip nobody asked for therefore changes state
+# too, and sends one event python does not: ignore that switch in a test that switches
+# its neighbour, everything else about it is still compared elsewhere.
+def same_events(name, messages, listen=1.5, colors=False, ignore=()):
     async def both():
         return await asyncio.gather(events(PY, messages, listen), events(RS, messages, listen))
 
@@ -146,7 +131,10 @@ def same_events(name, messages, listen=1.5, colors=False):
         return random_colors and "name" in event and event["allow_hue"] and not event["effects"]
 
     for attempt in range(3):
-        py, rs = (sorted(set(normalise(e, colors) for e in side if not polled(e))) for side in asyncio.run(both()))
+        def keep(event):
+            return not polled(event) and json.loads(event).get("id") not in ignore
+
+        py, rs = (sorted(set(normalise(e, colors) for e in side if keep(e))) for side in asyncio.run(both()))
         if py == rs:
             break
         time.sleep(4)
@@ -281,7 +269,7 @@ def main():
 
     # websocket: the same events
     same_events("status", ["/switch"])
-    same_events("light", ["/switch/led_tv/on", "/switch/led_tv/-/10/20/30", "/switch/led_tv/off"])
+    same_events("light", ["/switch/led_tv/on", "/switch/led_tv/-/10/20/30", "/switch/led_tv/off"], ignore=("led_living_room",))
     same_events("nanoleaf", ["/switch/nanoleaf_tv/on", "/switch/nanoleaf/set?effect=Forest", "/switch/nanoleaf_tv/color/red"])
     same_events("window", ["/switch/window_tv/up", "/switch/window_tv/stop"])
     same_events("errors are silent", ["/switch/led_tv/set?hue=abc", "/nope", "/switch/nope/on"])
