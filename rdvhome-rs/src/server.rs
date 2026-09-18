@@ -325,7 +325,13 @@ pub async fn route(home: &Home, method: &str, target: &str) -> Answer {
             None => failure(Failure::Crash),
         },
         Route::Read { alias } => switches(Home::status(&home.filter(alias.as_deref())).await),
-        Route::Write { alias, command } => switches(Home::apply(&home.filter(alias.as_deref()), &command).await),
+        Route::Write { alias, command } => {
+            // what a click really resolved to, before any device is touched
+            let matched = home.filter(alias.as_deref());
+            println!("[HTTP] {} {} -> {:?} on {:?}", method, target, command, matched.iter().map(|s| s.id.as_str()).collect::<Vec<_>>());
+
+            switches(Home::apply(&matched, &command).await)
+        }
     }
 }
 

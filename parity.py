@@ -35,6 +35,26 @@ failures = 0
 # (NotImplementedError). The devices are switched anyway. Rust answers 200.
 KNOWN = {"/switch/all/off": "python 500 (philips_pool)"}
 
+# led_tv and led_living_room hang on the same relay. Python reports them on only when
+# the mains AND the zigbee state say so, so the strip you did not touch stayed off
+# until the next hue poll (and stayed off for good while the bridge was away), though
+# it was lit in the room. Rust ORs the two instead, see powered.rs. Their "on" / "off"
+# is blanked on both sides: everything else about those switches is still compared,
+# but a real regression of that one field on those two would not be caught here.
+POWERED = ("led_tv", "led_living_room")
+
+
+def blank_powered(text):
+    switch, out = None, []
+    for line in text.splitlines(True):
+        found = re.search(r'"id": "([a-z_]+)"', line)
+        if found:
+            switch = found.group(1)
+        if switch in POWERED:
+            line = re.sub(r'"(on|off)": (?:true|false)', r'"\1": "?"', line)
+        out.append(line)
+    return "".join(out)
+
 
 def check(name, ok, detail=""):
     global failures
@@ -54,6 +74,7 @@ def fetch(host, path, method="GET"):
 def normalise(body, colors=False):
     text = body.decode() if isinstance(body, bytes) else body
     text = re.sub(r'"unixtime": [0-9.e+-]+', '"unixtime": 0', text)
+    text = blank_powered(text)
     text = re.sub(
         r'"alias": \[([^\]]*)\]',
         lambda m: '"alias": [%s]' % ", ".join(sorted(a.strip() for a in m.group(1).split(","))),

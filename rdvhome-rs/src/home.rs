@@ -67,12 +67,12 @@ impl Builder {
         Powered::new(power.clone(), self.bridge.light(id, key, HueOptions { behind_relay: true, ..HueOptions::default() }))
     }
 
-    fn relay(&self, relay: u8, status: u8) -> Arc<Relay> {
-        Relay::new(self.gpio.clone(), relay, status)
+    fn relay(&self, id: &str, relay: u8, status: u8) -> Arc<Relay> {
+        Relay::new(id, self.gpio.clone(), relay, status)
     }
 
-    fn window(&self, power: u8, direction: u8) -> Arc<Window> {
-        Window::new(self.gpio.clone(), power, direction)
+    fn window(&self, id: &str, power: u8, direction: u8) -> Arc<Window> {
+        Window::new(id, self.gpio.clone(), power, direction)
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -106,17 +106,17 @@ pub fn build() -> (Arc<Home>, bool) {
     let mut b = Builder { home: HomeBuilder::new(), gpio, bridge: bridge.clone(), scenes: Vec::new() };
 
     // one relay powers both strips around the tv
-    let tv_strips = b.relay(20, 4);
+    let tv_strips = b.relay("led_tv+led_living_room", 20, 4);
 
     b.switch(describe("philips_pool", "Philips Pool", "💡", &[], None, "Scene"), bridge);
 
     let device = b.hue("led_kitchen", 6);
     b.switch(describe("led_kitchen", "Kitchen Led", "🍽", &["default"], Some("Kitchen"), "Living"), device);
 
-    let device = b.relay(24, 17);
+    let device = b.relay("spotlight_kitchen", 24, 17);
     b.switch(describe("spotlight_kitchen", "Kitchen Light", "🍽", &[], Some("Kitchen"), "Living"), device);
 
-    let device = b.relay(23, 2);
+    let device = b.relay("spotlight_living_room", 23, 2);
     b.switch(describe("spotlight_living_room", "Living Room Light", "🛋", &[], None, "Living"), device);
 
     let device = b.strip("led_living_room", 1, &tv_strips);
@@ -127,7 +127,7 @@ pub fn build() -> (Arc<Home>, bool) {
     let device = b.strip("led_tv", 3, &tv_strips);
     b.switch(describe("led_tv", "TV Led", "📺", &["default"], Some("Living Room"), "Living"), device);
 
-    let device = b.relay(15, 25);
+    let device = b.relay("spotlight_tv", 15, 25);
     b.switch(describe("spotlight_tv", "TV Light", "📺", &[], None, "Living"), device);
 
     // the effect names must match the ones installed on the panel exactly
@@ -156,7 +156,7 @@ pub fn build() -> (Arc<Home>, bool) {
         ),
     );
 
-    let device = b.relay(18, 7);
+    let device = b.relay("spotlight_entrance", 18, 7);
     b.switch(describe("spotlight_entrance", "Entrance Light", "🚪", &[], None, "Living"), device);
 
     let device = b.hue("lamp_room", 7);
@@ -165,17 +165,17 @@ pub fn build() -> (Arc<Home>, bool) {
     let device = b.hue("led_bathroom_entrance", 5);
     b.switch(describe("led_bathroom_entrance", "Bathroom Entrance", "🚽", &[], None, "Bathrooms"), device);
 
-    let power = b.relay(14, 8);
+    let power = b.relay("led_bedroom", 14, 8);
     let device = b.strip("led_bedroom", 2, &power);
     b.switch(describe("led_bedroom", "Bedroom Led", "🛏", &[], Some("Bedroom"), "Bedroom"), device);
 
-    let device = b.relay(21, 3);
+    let device = b.relay("spotlight_bedroom", 21, 3);
     b.switch(describe("spotlight_bedroom", "Bedroom Light", "🛏", &[], None, "Bedroom"), device);
 
     let device = b.hue("led_bathroom_bedroom", 4);
     b.switch(describe("led_bathroom_bedroom", "Bathroom Bedroom", "🚽", &[], Some("Bathroom"), "Bathrooms"), device);
 
-    let device = b.relay(16, 12);
+    let device = b.relay("spotlight_room", 16, 12);
     b.switch(describe("spotlight_room", "Studio Light", "📚", &[], None, "Studio"), device);
 
     let device = b.hue("led_room", 8);
@@ -185,13 +185,13 @@ pub fn build() -> (Arc<Home>, bool) {
     let device = b.bridge.light(9, "lamp_hipster_room", HueOptions { color: false, ..HueOptions::default() });
     b.switch(describe("lamp_hipster_room", "Studio Hipster Lamp", "💡", &["default"], None, "Studio"), device);
 
-    let device = b.window(5, 6);
+    let device = b.window("window_kitchen", 5, 6);
     b.switch(describe("window_kitchen", "Kitchen Window", "☀️", &[], None, "Windows"), device);
 
-    let device = b.window(9, 13);
+    let device = b.window("window_living_room", 9, 13);
     b.switch(describe("window_living_room", "Living Room Window", "☀️", &[], None, "Windows"), device);
 
-    let device = b.window(11, 27);
+    let device = b.window("window_tv", 11, 27);
     b.switch(describe("window_tv", "TV Window", "☀️", &[], None, "Windows"), device);
 
     b.scene("random", "Random", "❓", Colors::Random, Effects::Same("Color Burst".into()), None, &[]);

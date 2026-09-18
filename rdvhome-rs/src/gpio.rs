@@ -106,11 +106,19 @@ mod real {
     pub struct RealGpio {
         board: Board,
         pins: Mutex<HashMap<u8, Pin>>,
+        // only to log a pin when it moves, like the python app did
+        last: Mutex<HashMap<u8, bool>>,
     }
 
     impl RealGpio {
         pub fn new() -> Option<RealGpio> {
-            Some(RealGpio { board: Board::new().ok()?, pins: Mutex::default() })
+            Some(RealGpio { board: Board::new().ok()?, pins: Mutex::default(), last: Mutex::default() })
+        }
+
+        fn log_change(&self, pin: u8, high: bool) {
+            if self.last.lock().unwrap().insert(pin, high) != Some(high) {
+                println!("[GPIO] input pin={} changed to {}", pin, high as u8);
+            }
         }
     }
 
@@ -124,7 +132,11 @@ mod real {
 
             if !pins.contains_key(&pin) {
                 match self.board.get(pin) {
-                    Ok(p) => drop(pins.insert(pin, Pin::Input(p.into_input_pullup()))),
+                    Ok(p) => {
+                        let p = p.into_input_pullup();
+                        println!("[GPIO] setup_input pin={} OK, reads {}", pin, p.is_high() as u8);
+                        pins.insert(pin, Pin::Input(p));
+                    }
                     Err(e) => eprintln!("[GPIO] setup_input pin={} ERROR: {}", pin, e),
                 }
             }
@@ -136,9 +148,11 @@ mod real {
             if !pins.contains_key(&pin) {
                 match self.board.get(pin) {
                     Ok(p) => {
+                        let mode = p.mode();
                         let mut p = p.into_output_high();
                         // leave the relays as they are when the app stops
                         p.set_reset_on_drop(false);
+                        println!("[GPIO] setup_output pin={} OK, was {:?}, now high", pin, mode);
                         pins.insert(pin, Pin::Output(p));
                     }
                     Err(e) => eprintln!("[GPIO] setup_output pin={} ERROR: {}", pin, e),
@@ -147,18 +161,28 @@ mod real {
         }
 
         fn read(&self, pin: u8) -> bool {
-            match self.pins.lock().unwrap().get(&pin) {
+            let value = match self.pins.lock().unwrap().get(&pin) {
                 Some(Pin::Input(p)) => p.is_high(),
                 Some(Pin::Output(p)) => p.is_set_high(),
-                None => true,
-            }
+                // never set up: the caller reads "not powered" and never knows why
+                None => {
+                    eprintln!("[GPIO] read pin={} NOT CONFIGURED, answering high", pin);
+                    true
+                }
+            };
+
+            self.log_change(pin, value);
+            value
         }
 
         fn write(&self, pin: u8, high: bool) {
             println!("[GPIO] output pin={} high={}", pin, high);
 
-            if let Some(Pin::Output(p)) = self.pins.lock().unwrap().get_mut(&pin) {
-                p.write(if high { rppal::gpio::Level::High } else { rppal::gpio::Level::Low });
+            match self.pins.lock().unwrap().get_mut(&pin) {
+                Some(Pin::Output(p)) => p.write(if high { rppal::gpio::Level::High } else { rppal::gpio::Level::Low }),
+                // the write above is a lie: say so instead of dropping it
+                Some(Pin::Input(_)) => eprintln!("[GPIO] write pin={} IS AN INPUT, nothing written", pin),
+                None => eprintln!("[GPIO] write pin={} NOT CONFIGURED, nothing written", pin),
             }
         }
     }

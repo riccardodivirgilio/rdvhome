@@ -205,10 +205,13 @@ impl HueLight {
         // the mains came back and the bulb forgot its colour: give it back
         if reachable && color.is_some_and(|c| c.same(&POWER_ON_COLOR)) {
             if saved_color.same(&POWER_ON_COLOR) {
+                // even the saved colour is the power-on one: nothing of ours to restore
                 saved_color = Saved::default().color();
             } else {
                 saved_color.brightness = Some(1.0);
             }
+
+            println!("[HUE {}] came up on the bridge power-on colour, pushing back {:?}", self.key, saved_color);
 
             self.apply(&Command { color: Some(saved_color), ..Command::default() }).await;
             color = Some(saved_color);
@@ -225,6 +228,10 @@ impl HueLight {
         changed |= color.is_some_and(|c| !c.same(&saved_color));
 
         if changed {
+            if on != saved.on {
+                println!("[HUE {}] bridge says on={} (was {}), reachable={}", self.key, on, saved.on, reachable);
+            }
+
             saved.on = on;
             saved.allow_on = allow_on;
             if let Some(color) = color {

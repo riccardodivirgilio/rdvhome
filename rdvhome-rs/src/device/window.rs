@@ -13,6 +13,7 @@ use super::{changes, Capabilities, Changes, Command, Device, Direction, Report};
 use crate::gpio::Gpio;
 
 pub struct Window {
+    id: String,
     gpio: Arc<dyn Gpio>,
     power: u8,
     direction: u8,
@@ -21,11 +22,13 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn new(gpio: Arc<dyn Gpio>, power: u8, direction: u8) -> Arc<Window> {
+    pub fn new(id: &str, gpio: Arc<dyn Gpio>, power: u8, direction: u8) -> Arc<Window> {
+        println!("[BOOT] window {} power_pin={} direction_pin={}", id, power, direction);
+
         gpio.setup_output(power);
         gpio.setup_output(direction);
 
-        Arc::new(Window { gpio, power, direction, changes: changes(), started: AtomicBool::new(false) })
+        Arc::new(Window { id: id.to_string(), gpio, power, direction, changes: changes(), started: AtomicBool::new(false) })
     }
 
     // (up, down)
@@ -68,11 +71,17 @@ impl Device for Window {
     // anything that is not "up" or "down" stops the motor
     async fn apply(&self, cmd: &Command) -> Report {
         match cmd.direction {
-            None => self.stop(),
+            None => {
+                println!("[WINDOW {}] stop (power pin {} high, direction pin {} high)", self.id, self.power, self.direction);
+                self.stop()
+            }
             Some(direction) => {
                 let (up, down) = self.moving();
 
-                if !(if direction == Direction::Up { up } else { down }) {
+                if if direction == Direction::Up { up } else { down } {
+                    println!("[WINDOW {}] asked {:?}, already going there, nothing written", self.id, direction);
+                } else {
+                    println!("[WINDOW {}] asked {:?} (was up={} down={}), direction pin {} then power pin {}", self.id, direction, up, down, self.direction, self.power);
                     self.gpio.write(self.direction, direction == Direction::Up);
                     self.gpio.write(self.power, false);
                 }
