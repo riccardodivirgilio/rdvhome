@@ -110,5 +110,6 @@ if ! ssh "$HOST" "journalctl -u $UNIT _SYSTEMD_INVOCATION_ID=\$(systemctl show -
     exit 1
 fi
 
-# from the pi: this mac cannot reach port 8500 on that network
-ssh "$HOST" "curl -fsS --max-time 10 http://127.0.0.1:8500/switch >/dev/null" && echo "==> answering on :8500, real pins"
+# from the pi: this mac cannot reach port 8500 on that network. /health touches no
+# device, so one that hangs (reading /switch waits for it) cannot fail the deploy
+ssh "$HOST" "curl -fsS --max-time 10 http://127.0.0.1:8500/health" && echo "==> answering on :8500, real pins"
