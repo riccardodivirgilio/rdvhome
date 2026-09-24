@@ -222,6 +222,7 @@ fn is_component(segment: &str) -> bool {
 
 enum Route {
     Static(String),
+    Health,
     Homekit,
     Qrcode,
     // the state of the switches behind an alias, None is all of them
@@ -252,6 +253,7 @@ fn resolve(path: &str, query: &str) -> Result<Route, Failure> {
     match segments[..] {
         [""] => Ok(Route::Static("index.html".to_string())),
         ["css" | "js", ..] => Ok(Route::Static(path[1..].to_string())),
+        ["health"] => Ok(Route::Health),
         ["homekit"] => Ok(Route::Homekit),
         ["qrcode"] => Ok(Route::Qrcode),
 
@@ -313,6 +315,18 @@ pub async fn route(home: &Home, method: &str, target: &str) -> Answer {
             None if FRONTEND.get_dir(name.trim_end_matches('/')).is_some() => failure(Failure::Forbidden),
             None => Answer { status: 404, content_type: "application/octet-stream", body: Vec::new() },
         },
+        // which app answers and which version of it, printed next to the HomeKit button;
+        // the python app answers the same url with "python"
+        Route::Health => envelope(
+            200,
+            Map::from_iter([
+                ("app".to_string(), json!("rust")),
+                ("version".to_string(), json!(env!("CARGO_PKG_VERSION"))),
+                // the git commit it was built from, set by deploy.sh: tells two builds of
+                // the same version apart ("-dirty" when built from uncommitted changes)
+                ("commit".to_string(), json!(option_env!("RDV_COMMIT").unwrap_or("unknown"))),
+            ]),
+        ),
         Route::Homekit => match homekit::pairing(None) {
             Some(pairing) => envelope(
                 200,
@@ -371,8 +385,15 @@ async fn serve_socket(home: Arc<Home>, socket: WebSocket) {
     while let Some(Ok(message)) = receiver.next().await {
         match message {
             Message::Text(text) if text.as_str() == "/close" => break,
-            // no answer: what happens is in the events
-            Message::Text(text) => drop(route(&home, "WS", text.as_str()).await),
+            // No answer: what happens is in the events, each sent when its own device
+            // returns. Every message runs on its own task instead of after the previous
+            // one: the page sends "/switch" (read every device) on connect and on clicks,
+            // and one device that does not answer held an unrelated click behind it for
+            // the whole timeout. A command that arrived runs even if the socket closes.
+            Message::Text(text) => {
+                let home = home.clone();
+                tokio::spawn(async move { drop(route(&home, "WS", text.as_str()).await) });
+            }
             Message::Close(_) => break,
             _ => {}
         }

@@ -69,6 +69,7 @@ out=$(mktemp -d)
 trap 'rm -rf "$out"' EXIT
 docker buildx build --platform linux/arm64 \
     --build-context frontend="$HERE/../rdvhome/frontend/dist" \
+    --build-arg RDV_COMMIT="$(git -C "$HERE" describe --always --dirty)" \
     -o "type=local,dest=$out" "$HERE"
 file "$out/rdvhome" | grep -q aarch64 || { echo "not an aarch64 binary" >&2; exit 1; }
 

@@ -743,6 +743,8 @@
                 <rect x="1220" y="1018" width="110" height="34" rx="6" fill="rgba(128,128,128,0.12)" stroke="rgba(128,128,128,0.3)" stroke-width="1"/>
                 <text x="1275" y="1040" text-anchor="middle" font-size="13" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" fill="currentColor">HomeKit QR</text>
             </a>
+            <!-- which app is answering (python or rust) and its version, from /health -->
+            <text v-if="version" x="1210" y="1040" text-anchor="end" font-size="11" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" fill="currentColor" opacity="0.5">{{ version }}</text>
         </svg>
     </div>
 </template>
@@ -755,6 +757,19 @@ import {hsb_to_css_with_lightness} from '../utils/color';
 export default {
   name: 'home',
   props: ['switches'],
+  data() {
+    return {version: null}
+  },
+  mounted() {
+    fetch('/health')
+      .then(response => response.json())
+      // "rust 0.3.0 1a2b3c4": the commit tells two builds of one version apart
+      .then(health => {
+        this.version = [health.app, health.version, health.commit !== 'unknown' && health.commit]
+          .filter(Boolean).join(' ')
+      })
+      .catch(() => {})
+  },
   methods: {
       to_css: hsb_to_css_with_lightness,
       light_color: function(item) {

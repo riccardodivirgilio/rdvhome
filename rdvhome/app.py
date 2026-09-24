@@ -16,6 +16,7 @@ from rpy.functions.asyncio import run_all
 from rpy.functions.decorators import to_data
 from rpy.functions.importutils import module_path
 
+from rdvhome import __version__
 from rdvhome.api import api_response, status, switch
 from rdvhome.conf import settings
 from rdvhome.switches import switches
@@ -144,6 +145,13 @@ app.router.add_static("/css", module_path("rdvhome", "frontend", "dist", "css"))
 app.router.add_static("/js", module_path("rdvhome", "frontend", "dist", "js"))
 
 
+# which app answers and which version of it: the web app prints it next to the
+# HomeKit button, rdvhome-rs answers the same url with "rust"
+@url("/health", name="health")
+async def health(request):
+    return JsonResponse(api_response(app="python", version=__version__))
+
+
 @url("/homekit", name="homekit")
 async def homekit_pair(request):
     from rdvhome.homekit import driver
@@ -202,6 +210,24 @@ async def view_status_list(request):
     return JsonResponse(await switch(**getargs(request)))
 
 
+# A websocket message runs on its own, not after the previous one. Awaiting them in
+# order made every click wait behind whatever was in front of it: the page sends
+# "/switch" (read every device) on connect and on clicks, and one device that does not
+# answer (nanoleaf-exa, 30 s timeouts since 2026-09-20) held an unrelated light switch
+# for 30 s. The answers were always events, each sent when its own device returns, so
+# nothing waits for the handler to finish.
+#
+# The tasks are kept here until they finish (asyncio only holds weak references to
+# them), and a command that arrived is carried out even if its socket closes meanwhile.
+in_flight = set()
+
+
+def dispatch(path):
+    task = asyncio.ensure_future(app._handle(make_mocked_request("WS", path)))
+    in_flight.add(task)
+    task.add_done_callback(in_flight.discard)
+
+
 @url("/websocket", name="websocket")
 async def websocket(request):
 
@@ -222,7 +248,7 @@ async def websocket(request):
                 if msg.data == "/close":
                     await ws.close()
                 else:
-                    await app._handle(make_mocked_request("WS", msg.data))
+                    dispatch(msg.data)
 
             elif msg.type == aiohttp.WSMsgType.ERROR:
                 print("ws connection closed with exception %s" % ws.exception())

@@ -8,6 +8,9 @@ WORKDIR /app/rdvhome-rs
 COPY --from=frontend . /app/rdvhome/frontend/dist
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
+# the commit shown by /health, passed by deploy.sh (read at compile time)
+ARG RDV_COMMIT=unknown
+ENV RDV_COMMIT=$RDV_COMMIT
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/rdvhome-rs/target \
     cargo build --release && cp target/release/rdvhome /rdvhome
