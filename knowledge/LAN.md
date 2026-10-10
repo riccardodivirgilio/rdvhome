@@ -90,6 +90,10 @@ it renews (kick it via `cmd/stamgr {"cmd":"kick-sta"}` to speed it up).
 
 ## DNS
 
+Every network's DHCP hands out its gateway (`10.10.X.1`) as DNS; the UXG's dnsmasq answers local
+records and forwards the rest to **`1.1.1.1` (Cloudflare) primary, `8.8.8.8` (Google) secondary** (both WANs
+`wan_dns_preference: manual` since 2026-10-10, so the ISP's PPPoE resolvers are ignored; dnsmasq `all-servers` queries both at once). DoH is off.
+
 The gateway resolves local records for everyone using it as DNS. Two mechanisms:
 - **Per-client**: `rest/user` `local_dns_record` + `local_dns_record_enabled` (needs a fixed IP).
 - **Standalone**: `/v2/api/site/default/static-dns` A records (service names → NAS).
